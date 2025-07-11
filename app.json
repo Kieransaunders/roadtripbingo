@@ -9,14 +9,16 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.deadaheadbingo"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.deadaheadbingo"
     },
     "web": {
       "bundler": "metro",
@@ -32,6 +34,20 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Dead Ahead Bingo to access your camera to capture roadkill evidence for the leaderboard."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Dead Ahead Bingo to save your roadkill photos to your device.",
+          "savePhotosPermission": "Allow Dead Ahead Bingo to save photos to your photo library.",
+          "isAccessMediaLocationEnabled": true
         }
       ]
     ],

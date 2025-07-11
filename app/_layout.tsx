@@ -1,10 +1,25 @@
+import '../src/unistyles';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useColorScheme } from '@/src/hooks/useColorScheme';
+import { ThemeProvider as NeoUIThemeProvider } from '@joe111/neo-ui';
+
+// Custom dark theme for the game
+const GameTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    primary: '#FF4444',
+    background: '#1a1a2e',
+    card: '#2a2a4a',
+    text: '#ffffff',
+    border: '#333',
+  },
+};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -18,12 +33,19 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <NeoUIThemeProvider>
+      <ThemeProvider value={GameTheme}>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="game" options={{ headerShown: false }} />
+          <Stack.Screen name="victory" options={{ headerShown: false }} />
+          <Stack.Screen name="hall-of-shame" options={{ headerShown: false }} />
+          <Stack.Screen name="settings" options={{ headerShown: false }} />
+          <Stack.Screen name="camera" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="light" />
+      </ThemeProvider>
+    </NeoUIThemeProvider>
   );
 }
