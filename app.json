@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "dead-ahead-bingo",
-    "slug": "dead-ahead-bingo",
+    "slug": "deadahead",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -18,7 +18,14 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.deadaheadbingo"
+      "package": "com.anonymous.deadaheadbingo",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -49,10 +56,18 @@
           "savePhotosPermission": "Allow Dead Ahead Bingo to save photos to your photo library.",
           "isAccessMediaLocationEnabled": true
         }
-      ]
+      ],
+      "react-native-edge-to-edge"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a8837a6b-eacb-4282-b149-c278dface0fe"
+      }
+    },
+    "owner": "mrzang77"
   }
 }

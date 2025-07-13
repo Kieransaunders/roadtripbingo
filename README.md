@@ -1,50 +1,54 @@
-# Welcome to your Expo app 👋
+# Dead Ahead: Roadkill Bingo 🎯
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Welcome to Dead Ahead: Roadkill Bingo, a unique mobile game built with React Native and Expo! Spot bizarre roadside sights during road trips using a 5x5 bingo grid, combining dark British humor with interactive gameplay.
 
-## Get started
+## Project Overview
 
-1. Install dependencies
+Dead Ahead: Roadkill Bingo is a mobile game where players identify various roadside "roadkill" and other quirky sights to complete bingo patterns. The game features a camera integration for "Snap-a-Roadkill" photo sharing and leaderboards.
 
-   ```bash
-   npm install
-   ```
+## Key Technical Stack
 
-2. Start the app
+*   **Framework:** Expo SDK 53 with React Native 0.79.5
+*   **Architecture:** React Native New Architecture enabled
+*   **Language:** TypeScript (strict mode)
+*   **Navigation:** Expo Router (file-based)
+*   **State Management:** Zustand
+*   **Styling:** React Native Unistyles 3.0 (theming and responsive styling)
+*   **UI Components:** Neo UI
+*   **Animations:** React Native Reanimated 3.17
 
-   ```bash
-   npx expo start
-   ```
+## Get Started
 
-In the output, you'll find options to open the app in a
+1.  **Install dependencies**
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+    ```bash
+    npm install
+    ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+2.  **Start the app**
 
-## Get a fresh project
+    ```bash
+    npx expo start
+    ```
 
-When you're ready, run:
+    In the output, you'll find options to open the app in a:
+    *   [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+    *   [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+    *   [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+    *   [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-```bash
-npm run reset-project
-```
+    You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
+## Learn More
 
 To learn more about developing your project with Expo, look at the following resources:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+*   [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+*   [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## Join the community
+## Join the Community
 
 Join our community of developers creating universal apps.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+*   [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+*   [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

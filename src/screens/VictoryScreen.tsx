@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Dimensions, StyleSheet, Alert } from 'react-native';
+import { View, Dimensions, StyleSheet, Alert, Linking } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText, Box, Button } from '@joe111/neo-ui';
@@ -13,6 +13,8 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import * as WebBrowser from 'expo-web-browser';
+import * as Clipboard from 'expo-clipboard';
 import { useGameStore } from '../stores/gameStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -139,12 +141,52 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   const gameTime = calculateGameTime();
   const winningPattern = gameMode === 'standard' ? "3 in a row" : "4 in a row";
 
-  const handleShare = () => {
-    Alert.alert(
-      "Share Victory!", 
-      `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}! 🎉`,
-      [{ text: "OK" }]
-    );
+  const handleShare = async () => {
+    try {
+      // Create victory message
+      const victoryMessage = `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}! 🎉`;
+      
+      // Instagram hashtags - encoded for URL
+      const hashtags = encodeURIComponent('#deadahead #roadkill');
+      
+      // Try to open Instagram app first, fallback to web browser
+      const instagramUrl = `instagram://camera?hashtags=${hashtags}`;
+      const instagramWebUrl = `https://www.instagram.com/create/story/?hashtags=${hashtags}`;
+      
+      // Check if Instagram app is available
+      const canOpenInstagram = await Linking.canOpenURL(instagramUrl);
+      
+      if (canOpenInstagram) {
+        // Open Instagram app
+        await Linking.openURL(instagramUrl);
+      } else {
+        // Fallback to web browser
+        await WebBrowser.openBrowserAsync(instagramWebUrl);
+      }
+      
+      // Show additional context alert
+      Alert.alert(
+        "Share on Instagram! 📸", 
+        `${victoryMessage}\n\nShare your victory with hashtags:\n#deadahead #roadkill`,
+        [{ text: "Got it!" }]
+      );
+    } catch (error) {
+      console.error('Error opening Instagram:', error);
+      
+      // Fallback alert with manual sharing instructions
+      Alert.alert(
+        "Share Your Victory! 🎉", 
+        `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}!\n\nShare on Instagram with:\n#deadahead #roadkill`,
+        [
+          { text: "Copy Message", onPress: async () => {
+            const shareMessage = `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}! 🎉 #deadahead #roadkill`;
+            await Clipboard.setStringAsync(shareMessage);
+            Alert.alert("Copied!", "Victory message copied to clipboard!");
+          }},
+          { text: "OK" }
+        ]
+      );
+    }
   };
 
   const handlePlayAgain = () => {

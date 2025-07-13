@@ -58,7 +58,9 @@
 - ✅ Animated "ROADKILL BINGO!" celebration with spring animations
 - ✅ Blood splatter/confetti particle effects (30 animated particles)
 - ✅ Victory stats display (time, tiles spotted, completion %, win pattern)
-- ✅ Share functionality placeholder
+- ✅ **Instagram share functionality with #deadahead and #roadkill hashtags**
+- ✅ **Clipboard functionality for copying victory messages**
+- ✅ **Smart sharing: Instagram app → web fallback → manual copy**
 - ✅ "Play Again" and "Back to Dashboard" buttons with haptic feedback
 - ✅ Sound effects placeholder (ready for expo-av integration)
 - ✅ Real-time game timer calculation

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, ScrollView, StatusBar, Switch, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, TouchableOpacity, ScrollView, StatusBar, Switch, StyleSheet, Alert, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText, ThemedView, Box } from '@joe111/neo-ui';
+import { useGameStore, GoreLevel } from '../stores/gameStore';
+import { soundManager } from '../services/soundManager';
 
 interface SettingSectionProps {
   title: string;
@@ -50,19 +52,37 @@ interface RadioOptionProps {
 }
 
 const RadioOption: React.FC<RadioOptionProps> = ({ title, description, selected, onPress }) => {
+  const isDisabled = description.includes('DISABLED');
+  
   return (
     <TouchableOpacity 
-      style={[styles.radioOption, selected && styles.radioOptionSelected]} 
+      style={[
+        styles.radioOption, 
+        selected && styles.radioOptionSelected,
+        isDisabled && styles.radioOptionDisabled
+      ]} 
       onPress={onPress}
       activeOpacity={0.7}
     >
       <Box style={styles.radioContent}>
-        <Box style={[styles.radioButton, selected && styles.radioButtonSelected]}>
+        <Box style={[
+          styles.radioButton, 
+          selected && styles.radioButtonSelected,
+          isDisabled && styles.radioButtonDisabled
+        ]}>
           {selected && <Box style={styles.radioButtonInner} />}
         </Box>
         <Box style={styles.radioText}>
-          <ThemedText style={[styles.radioTitle, selected && styles.radioTitleSelected]}>{title}</ThemedText>
-          <ThemedText style={[styles.radioDescription, selected && styles.radioDescriptionSelected]}>{description}</ThemedText>
+          <ThemedText style={[
+            styles.radioTitle, 
+            selected && styles.radioTitleSelected,
+            isDisabled && styles.radioTitleDisabled
+          ]}>{title}</ThemedText>
+          <ThemedText style={[
+            styles.radioDescription, 
+            selected && styles.radioDescriptionSelected,
+            isDisabled && styles.radioDescriptionDisabled
+          ]}>{description}</ThemedText>
         </Box>
       </Box>
     </TouchableOpacity>
@@ -83,17 +103,58 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon, text }) => {
   );
 };
 
-type GoreLevel = 'mild' | 'moderate' | 'extreme';
-
 export const SettingsScreen: React.FC = () => {
 
-  // State for settings
-  const [soundEffects, setSoundEffects] = useState(true);
-  const [hapticFeedback, setHapticFeedback] = useState(true);
-  const [goreLevel, setGoreLevel] = useState<GoreLevel>('extreme');
+  // Get settings from game store
+  const {
+    soundEnabled,
+    hapticEnabled,
+    goreLevel,
+    setSoundEnabled,
+    setHapticEnabled,
+    setGoreLevel,
+    loadSettings
+  } = useGameStore();
+
+  // Load settings on component mount
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
   const handleBack = () => {
-    router.back();
+    try {
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        // Fallback to dashboard if no back history
+        router.replace('/');
+      }
+    } catch (error) {
+      console.warn('Navigation error:', error);
+      // Force navigation to dashboard
+      router.replace('/');
+    }
+  };
+
+  const handleGoreLevelChange = async (level: GoreLevel) => {
+    // Play creepy monster sound when they try to change mode 👹
+    await soundManager.playCreepySound();
+    
+    // Show the message for ANY click on gore level options
+    const message = 'Extreme mode is baked in. Like roadkill on hot tarmac.';
+    
+    if (Platform.OS === 'web') {
+      // Use browser alert for web
+      window.alert(`🩸 Extreme Mode Only\n\n${message}`);
+    } else {
+      // Use React Native Alert for mobile
+      Alert.alert(
+        '🩸 Extreme Mode Only',
+        message,
+        [{ text: 'Got It!', style: 'default' }]
+      );
+    }
+    // Always keep it on extreme regardless of what they clicked
   };
 
   return (
@@ -116,14 +177,14 @@ export const SettingsScreen: React.FC = () => {
             <ToggleSetting
               title="Sound Effects"
               description="Splats, thuds, and victory sounds"
-              value={soundEffects}
-              onValueChange={setSoundEffects}
+              value={soundEnabled}
+              onValueChange={setSoundEnabled}
             />
             <ToggleSetting
               title="Haptic Feedback"
               description="Vibration on tile marks and wins"
-              value={hapticFeedback}
-              onValueChange={setHapticFeedback}
+              value={hapticEnabled}
+              onValueChange={setHapticEnabled}
             />
           </View>
         </SettingSection>
@@ -131,26 +192,26 @@ export const SettingsScreen: React.FC = () => {
         {/* Gore Level */}
         <SettingSection title="Gore Level">
           <ThemedText style={styles.goreLevelDescription}>
-            Choose how graphic you want your roadkill experience
+            Extreme mode is the only way to experience true roadkill chaos
           </ThemedText>
           <View style={styles.radioContainer}>
             <RadioOption
               title="Mild"
-              description="Family-friendly roadkill"
-              selected={goreLevel === 'mild'}
-              onPress={() => setGoreLevel('mild')}
+              description="For cowards • DISABLED"
+              selected={false}
+              onPress={() => handleGoreLevelChange('mild')}
             />
             <RadioOption
               title="Moderate"
-              description="Some blood and guts"
-              selected={goreLevel === 'moderate'}
-              onPress={() => setGoreLevel('moderate')}
+              description="Still too tame • DISABLED"
+              selected={false}
+              onPress={() => handleGoreLevelChange('moderate')}
             />
             <RadioOption
               title="Extreme"
-              description="Full horror experience"
-              selected={goreLevel === 'extreme'}
-              onPress={() => setGoreLevel('extreme')}
+              description="Full horror experience • LOCKED"
+              selected={true}
+              onPress={() => {}} // No action needed - already locked to extreme
             />
           </View>
         </SettingSection>
@@ -299,6 +360,18 @@ const styles = StyleSheet.create({
   },
   radioDescriptionSelected: {
     color: '#ddd',
+  },
+  radioOptionDisabled: {
+    opacity: 0.4,
+  },
+  radioButtonDisabled: {
+    borderColor: '#444',
+  },
+  radioTitleDisabled: {
+    color: '#666',
+  },
+  radioDescriptionDisabled: {
+    color: '#555',
   },
   aboutContainer: {
     gap: 16,

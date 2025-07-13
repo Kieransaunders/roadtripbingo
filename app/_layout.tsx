@@ -3,10 +3,12 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { ThemeProvider as NeoUIThemeProvider } from '@joe111/neo-ui';
+import { useGameStore } from '@/src/stores/gameStore';
 
 // Custom dark theme for the game
 const GameTheme = {
@@ -23,9 +25,15 @@ const GameTheme = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const loadSettings = useGameStore(state => state.loadSettings);
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  // Load settings when app starts
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
   if (!loaded) {
     // Async font loading only occurs in development.

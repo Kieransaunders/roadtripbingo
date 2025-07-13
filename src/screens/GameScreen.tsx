@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, Alert, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import { View, ScrollView, Alert, StyleSheet, TouchableOpacity, StatusBar, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText, ThemedView, Box, Button } from '@joe111/neo-ui';
 import { BingoGrid } from '../components/BingoGrid';
 import { useGameStore } from '../stores/gameStore';
 import { router } from 'expo-router';
+import { postToInstagram, openInstagramAccount } from '../services/instagramAPI';
+import { uploadImageToCloudinary } from '../services/cloudinary';
 
 export const GameScreen: React.FC = () => {
   const { 
@@ -49,9 +51,103 @@ export const GameScreen: React.FC = () => {
     router.push('/camera');
   };
 
-  const handleTestVictory = () => {
-    // Temporary function to test victory screen
-    router.push('/victory');
+  const handleTestInstagram = async () => {
+    console.log('🔵 Instagram test button clicked!');
+    
+    // First, test if alerts work at all
+    if (Platform.OS === 'web') {
+      window.alert('🔵 Button clicked! Testing full Cloudinary → Instagram flow...');
+    } else {
+      Alert.alert('🔵 Button clicked!', 'Testing full Cloudinary → Instagram flow...');
+    }
+    
+    try {
+      // Step 1: Get local asset and upload to Cloudinary
+      console.log('🔵 Step 1: Using local game asset - Dead Ahead Logo');
+      
+      // Get the dead ahead logo from assets
+      const logoImage = require('../../assets/images/dead_ahead_logo.png');
+      
+      // For web, we need to fetch the local asset and convert to blob
+      const assetResponse = await fetch(logoImage);
+      const assetBlob = await assetResponse.blob();
+      console.log('🔵 Local asset loaded, size:', assetBlob.size, 'bytes');
+      
+      // Create file for Cloudinary upload
+      const file = new File([assetBlob], 'dead-ahead-logo-test.png', { type: 'image/png' });
+      console.log('🔵 Step 2: Uploading to Cloudinary...');
+      
+      // Upload to Cloudinary
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'roadkill_preset');
+      formData.append('tags', 'test,deadahead,logo,instagram');
+      formData.append('folder', 'roadkill-bingo');
+
+      const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/dxuq6a1mt/image/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const cloudinaryData = await cloudinaryResponse.json();
+      console.log('🔵 Cloudinary response:', cloudinaryData);
+
+      if (!cloudinaryResponse.ok) {
+        throw new Error(cloudinaryData.error?.message || 'Failed to upload to Cloudinary');
+      }
+
+      const cloudinaryUrl = cloudinaryData.secure_url;
+      console.log('🔵 Step 2 Complete: Cloudinary URL:', cloudinaryUrl);
+
+      // Show Cloudinary success
+      const cloudinaryMessage = `✅ Step 1 & 2: Complete!\n\n📱 Local Asset: dead_ahead_logo.png\n☁️ Cloudinary: ${cloudinaryUrl}\n\nNow posting to Instagram...`;
+      if (Platform.OS === 'web') {
+        window.alert(cloudinaryMessage);
+      } else {
+        Alert.alert('✅ Cloudinary Success!', cloudinaryMessage);
+      }
+
+      // Step 3: Post to Instagram using Cloudinary URL
+      const testDescription = `🎯 Testing complete flow: Local Asset → Cloudinary → Instagram!\n\n🎮 Dead Ahead: Roadkill Bingo Logo Test\n\nSee it. Spot it. Shout it. Win shotgun or throw up trying! 🤢\n\n#roadkill #deadahead #roadkillbingo #test #logo #cloudinary`;
+      
+      console.log('🔵 Step 3: Posting to Instagram via n8n with Cloudinary URL...');
+      const result = await postToInstagram(cloudinaryUrl, testDescription);
+      console.log('🔵 Instagram result:', result);
+      
+      if (result.success) {
+        console.log('🔵 Instagram posting success!');
+        const successMessage = `🎉 COMPLETE FLOW SUCCESS!\n\n✅ Local Asset: dead_ahead_logo.png\n✅ Cloudinary: ${cloudinaryUrl}\n✅ n8n Webhook: Called\n✅ Instagram: Posted!\n\nPost ID: ${result.post_id}`;
+        
+        if (Platform.OS === 'web') {
+          window.alert(successMessage);
+        } else {
+          Alert.alert(
+            '🎉 Complete Success!', 
+            successMessage,
+            [
+              { text: 'View on Instagram', onPress: () => openInstagramAccount() },
+              { text: 'OK' }
+            ]
+          );
+        }
+      } else {
+        console.log('🔵 Instagram failed:', result);
+        const message = `❌ Instagram Step Failed\n\n✅ Image URL: ${testImageUrl}\n❌ Instagram: ${result.message || 'Unknown error'}`;
+        if (Platform.OS === 'web') {
+          window.alert(message);
+        } else {
+          Alert.alert('❌ Instagram Failed', message);
+        }
+      }
+    } catch (error) {
+      console.log('🔵 Full flow error:', error);
+      const message = `❌ Full Flow Test Failed\n\n${error.message || 'Unknown error occurred'}`;
+      if (Platform.OS === 'web') {
+        window.alert(message);
+      } else {
+        Alert.alert('❌ Test Failed', error.message || 'Unknown error occurred');
+      }
+    }
   };
 
   const getSpottedCount = () => {
@@ -127,12 +223,13 @@ export const GameScreen: React.FC = () => {
           <ThemedText style={styles.buttonText}>New Game</ThemedText>
         </Button>
 
-        <Button 
+        <TouchableOpacity 
           style={[styles.button, styles.testButton]}
-          onPress={handleTestVictory}
+          onPress={handleTestInstagram}
+          activeOpacity={0.7}
         >
-          <ThemedText style={styles.buttonText}>🎉 Test Victory</ThemedText>
-        </Button>
+          <ThemedText style={styles.buttonText}>📤 Test Instagram</ThemedText>
+        </TouchableOpacity>
       </Box>
       </ScrollView>
     </SafeAreaView>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, Image, Text, View, StyleSheet } from 'react-native';
 import { BingoCell } from '../stores/gameStore';
+import { soundManager } from '../services/soundManager';
 
 interface BingoTileProps {
   cell: BingoCell;
@@ -14,7 +15,49 @@ export const BingoTile: React.FC<BingoTileProps> = ({
   size = 70 
 }) => {
   
-  const handlePress = () => {
+  const handlePress = async () => {
+    // Play category-specific sound effects
+    if (!cell.isSpotted) {
+      // Play different sounds based on tile category and content
+      switch (cell.tile.category) {
+        case 'roadkill':
+          // Roadkill tiles get heavy blood splatter or car+blood sounds
+          if (Math.random() < 0.4) {
+            await soundManager.playFallbackSound(); // Car noise + blood
+          } else {
+            await soundManager.playBloodSplatterWithIntensity('heavy');
+          }
+          break;
+          
+        case 'special':
+          await soundManager.playElectricSound();
+          break;
+          
+        case 'vehicles':
+          // 30% chance of car+blood, 70% electric sounds for vehicles
+          if (Math.random() < 0.3) {
+            await soundManager.playFallbackSound();
+          } else {
+            await soundManager.playElectricSound();
+          }
+          break;
+          
+        case 'people':
+          // Creepy sounds for people-related tiles
+          await soundManager.playCreepySound();
+          break;
+          
+        default:
+          // Default blood splatter for other categories, with occasional car+blood fallback
+          if (Math.random() < 0.1) {
+            await soundManager.playFallbackSound();
+          } else {
+            await soundManager.playBloodSplatterSound();
+          }
+          break;
+      }
+    }
+    
     onPress(cell.position);
   };
 

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { GameTile, FREE_RANGE_TILE, getRandomTiles } from '../data/tiles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface BingoCell {
   tile: GameTile;
@@ -16,6 +17,8 @@ export interface GameStats {
   photosUploaded: number;
 }
 
+export type GoreLevel = 'mild' | 'moderate' | 'extreme';
+
 export interface GameState {
   // Current game state
   currentGrid: BingoCell[];
@@ -26,7 +29,7 @@ export interface GameState {
   // Settings
   soundEnabled: boolean;
   hapticEnabled: boolean;
-  darkHumourEnabled: boolean;
+  goreLevel: GoreLevel;
   
   // Stats
   stats: GameStats;
@@ -38,12 +41,14 @@ export interface GameState {
   setGameMode: (mode: 'standard' | 'savage') => void;
   setSoundEnabled: (enabled: boolean) => void;
   setHapticEnabled: (enabled: boolean) => void;
-  setDarkHumourEnabled: (enabled: boolean) => void;
+  setGoreLevel: (level: GoreLevel) => void;
   incrementPhotosUploaded: () => void;
   completeGame: (won: boolean) => void;
+  loadSettings: () => Promise<void>;
+  saveSettings: () => Promise<void>;
 }
 
-const generateBingoGrid = (darkHumourEnabled: boolean): BingoCell[] => {
+const generateBingoGrid = (goreLevel: GoreLevel): BingoCell[] => {
   const grid: BingoCell[] = [];
   const randomTiles = getRandomTiles(24, true);
   
@@ -137,7 +142,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   // Settings
   soundEnabled: true,
   hapticEnabled: true,
-  darkHumourEnabled: true,
+  goreLevel: 'extreme',
   
   // Stats
   stats: {
@@ -151,8 +156,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   
   // Actions
   startNewGame: () => {
-    const { darkHumourEnabled } = get();
-    const newGrid = generateBingoGrid(darkHumourEnabled);
+    const { goreLevel } = get();
+    const newGrid = generateBingoGrid(goreLevel);
     
     set({
       currentGrid: newGrid,
@@ -193,14 +198,18 @@ export const useGameStore = create<GameState>((set, get) => ({
   
   setSoundEnabled: (enabled: boolean) => {
     set({ soundEnabled: enabled });
+    get().saveSettings();
   },
   
   setHapticEnabled: (enabled: boolean) => {
     set({ hapticEnabled: enabled });
+    get().saveSettings();
   },
   
-  setDarkHumourEnabled: (enabled: boolean) => {
-    set({ darkHumourEnabled: enabled });
+  setGoreLevel: (level: GoreLevel) => {
+    // Force extreme mode - other levels are disabled
+    set({ goreLevel: 'extreme' });
+    get().saveSettings();
   },
   
   incrementPhotosUploaded: () => {
@@ -235,5 +244,37 @@ export const useGameStore = create<GameState>((set, get) => ({
         bestStreak: newBestStreak
       }
     });
+  },
+
+  loadSettings: async () => {
+    try {
+      const settingsData = await AsyncStorage.getItem('game_settings');
+      if (settingsData) {
+        const settings = JSON.parse(settingsData);
+        set({
+          soundEnabled: settings.soundEnabled ?? true,
+          hapticEnabled: settings.hapticEnabled ?? true,
+          goreLevel: settings.goreLevel ?? 'extreme',
+        });
+        console.log('✅ Settings loaded from storage');
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to load settings:', error);
+    }
+  },
+
+  saveSettings: async () => {
+    try {
+      const { soundEnabled, hapticEnabled, goreLevel } = get();
+      const settings = {
+        soundEnabled,
+        hapticEnabled,
+        goreLevel,
+      };
+      await AsyncStorage.setItem('game_settings', JSON.stringify(settings));
+      console.log('💾 Settings saved to storage');
+    } catch (error) {
+      console.warn('⚠️ Failed to save settings:', error);
+    }
   }
 }));
