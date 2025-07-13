@@ -35,7 +35,7 @@ export const GameScreen: React.FC = () => {
   }, [isGameWon]);
 
   const handleBack = () => {
-    router.back();
+    router.push('/');
   };
 
   const handleCallBingo = () => {
@@ -202,13 +202,6 @@ export const GameScreen: React.FC = () => {
       </View>
 
       <Box style={styles.buttonContainer}>
-        <Button 
-          style={[styles.button, styles.bingoButton]}
-          onPress={handleCallBingo}
-        >
-          <ThemedText style={styles.buttonText}>Call Roadkill Bingo!</ThemedText>
-        </Button>
-
         <Button 
           style={[styles.button, styles.snapButton]}
           onPress={handleSnapRoadkill}
