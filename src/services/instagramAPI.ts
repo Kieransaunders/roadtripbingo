@@ -4,7 +4,6 @@
 export interface InstagramPostData {
   image_url: string;
   description?: string;
-  access_token: string;
 }
 
 export interface InstagramPostResponse {
@@ -17,8 +16,6 @@ export interface InstagramPostResponse {
 // n8n webhook URL for Instagram posting
 const N8N_WEBHOOK_URL = 'https://n8n.iconnectit.co.uk/webhook/instagram-post';
 
-// Instagram access token (should be moved to environment variables in production)
-const INSTAGRAM_ACCESS_TOKEN = 'EAAR3gnTMZB2sBPASBFnDpedUbGuVZAFBYBxZAeZAZArBtsjVOwnX2uIvNS5YmN0y5C4Q8E5Q8RZAf5eswxuQ4adLq3vmiIAXYpw9fT2UjtoKLGY7FEROXxUcGRCNRVaPjUPVN2yIfww6ubJhAH09PDmPSUSmb8bVVbXzcoSHCfisS2iGikyyuc4Ddu0jP8tKHzpvYepW71d4bbNS6ZASAqdmyBdA0WSoaiW8gUZD';
 
 export const postToInstagram = async (
   imageUrl: string,
@@ -35,8 +32,7 @@ See it. Spot it. Shout it. Win shotgun or throw up trying! 🤢
 
     const postData: InstagramPostData = {
       image_url: imageUrl,
-      description: customDescription || defaultDescription,
-      access_token: INSTAGRAM_ACCESS_TOKEN
+      description: customDescription || defaultDescription
     };
 
     console.log('📤 Posting to Instagram via n8n...', { 
