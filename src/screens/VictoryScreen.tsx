@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Dimensions, StyleSheet, Alert, Linking } from 'react-native';
-import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedText, Box, Button } from '@joe111/neo-ui';
+import { Dimensions, Alert, View, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Button } from '@joe111/neo-ui';
+import { StyleSheet } from 'react-native-unistyles';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
   withSpring, 
   withSequence,
   withTiming,
-  interpolate,
-  runOnJS,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import * as WebBrowser from 'expo-web-browser';
 import * as Clipboard from 'expo-clipboard';
-import { useGameStore } from '../stores/gameStore';
+import { useGameStore, Achievement } from '../stores/gameStore';
+import { openInstagramAccount } from '../services/instagramAPI';
+import { BottomNavigation } from '../components/BottomNavigation';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -70,14 +69,16 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   onPlayAgain, 
   onBackToDashboard 
 }) => {
-  const { gameStats, currentGrid, gameMode, gameStartTime } = useGameStore();
+  const { gameStats: _gameStats, currentGrid, gameMode, gameStartTime, checkAchievements } = useGameStore();
   const [showStats, setShowStats] = useState(false);
+  const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
+  const insets = useSafeAreaInsets();
 
   // Animation values
   const titleScale = useSharedValue(0);
-  const titleRotation = useSharedValue(-10);
+  const titleRotation = useSharedValue(-5);
   const statsOpacity = useSharedValue(0);
-  const buttonsTranslateY = useSharedValue(100);
+  const buttonsTranslateY = useSharedValue(50);
 
   // Calculate game duration
   const calculateGameTime = (): string => {
@@ -96,23 +97,27 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
     // Play victory sound (TODO: Implement with expo-av)
     // playVictorySound();
 
-    // Title animation sequence
+    // Check for new achievements (this was already done in completeGame, but get the results)
+    const newlyUnlocked = checkAchievements();
+    setNewAchievements(newlyUnlocked);
+
+    // Title animation sequence - smoother and less jarring
     titleScale.value = withSequence(
-      withSpring(1.2, { damping: 8 }),
-      withSpring(1.0, { damping: 12 })
+      withSpring(1.1, { damping: 12, stiffness: 100 }),
+      withSpring(1.0, { damping: 15, stiffness: 120 })
     );
-    titleRotation.value = withSpring(0, { damping: 15 });
+    titleRotation.value = withSpring(0, { damping: 18, stiffness: 100 });
 
     // Show stats after title animation
     setTimeout(() => {
       setShowStats(true);
-      statsOpacity.value = withTiming(1, { duration: 800 });
-    }, 1000);
+      statsOpacity.value = withTiming(1, { duration: 600 });
+    }, 800);
 
-    // Show buttons last
+    // Show buttons last with more delay to prevent jarring
     setTimeout(() => {
-      buttonsTranslateY.value = withSpring(0, { damping: 12 });
-    }, 1500);
+      buttonsTranslateY.value = withSpring(0, { damping: 15, stiffness: 100 });
+    }, 1800);
 
     // Additional haptic feedback during animation
     setTimeout(() => {
@@ -145,44 +150,55 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
     try {
       // Create victory message
       const victoryMessage = `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}! 🎉`;
+      const shareMessage = `${victoryMessage} #deadahead #roadkill #roadkillbingo`;
       
-      // Instagram hashtags - encoded for URL
-      const hashtags = encodeURIComponent('#deadahead #roadkill');
-      
-      // Try to open Instagram app first, fallback to web browser
-      const instagramUrl = `instagram://camera?hashtags=${hashtags}`;
-      const instagramWebUrl = `https://www.instagram.com/create/story/?hashtags=${hashtags}`;
-      
-      // Check if Instagram app is available
-      const canOpenInstagram = await Linking.canOpenURL(instagramUrl);
-      
-      if (canOpenInstagram) {
-        // Open Instagram app
-        await Linking.openURL(instagramUrl);
-      } else {
-        // Fallback to web browser
-        await WebBrowser.openBrowserAsync(instagramWebUrl);
-      }
-      
-      // Show additional context alert
-      Alert.alert(
-        "Share on Instagram! 📸", 
-        `${victoryMessage}\n\nShare your victory with hashtags:\n#deadahead #roadkill`,
-        [{ text: "Got it!" }]
-      );
-    } catch (error) {
-      console.error('Error opening Instagram:', error);
-      
-      // Fallback alert with manual sharing instructions
+      // Show sharing dialog with copy option first
       Alert.alert(
         "Share Your Victory! 🎉", 
-        `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}!\n\nShare on Instagram with:\n#deadahead #roadkill`,
+        `${victoryMessage}\n\nShare your victory on social media!`,
         [
-          { text: "Copy Message", onPress: async () => {
-            const shareMessage = `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}! 🎉 #deadahead #roadkill`;
-            await Clipboard.setStringAsync(shareMessage);
-            Alert.alert("Copied!", "Victory message copied to clipboard!");
-          }},
+          { 
+            text: "Copy Message", 
+            onPress: async () => {
+              await Clipboard.setStringAsync(shareMessage);
+              Alert.alert(
+                "Copied! 📋", 
+                "Victory message copied to clipboard!\n\nYou can now paste it anywhere - Instagram, Twitter, Facebook, etc.",
+                [
+                  { 
+                    text: "View @deadaheadroadkill", 
+                    onPress: () => openInstagramAccount()
+                  },
+                  { text: "Done" }
+                ]
+              );
+            }
+          },
+          { 
+            text: "View @deadaheadroadkill", 
+            onPress: () => openInstagramAccount()
+          },
+          { text: "Later" }
+        ]
+      );
+    } catch (error) {
+      console.error('Error sharing victory:', error);
+      
+      // Simple fallback
+      const victoryMessage = `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}! 🎉`;
+      const shareMessage = `${victoryMessage} #deadahead #roadkill #roadkillbingo`;
+      
+      Alert.alert(
+        "Share Your Victory! 🎉", 
+        victoryMessage,
+        [
+          { 
+            text: "Copy Message", 
+            onPress: async () => {
+              await Clipboard.setStringAsync(shareMessage);
+              Alert.alert("Copied!", "Victory message copied to clipboard!");
+            }
+          },
           { text: "OK" }
         ]
       );
@@ -200,7 +216,12 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, { 
+      paddingTop: insets.top + 20,
+      paddingBottom: insets.bottom + 100, // Add extra padding for bottom navigation
+      paddingLeft: insets.left + 20,
+      paddingRight: insets.right + 20,
+    }]}>
       {/* Blood splatter/Confetti particles */}
       {Array.from({ length: 30 }, (_, i) => (
         <SplatterParticle
@@ -216,41 +237,50 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
       ))}
 
       {/* Main content */}
-      <Box style={styles.content}>
+      <View style={styles.content}>
         {/* Victory Title */}
         <Animated.View style={[styles.titleContainer, titleAnimatedStyle]}>
-          <ThemedText style={styles.mainTitle}>ROADKILL</ThemedText>
-          <ThemedText style={styles.bingoTitle}>BINGO!</ThemedText>
-          <ThemedText style={styles.subtitle}>🎉 YOU WON! 🎉</ThemedText>
+          <Text style={styles.mainTitle}>ROADKILL</Text>
+          <Text style={styles.bingoTitle}>BINGO!</Text>
+          <Text style={styles.subtitle}>🎉 YOU WON! 🎉</Text>
         </Animated.View>
 
         {/* Victory Stats */}
         {showStats && (
           <Animated.View style={[styles.statsContainer, statsAnimatedStyle]}>
-            <Box style={styles.statsGrid}>
-              <Box style={styles.statItem}>
-                <ThemedText style={styles.statValue}>{spottedCount}/25</ThemedText>
-                <ThemedText style={styles.statLabel}>Tiles Spotted</ThemedText>
-              </Box>
-              <Box style={styles.statItem}>
-                <ThemedText style={styles.statValue}>{gameTime}</ThemedText>
-                <ThemedText style={styles.statLabel}>Time</ThemedText>
-              </Box>
-              <Box style={styles.statItem}>
-                <ThemedText style={styles.statValue}>{completionPercentage}%</ThemedText>
-                <ThemedText style={styles.statLabel}>Complete</ThemedText>
-              </Box>
-              <Box style={styles.statItem}>
-                <ThemedText style={styles.statValue}>{winningPattern}</ThemedText>
-                <ThemedText style={styles.statLabel}>Victory</ThemedText>
-              </Box>
-            </Box>
+            <View style={styles.statsGrid}>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>{spottedCount}/25</Text>
+                <Text style={styles.statLabel}>Tiles Spotted</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>{gameTime}</Text>
+                <Text style={styles.statLabel}>Time</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>{completionPercentage}%</Text>
+                <Text style={styles.statLabel}>Complete</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>{winningPattern}</Text>
+                <Text style={styles.statLabel}>Victory</Text>
+              </View>
+            </View>
 
-            <Box style={styles.achievementContainer}>
-              <ThemedText style={styles.achievementText}>
-                🏆 New roadkill spotter achievement unlocked!
-              </ThemedText>
-            </Box>
+            {newAchievements.length > 0 && (
+              <View style={styles.achievementContainer}>
+                {newAchievements.map((achievement, index) => (
+                  <View key={achievement.id} style={styles.achievementItem}>
+                    <Text style={styles.achievementText}>
+                      {achievement.icon} {achievement.title} unlocked!
+                    </Text>
+                    <Text style={styles.achievementDescription}>
+                      {achievement.description}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </Animated.View>
         )}
 
@@ -260,29 +290,31 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
             style={[styles.button, styles.playAgainButton]}
             onPress={handlePlayAgain}
           >
-            <ThemedText style={styles.buttonText}>🎮 Play Again</ThemedText>
+            <Text style={styles.buttonText}>🎮 Play Again</Text>
           </Button>
 
           <Button
             style={[styles.button, styles.shareButton]}
             onPress={handleShare}
           >
-            <ThemedText style={styles.buttonText}>📸 Share Victory</ThemedText>
+            <Text style={styles.buttonText}>📸 Share Victory</Text>
           </Button>
 
           <Button
             style={[styles.button, styles.dashboardButton]}
             onPress={handleBackToDashboard}
           >
-            <ThemedText style={styles.buttonText}>🏠 Back to Dashboard</ThemedText>
+            <Text style={styles.buttonText}>🏠 Back to Dashboard</Text>
           </Button>
         </Animated.View>
-      </Box>
-    </SafeAreaView>
+      </View>
+      
+      <BottomNavigation />
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
     backgroundColor: '#1a1a2e',
@@ -291,14 +323,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
   },
   titleContainer: {
     alignItems: 'center',
     marginBottom: 40,
+    marginTop: 40, // Fixed top margin to prevent clipping
+    paddingTop: 20, // Add padding for safe display
   },
   mainTitle: {
-    fontSize: 48,
+    fontSize: theme.fonts.massive,
     fontWeight: 'bold',
     color: '#FF4444',
     textAlign: 'center',
@@ -307,7 +340,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   bingoTitle: {
-    fontSize: 56,
+    fontSize: theme.fonts.gigantic,
     fontWeight: 'bold',
     color: '#FFD700',
     textAlign: 'center',
@@ -317,7 +350,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: theme.fonts.lg,
     color: '#fff',
     textAlign: 'center',
     marginTop: 16,
@@ -337,18 +370,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   statItem: {
-    width: '48%',
+    width: '48%', // Use percentage width
     alignItems: 'center',
     marginBottom: 16,
   },
   statValue: {
-    fontSize: 28,
+    fontSize: theme.fonts.lg,
     fontWeight: 'bold',
     color: '#FFD700',
     marginBottom: 4,
   },
   statLabel: {
-    fontSize: 14,
+    fontSize: theme.fonts.xs,
     color: '#ccc',
     textAlign: 'center',
   },
@@ -357,12 +390,23 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
+    gap: 8,
+  },
+  achievementItem: {
+    alignItems: 'center',
+    paddingVertical: 4,
   },
   achievementText: {
-    fontSize: 16,
+    fontSize: theme.fonts.md,
     color: 'white',
     textAlign: 'center',
     fontWeight: '600',
+  },
+  achievementDescription: {
+    fontSize: theme.fonts.sm,
+    color: '#E8F5E8',
+    textAlign: 'center',
+    marginTop: 4,
   },
   buttonsContainer: {
     width: '100%',
@@ -391,7 +435,7 @@ const styles = StyleSheet.create({
     borderColor: '#FF4444',
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: theme.fonts.lg,
     fontWeight: 'bold',
     color: 'white',
   },
@@ -407,4 +451,4 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 2,
   },
-});
+}));

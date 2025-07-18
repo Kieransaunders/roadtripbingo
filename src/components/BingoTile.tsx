@@ -90,10 +90,6 @@ export const BingoTile: React.FC<BingoTileProps> = ({
           <Text style={styles.specialText}>FREE</Text>
         </View>
       )}
-      
-      <Text style={[styles.label, cell.isSpotted && styles.spottedLabel]}>
-        {cell.tile.name}
-      </Text>
     </Pressable>
   );
 };
@@ -102,8 +98,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#2A2A2A',
     borderRadius: 8,
-    padding: 4,
-    margin: 2,
+    padding: 2,
+    margin: 1,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -119,9 +115,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#2A2A2A80',
   },
   image: {
-    width: '80%',
-    height: '60%',
-    borderRadius: 4,
+    width: '95%',
+    height: '95%',
+    borderRadius: 6,
   },
   spottedImage: {
     opacity: 0.5,
@@ -155,15 +151,5 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 8,
     fontWeight: 'bold',
-  },
-  label: {
-    color: '#CCCCCC',
-    fontSize: 10,
-    textAlign: 'center',
-    marginTop: 2,
-  },
-  spottedLabel: {
-    opacity: 0.7,
-    textDecorationLine: 'line-through',
   },
 });

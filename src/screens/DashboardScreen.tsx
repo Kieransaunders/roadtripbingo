@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, TouchableOpacity, StatusBar, StyleSheet } from 'react-native';
+import { TouchableOpacity, StatusBar, Dimensions, View, Text, ScrollView } from 'react-native';
 import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedText, ThemedView, Box } from '@joe111/neo-ui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet } from 'react-native-unistyles';
+import { BottomNavigation } from '../components/BottomNavigation';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 // Icons (using simple Unicode symbols for now - can be replaced with proper icon library)
 const MenuIcons = {
@@ -22,23 +25,24 @@ interface MenuCardProps {
 const MenuCard: React.FC<MenuCardProps> = ({ icon, title, subtitle, onPress }) => {
   return (
     <TouchableOpacity style={styles.menuCard} onPress={onPress} activeOpacity={0.8}>
-      <Box style={styles.menuCardContent}>
-        <Box style={styles.iconContainer}>
-          <ThemedText style={styles.iconText}>{icon}</ThemedText>
-        </Box>
-        <Box style={styles.textContainer}>
-          <ThemedText style={styles.menuTitle}>{title}</ThemedText>
-          <ThemedText style={styles.menuSubtitle}>{subtitle}</ThemedText>
-        </Box>
-        <Box style={styles.chevronContainer}>
-          <ThemedText style={styles.chevron}>›</ThemedText>
-        </Box>
-      </Box>
+      <View style={styles.menuCardContent}>
+        <View style={styles.iconContainer}>
+          <Text style={styles.iconText}>{icon}</Text>
+        </View>
+        <View style={styles.textContainer}>
+          <Text style={styles.menuTitle}>{title}</Text>
+          <Text style={styles.menuSubtitle}>{subtitle}</Text>
+        </View>
+        <View style={styles.chevronContainer}>
+          <Text style={styles.chevron}>›</Text>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 };
 
 export const DashboardScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
 
   const handleMenuPress = (screen: string) => {
     switch (screen) {
@@ -58,68 +62,80 @@ export const DashboardScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
       
-      {/* Header */}
-      <Box style={styles.header}>
-        <ThemedText style={styles.mainTitle}>DEAD AHEAD</ThemedText>
-        <ThemedText style={styles.subtitle}>Roadkill Bingo</ThemedText>
-        <ThemedText style={styles.tagline}>
-          "See it. Spot it. Shout it. Win shotgun or throw up trying."
-        </ThemedText>
-      </Box>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.mainTitle}>DEAD AHEAD</Text>
+          <Text style={styles.subtitle}>Roadkill Bingo</Text>
+          <Text style={styles.tagline}>
+            &quot;See it. Spot it. Shout it. Win shotgun or throw up trying.&quot;
+          </Text>
+        </View>
 
-      {/* Menu Cards */}
-      <Box style={styles.menuContainer}>
-        <MenuCard
-          icon={MenuIcons.car}
-          title="Solo Road Trip"
-          subtitle="Practice your spotting skills"
-          onPress={() => handleMenuPress('game')}
-        />
-        
-        <MenuCard
-          icon={MenuIcons.camera}
-          title="Snap the Splat!"
-          subtitle="Use camera to validate finds"
-          onPress={() => handleMenuPress('camera')}
-        />
-        
-        <MenuCard
-          icon={MenuIcons.trophy}
-          title="Hall of Shame"
-          subtitle="View your achievements"
-          onPress={() => handleMenuPress('hall-of-shame')}
-        />
-        
-        <MenuCard
-          icon={MenuIcons.settings}
-          title="Settings"
-          subtitle="Gore level & sound options"
-          onPress={() => handleMenuPress('settings')}
-        />
-      </Box>
 
-      {/* Footer Disclaimer */}
-      <Box style={styles.footer}>
-        <Box style={styles.disclaimerContainer}>
-          <Box style={styles.ratingBadge}>
-            <ThemedText style={styles.ratingText}>12+</ThemedText>
-          </Box>
-          <ThemedText style={styles.disclaimerText}>
-            Rated 12+ for crude humor and mild violence
-          </ThemedText>
-        </Box>
-        <ThemedText style={styles.disclaimerSubtext}>
-          No animals were harmed in the making of this game
-        </ThemedText>
-      </Box>
-    </SafeAreaView>
+        {/* Menu Cards */}
+        <View style={styles.menuContainer}>
+          <MenuCard
+            icon={MenuIcons.car}
+            title="Play Game"
+            subtitle="Practice your spotting skills"
+            onPress={() => handleMenuPress('game')}
+          />
+          
+          <MenuCard
+            icon={MenuIcons.camera}
+            title="Snap the Splat!"
+            subtitle="Use camera to validate finds"
+            onPress={() => handleMenuPress('camera')}
+          />
+          
+          <MenuCard
+            icon={MenuIcons.trophy}
+            title="Hall of Shame"
+            subtitle="View your achievements"
+            onPress={() => handleMenuPress('hall-of-shame')}
+          />
+          
+          <MenuCard
+            icon={MenuIcons.settings}
+            title="Settings"
+            subtitle="Gore level & sound options"
+            onPress={() => handleMenuPress('settings')}
+          />
+        </View>
+
+        {/* Footer Disclaimer - Fixed Panel */}
+        <View style={styles.footerContainer}>
+          <View style={styles.footer}>
+            <View style={styles.disclaimerContainer}>
+              <View style={styles.ratingBadge}>
+                <Text style={styles.ratingText}>12+</Text>
+              </View>
+              <Text style={styles.disclaimerText}>
+                Rated 12+ for crude humor and mild violence
+              </Text>
+            </View>
+            <Text style={styles.disclaimerSubtext}>
+              No animals were harmed in the making of this game... By Us!
+            </Text>
+            <Text style={styles.bloodSplat}>🩸</Text>
+          </View>
+        </View>
+      </ScrollView>
+      
+      <BottomNavigation />
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
     backgroundColor: '#1a1a2e',
@@ -127,34 +143,42 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 40,
-    paddingBottom: 60,
+    paddingTop: 30, // Reduced padding for better spacing
+    paddingBottom: 40,
+    justifyContent: 'flex-start', // Align to top instead of center
   },
   mainTitle: {
-    fontSize: 48,
+    fontSize: theme.fonts.gigantic,
     fontWeight: 'bold',
     color: '#FF4444',
-    letterSpacing: 2,
+    letterSpacing: screenWidth * 0.005, // Responsive letter spacing
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 28,
+    fontSize: theme.fonts.huge,
     color: '#FFD700',
     marginTop: 8,
     textAlign: 'center',
   },
   tagline: {
-    fontSize: 16,
+    fontSize: theme.fonts.md,
     color: '#888',
     textAlign: 'center',
     marginTop: 20,
     paddingHorizontal: 20,
-    lineHeight: 22,
+    lineHeight: theme.fonts.md * 1.4, // Responsive line height
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 80, // Add padding for bottom navigation
   },
   menuContainer: {
-    flex: 1,
     paddingHorizontal: 20,
     gap: 16,
+    paddingBottom: 20, // Add space above footer
   },
   menuCard: {
     backgroundColor: '#2a2a4a',
@@ -167,42 +191,48 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: screenWidth * 0.15, // Responsive icon size
+    height: screenWidth * 0.15,
+    borderRadius: screenWidth * 0.075,
     backgroundColor: '#FF4444',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
   },
   iconText: {
-    fontSize: 24,
+    fontSize: theme.fonts.xxl,
     color: 'white',
   },
   textContainer: {
     flex: 1,
   },
   menuTitle: {
-    fontSize: 20,
+    fontSize: theme.fonts.xl,
     fontWeight: '600',
     color: 'white',
     marginBottom: 4,
   },
   menuSubtitle: {
-    fontSize: 14,
+    fontSize: theme.fonts.sm,
     color: '#888',
   },
   chevronContainer: {
     justifyContent: 'center',
   },
   chevron: {
-    fontSize: 24,
+    fontSize: theme.fonts.xxl,
     color: '#666',
     fontWeight: '300',
   },
+  footerContainer: {
+    backgroundColor: '#1a1a2e',
+    borderTopWidth: 1,
+    borderTopColor: '#333',
+    paddingTop: 16,
+    paddingBottom: 40,
+  },
   footer: {
     paddingHorizontal: 20,
-    paddingBottom: 40,
     alignItems: 'center',
   },
   disclaimerContainer: {
@@ -219,16 +249,21 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     color: 'white',
-    fontSize: 12,
+    fontSize: theme.fonts.xs,
     fontWeight: 'bold',
   },
   disclaimerText: {
-    fontSize: 12,
+    fontSize: theme.fonts.xs,
     color: '#888',
   },
   disclaimerSubtext: {
-    fontSize: 12,
+    fontSize: theme.fonts.xs,
     color: '#888',
     textAlign: 'center',
   },
-});
+  bloodSplat: {
+    fontSize: theme.fonts.lg,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+}));

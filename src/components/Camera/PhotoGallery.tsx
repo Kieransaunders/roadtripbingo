@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
-import { Button, ThemedText, Box } from '@neo-ui/react-native';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { Button, ThemedText, Box } from '@joe111/neo-ui';
+import { StyleSheet } from 'react-native-unistyles';
 import * as Haptics from 'expo-haptics';
 import { openInstagramAccount } from '../../services/instagramAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,7 +22,7 @@ interface PhotoGalleryProps {
 }
 
 export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
-  const { styles } = useStyles(stylesheet);
+  const styles = stylesheet;
   const [photos, setPhotos] = useState<PhotoRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -99,7 +99,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
             try {
               setPhotos([]);
               await AsyncStorage.removeItem('roadkill_photos');
-              await Haptics.successAsync();
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             } catch (error) {
               console.error('Error clearing photos:', error);
             }
@@ -231,7 +231,7 @@ export const savePhotoToGallery = async (photoData: Omit<PhotoRecord, 'id' | 'ti
   }
 };
 
-const stylesheet = createStyleSheet((theme) => ({
+const stylesheet = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

@@ -1,5 +1,7 @@
-// Instagram API integration via n8n workflow
+// Instagram API integration via Make.com workflow
 // Posts images to @deadaheadroadkill Instagram account
+
+import { Linking } from 'react-native';
 
 export interface InstagramPostData {
   image_url: string;
@@ -13,8 +15,26 @@ export interface InstagramPostResponse {
   error?: string;
 }
 
-// n8n webhook URL for Instagram posting
-const N8N_WEBHOOK_URL = 'https://n8n.iconnectit.co.uk/webhook/instagram-post';
+// Make.com webhook URL for Instagram posting (production)
+const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/6fadkjb17kifmn2jhyvfj2aln5igpd42';
+
+// Test webhook URL to verify it's working
+export const testWebhookConnection = async () => {
+  try {
+    const testUrl = `${MAKE_WEBHOOK_URL}?secret=deadahead&image_url=https://httpbin.org/image/jpeg&caption=Test connection`;
+    const response = await fetch(testUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log('🔗 Webhook test response:', response.status, response.statusText);
+    return response.ok;
+  } catch (error) {
+    console.error('❌ Webhook test failed:', error);
+    return false;
+  }
+};
 
 
 export const postToInstagram = async (
@@ -22,44 +42,70 @@ export const postToInstagram = async (
   customDescription?: string
 ): Promise<InstagramPostResponse> => {
   try {
+    // Short caption for Instagram
+    const shortCaption = "Dead Ahead Roadkill Snap the splat";
+    
+    // Longer social message for description
     const defaultDescription = `🚨 Roadkill spotted! 📸 
-
-Shared from Dead Ahead: Roadkill Bingo mobile game 🎯
 
 See it. Spot it. Shout it. Win shotgun or throw up trying! 🤢
 
 #roadkill #wildlifesafety #roadsafety #deadahead #roadkillbingo #wildlife #awareness #roadsafetyfirst`;
 
-    const postData: InstagramPostData = {
-      image_url: imageUrl,
-      description: customDescription || defaultDescription
-    };
+    const caption = encodeURIComponent(shortCaption);
+    const description = encodeURIComponent(customDescription || defaultDescription);
+    const postUrl = `${MAKE_WEBHOOK_URL}?secret=deadahead&image_url=${encodeURIComponent(imageUrl)}&caption=${caption}&description=${description}`;
 
-    console.log('📤 Posting to Instagram via n8n...', { 
+    console.log('📤 Posting to Instagram via Make.com...', { 
       imageUrl, 
-      webhookUrl: N8N_WEBHOOK_URL,
-      postData 
+      webhookUrl: MAKE_WEBHOOK_URL,
+      caption: shortCaption,
+      description: customDescription || defaultDescription
     });
 
-    const response = await fetch(N8N_WEBHOOK_URL, {
-      method: 'POST',
+    const response = await fetch(postUrl, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(postData)
     });
 
-    console.log('📤 n8n response status:', response.status, response.statusText);
+    console.log('📤 Make.com response status:', response.status, response.statusText);
     
-    const result: InstagramPostResponse = await response.json();
-    console.log('📤 n8n response data:', result);
+    // Get the response text first to check if it's valid JSON
+    const responseText = await response.text();
+    console.log('📤 Make.com response text:', responseText);
     
     if (!response.ok) {
-      throw new Error(result.message || `HTTP ${response.status}: ${response.statusText}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}${responseText ? ` - ${responseText}` : ''}`);
+    }
+
+    // Try to parse JSON only if we have content
+    let result: InstagramPostResponse;
+    if (responseText.trim()) {
+      try {
+        result = JSON.parse(responseText);
+        console.log('📤 Make.com response data:', result);
+      } catch (parseError) {
+        console.log('📤 Make.com returned plain text response (not JSON):', responseText);
+        // For Make.com, if it's not JSON, assume success with plain text response
+        result = {
+          success: true,
+          message: responseText || 'Webhook completed successfully',
+          post_id: 'unknown'
+        };
+      }
+    } else {
+      // If response is empty, assume success (some webhooks return empty 200 responses)
+      result = {
+        success: true,
+        message: 'Webhook completed successfully (empty response)',
+        post_id: 'unknown'
+      };
     }
 
     if (result.success) {
-      console.log('✅ Successfully posted to Instagram:', result.post_id);
+      console.log('✅ Successfully posted to Instagram:', result.post_id || 'success');
       return result;
     } else {
       throw new Error(result.message || result.error || 'Unknown error from Instagram API');
@@ -74,7 +120,6 @@ See it. Spot it. Shout it. Win shotgun or throw up trying! 🤢
 // Helper function to open Instagram account in browser
 export const openInstagramAccount = async (): Promise<boolean> => {
   try {
-    const { Linking } = await import('react-native');
     const instagramUrl = 'https://www.instagram.com/deadaheadroadkill';
     
     const canOpen = await Linking.canOpenURL(instagramUrl);
@@ -115,8 +160,7 @@ export const generateGameDescription = (context?: {
     description += `📍 Location: ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}\n`;
   }
   
-  description += `\nShared from Dead Ahead: Roadkill Bingo 🎯\n`;
-  description += `See it. Spot it. Shout it. Win shotgun or throw up trying! 🤢\n\n`;
+  description += `\nSee it. Spot it. Shout it. Win shotgun or throw up trying! 🤢\n\n`;
   description += `#roadkill #wildlifesafety #roadsafety #deadahead #roadkillbingo`;
   
   if (tileName) {
@@ -124,4 +168,12 @@ export const generateGameDescription = (context?: {
   }
   
   return description;
+};
+
+// Generate short caption for Instagram posts
+export const generateShortCaption = (tileName?: string): string => {
+  if (tileName) {
+    return `Dead Ahead Roadkill: ${tileName} spotted!`;
+  }
+  return "Dead Ahead Roadkill Snap the splat";
 };

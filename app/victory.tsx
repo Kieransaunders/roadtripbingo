@@ -12,6 +12,9 @@ export default function Victory() {
   };
 
   const handleBackToDashboard = () => {
+    // Reset the game state when going back to dashboard
+    // This ensures a fresh game when the user plays again
+    startNewGame();
     router.replace('/');
   };
 

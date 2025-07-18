@@ -1,5 +1,5 @@
 import '../src/unistyles';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -33,7 +33,7 @@ export default function RootLayout() {
   // Load settings when app starts
   useEffect(() => {
     loadSettings();
-  }, []);
+  }, [loadSettings]);
 
   if (!loaded) {
     // Async font loading only occurs in development.
@@ -42,7 +42,7 @@ export default function RootLayout() {
 
   return (
     <NeoUIThemeProvider>
-      <ThemeProvider value={GameTheme}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : GameTheme}>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="game" options={{ headerShown: false }} />

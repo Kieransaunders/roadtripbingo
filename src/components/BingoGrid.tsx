@@ -11,9 +11,16 @@ export const BingoGrid: React.FC<BingoGridProps> = ({ onTilePress }) => {
   const { currentGrid, toggleTile } = useGameStore();
   
   const screenWidth = Dimensions.get('window').width;
-  const gridPadding = 20;
-  const tileMargin = 4;
-  const tileSize = (screenWidth - gridPadding * 2 - tileMargin * 10) / 5;
+  const containerPadding = 10; // paddingHorizontal on container
+  const gridPadding = 8; // padding on grid
+  const tileMargin = 1; // margin on each tile
+  
+  // Account for all padding layers:
+  // Container: 10px × 2 = 20px
+  // Grid: 8px × 2 = 16px  
+  // Tile margins: 1px × 2 × 4 tiles = 8px
+  const totalSpacing = (containerPadding * 2) + (gridPadding * 2) + (tileMargin * 8);
+  const tileSize = (screenWidth - totalSpacing) / 4;
   
   const handleTilePress = (position: number) => {
     toggleTile(position);
@@ -24,7 +31,7 @@ export const BingoGrid: React.FC<BingoGridProps> = ({ onTilePress }) => {
     return (
       <View style={styles.emptyContainer}>
         <View style={styles.emptyGrid}>
-          {Array.from({ length: 25 }, (_, index) => (
+          {Array.from({ length: 16 }, (_, index) => (
             <View
               key={index}
               style={[

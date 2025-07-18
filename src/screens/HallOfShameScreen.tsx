@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, TouchableOpacity, ScrollView, StatusBar, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, FlatList, StatusBar, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedText, ThemedView, Box } from '@joe111/neo-ui';
+import { ThemedText, Box } from '@joe111/neo-ui';
+import { PhotoGallery } from '../components/Camera/PhotoGallery';
+import { useGameStore } from '../stores/gameStore';
+import { BottomNavigation } from '../components/BottomNavigation';
 
 interface StatCardProps {
   title: string;
@@ -27,7 +30,13 @@ interface StatItemProps {
 const StatItem: React.FC<StatItemProps> = ({ value, label, color = 'white' }) => {
   return (
     <Box style={styles.statItem}>
-      <ThemedText style={[styles.statValue, { color }]}>{value}</ThemedText>
+      <ThemedText 
+        style={[styles.statValue, { color }]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+      >
+        {value}
+      </ThemedText>
       <ThemedText style={styles.statLabel}>{label}</ThemedText>
     </Box>
   );
@@ -62,6 +71,7 @@ const Achievement: React.FC<AchievementProps> = ({ title, description, icon, com
 };
 
 export const HallOfShameScreen: React.FC = () => {
+  const { stats, achievements } = useGameStore();
 
   const handleBack = () => {
     router.back();
@@ -70,6 +80,87 @@ export const HallOfShameScreen: React.FC = () => {
   const handleRefresh = () => {
     // TODO: Implement refresh logic
     console.log('Refreshing stats...');
+  };
+
+  // Format time display
+  const formatTime = (milliseconds: number): string => {
+    if (milliseconds === Infinity) return "--:--";
+    const minutes = Math.floor(milliseconds / 60000);
+    const seconds = Math.floor((milliseconds % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  // Calculate win rate
+  const winRate = stats.gamesPlayed > 0 ? Math.round((stats.gamesWon / stats.gamesPlayed) * 100) : 0;
+
+  // Create data array for FlatList
+  const screenData = [
+    { id: 'road-trip-stats', type: 'stat-card', title: 'Road Trip Stats' },
+    { id: 'scoring', type: 'stat-card', title: 'Scoring' },
+    { id: 'streaks', type: 'stat-card', title: 'Streaks' },
+    { id: 'achievements', type: 'stat-card', title: 'Achievements' },
+    { id: 'photo-gallery', type: 'photo-gallery', title: 'Photo Gallery' },
+  ];
+
+  const renderItem = ({ item }: { item: any }) => {
+    switch (item.type) {
+      case 'stat-card':
+        if (item.id === 'road-trip-stats') {
+          return (
+            <StatCard title="Road Trip Stats">
+              <View style={styles.statRow}>
+                <StatItem value={stats.gamesPlayed.toString()} label="Games" color="white" />
+                <StatItem value={stats.gamesWon.toString()} label="Wins" color="#4CAF50" />
+                <StatItem value={`${winRate}%`} label="Win Rate" color="#2196F3" />
+              </View>
+            </StatCard>
+          );
+        } else if (item.id === 'scoring') {
+          return (
+            <StatCard title="Scoring">
+              <View style={styles.statRow}>
+                <StatItem value={stats.totalScore.toLocaleString()} label="Total Score" color="#FFD700" />
+                <StatItem value={stats.gamesPlayed > 0 ? Math.round(stats.totalScore / stats.gamesPlayed).toString() : "0"} label="Avg Score" color="#9C27B0" />
+                <StatItem value={stats.photosUploaded.toString()} label="Photos" color="#FF4444" />
+              </View>
+            </StatCard>
+          );
+        } else if (item.id === 'streaks') {
+          return (
+            <StatCard title="Streaks">
+              <View style={styles.statRow}>
+                <StatItem value={stats.bestStreak.toString()} label="Best Streak" color="#FF9800" />
+                <StatItem value={stats.currentStreak.toString()} label="Current" color="#00BCD4" />
+                <StatItem value={formatTime(stats.fastestTime)} label="Best Time" color="#E91E63" />
+              </View>
+            </StatCard>
+          );
+        } else if (item.id === 'achievements') {
+          return (
+            <StatCard title="Achievements">
+              <View style={styles.achievementsContainer}>
+                {Object.values(achievements).map((achievement) => (
+                  <Achievement
+                    key={achievement.id}
+                    title={achievement.title}
+                    description={achievement.description}
+                    icon={achievement.icon}
+                    completed={achievement.unlocked}
+                  />
+                ))}
+              </View>
+            </StatCard>
+          );
+        }
+        break;
+      case 'photo-gallery':
+        return (
+          <View style={styles.galleryContainer}>
+            <PhotoGallery />
+          </View>
+        );
+    }
+    return null;
   };
 
   return (
@@ -87,58 +178,15 @@ export const HallOfShameScreen: React.FC = () => {
         </TouchableOpacity>
       </Box>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Road Trip Stats */}
-        <StatCard title="Road Trip Stats">
-          <View style={styles.statRow}>
-            <StatItem value="8" label="Games" color="white" />
-            <StatItem value="7" label="Wins" color="#4CAF50" />
-            <StatItem value="87.5%" label="Win Rate" color="#2196F3" />
-          </View>
-        </StatCard>
-
-        {/* Scoring */}
-        <StatCard title="Scoring">
-          <View style={styles.statRow}>
-            <StatItem value="590" label="Total Score" color="#FFD700" />
-            <StatItem value="74" label="Avg Score" color="#9C27B0" />
-            <StatItem value="0" label="Photos" color="#FF4444" />
-          </View>
-        </StatCard>
-
-        {/* Streaks */}
-        <StatCard title="Streaks">
-          <View style={styles.statRow}>
-            <StatItem value="4" label="Best Streak" color="#FF9800" />
-            <StatItem value="4" label="Current" color="#00BCD4" />
-            <StatItem value="0:03" label="Best Time" color="#E91E63" />
-          </View>
-        </StatCard>
-
-        {/* Achievements */}
-        <StatCard title="Achievements">
-          <View style={styles.achievementsContainer}>
-            <Achievement
-              title="First Blood"
-              description="Win your first game"
-              icon="🏆"
-              completed={true}
-            />
-            <Achievement
-              title="Shutterbug"
-              description="Take 10 photos"
-              icon="📷"
-              completed={false}
-            />
-            <Achievement
-              title="Winning Streak"
-              description="Win 5 games in a row"
-              icon="💧"
-              completed={false}
-            />
-          </View>
-        </StatCard>
-      </ScrollView>
+      <FlatList
+        data={screenData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.flatListContent}
+      />
+      
+      <BottomNavigation />
     </SafeAreaView>
   );
 };
@@ -186,9 +234,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  content: {
-    flex: 1,
+  flatListContent: {
     paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 100, // Add space for bottom navigation
   },
   statCard: {
     backgroundColor: '#2a2a4a',
@@ -205,20 +254,29 @@ const styles = StyleSheet.create({
   statRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
   },
   statItem: {
     alignItems: 'center',
     flex: 1,
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+    justifyContent: 'center',
+    minHeight: 60,
   },
   statValue: {
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 4,
+    textAlign: 'center',
+    lineHeight: 34,
   },
   statLabel: {
     fontSize: 14,
     color: '#888',
     textAlign: 'center',
+    flexWrap: 'wrap',
   },
   achievementsContainer: {
     gap: 12,
@@ -277,5 +335,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  galleryContainer: {
+    backgroundColor: '#2a2a4a',
+    borderRadius: 12,
+    marginBottom: 20,
+    overflow: 'hidden',
   },
 });

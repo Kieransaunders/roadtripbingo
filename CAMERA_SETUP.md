@@ -24,7 +24,8 @@ The Cloudinary config has been set up in `src/services/cloudinary.ts`:
 - **URL**: `https://api.cloudinary.com/v1_1/dxuq6a1mt/image/upload`
 
 ### 2. n8n Workflow (✅ READY)
-- **Webhook URL**: `https://n8n.iconnectit.co.uk/webhook-test/instagram-post`
+- **Webhook URL**: `https://n8n.iconnectit.co.uk/webhook/instagram-post` (production)
+- **Test URL**: `https://n8n.iconnectit.co.uk/webhook-test/instagram-post` (test mode)
 - **Access Token**: Already configured in `instagramAPI.ts`
 - **Expected payload**: `{ image_url, description, access_token }`
 

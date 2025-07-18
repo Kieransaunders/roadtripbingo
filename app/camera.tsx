@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Alert, Dimensions, Platform } from 'react-native';
+import { View, Text, Alert, Dimensions, TouchableOpacity } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { StyleSheet } from 'react-native-unistyles';
-import { ThemeProvider } from '@joe111/neo-ui';
-import { Button, Box, ThemedText } from '@joe111/neo-ui';
-import { Ionicons } from '@expo/vector-icons';
+import { ThemeProvider, Button, Box, ThemedText } from '@joe111/neo-ui';
 import { useGameStore } from '../src/stores/gameStore';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { openInstagramAccount } from '../src/services/instagramAPI';
+import { savePhotoToGallery } from '../src/components/Camera/PhotoGallery';
+import { BottomNavigation } from '../src/components/BottomNavigation';
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,7 +40,7 @@ const stylesheet = StyleSheet.create(theme => ({
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 32,
-    color: theme.colors.textSecondary,
+    color: '#888',
     paddingHorizontal: 20,
   },
   permissionButton: {
@@ -59,6 +61,14 @@ const stylesheet = StyleSheet.create(theme => ({
   },
   backButtonSmall: {
     minWidth: 60,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 18,
@@ -68,6 +78,14 @@ const stylesheet = StyleSheet.create(theme => ({
   },
   flipButton: {
     minWidth: 60,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   instructions: {
     position: 'absolute',
@@ -92,7 +110,7 @@ const stylesheet = StyleSheet.create(theme => ({
   },
   controls: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 80, // Add space for bottom navigation
     left: 0,
     right: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
@@ -109,6 +127,8 @@ const stylesheet = StyleSheet.create(theme => ({
     backgroundColor: theme.colors.primary,
     borderWidth: 4,
     borderColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   captureButtonDisabled: {
     opacity: 0.6,
@@ -116,6 +136,7 @@ const stylesheet = StyleSheet.create(theme => ({
   previewContainer: {
     flex: 1,
     padding: 20,
+    paddingBottom: 100, // Add space for bottom navigation
     justifyContent: 'center',
     backgroundColor: theme.colors.background,
   },
@@ -142,34 +163,82 @@ const stylesheet = StyleSheet.create(theme => ({
   photoPlaceholder: {
     width: width * 0.8,
     height: height * 0.4,
-    backgroundColor: theme.colors.card,
+    backgroundColor: '#2a2a4a',
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: theme.colors.border,
+    borderColor: '#333',
   },
   photoText: {
     marginTop: 12,
     fontSize: 16,
-    color: theme.colors.textSecondary,
+    color: '#888',
   },
   previewButtons: {
     gap: 12,
   },
   saveButton: {
-    backgroundColor: theme.colors.success || theme.colors.primary,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   retakeButton: {
-    borderColor: theme.colors.textSecondary,
+    backgroundColor: 'transparent',
+    borderColor: '#888',
+    borderWidth: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shareButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  instagramButton: {
+    backgroundColor: '#E4405F',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  headerButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  captureButtonText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 }));
 
 export default function CameraScreen() {
-  const styles = stylesheet; // Directly use the stylesheet
-  // If theme is needed for dynamic styles or logic, we'll need to find another way to get it.
-  // For now, let's assume it's not directly needed in the component's logic, only in the stylesheet definition.
-
+  const styles = stylesheet;
+  const insets = useSafeAreaInsets();
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
@@ -187,7 +256,7 @@ export default function CameraScreen() {
     if (!mediaPermission?.granted) {
       requestMediaPermission();
     }
-  }, []);
+  }, [permission?.granted, mediaPermission?.granted, requestPermission, requestMediaPermission]);
 
   const triggerHaptic = () => {
     if (hapticEnabled) {
@@ -210,6 +279,8 @@ export default function CameraScreen() {
 
       if (photo) {
         setCapturedPhoto(photo.uri);
+        // Auto-save to gallery when photo is taken
+        await savePhoto(photo.uri);
       }
     } catch (error) {
       console.error('Error taking picture:', error);
@@ -217,33 +288,25 @@ export default function CameraScreen() {
     }
   };
 
-  const savePhoto = async () => {
-    if (!capturedPhoto) return;
+  const savePhoto = async (photoUri?: string) => {
+    const uriToSave = photoUri || capturedPhoto;
+    if (!uriToSave) return;
     
     try {
-      triggerHaptic();
+      // Save to device media library
+      await MediaLibrary.createAssetAsync(uriToSave);
       
-      // Save to media library
-      const asset = await MediaLibrary.createAssetAsync(capturedPhoto);
+      // Save to app gallery
+      await savePhotoToGallery({
+        localUri: uriToSave,
+        tileName: 'Roadkill Spotted',
+        gameMode: 'Standard'
+      });
       
       // Increment the photos uploaded counter
       incrementPhotosUploaded();
       
-      Alert.alert(
-        'Snap Successful! 🎯', 
-        'Your roadkill evidence has been captured! This will be added to your Hall of Shame stats.',
-        [
-          {
-            text: 'Take Another',
-            onPress: () => setCapturedPhoto(null),
-          },
-          {
-            text: 'Back to Game',
-            onPress: () => router.back(),
-            style: 'default',
-          },
-        ]
-      );
+      console.log('✅ Photo automatically saved to gallery');
     } catch (error) {
       console.error('Error saving photo:', error);
       Alert.alert('Error', 'Failed to save photo. Please check your permissions.');
@@ -253,6 +316,113 @@ export default function CameraScreen() {
   const retakePhoto = () => {
     triggerHaptic();
     setCapturedPhoto(null);
+  };
+
+  const viewDeadAheadInsta = async () => {
+    triggerHaptic();
+    try {
+      await openInstagramAccount();
+      Alert.alert(
+        'Instagram Opened! 📱',
+        'Check out @deadaheadroadkill for more roadkill content!',
+        [{ text: 'OK' }]
+      );
+    } catch {
+      Alert.alert('Error', 'Could not open Instagram. Please try again.');
+    }
+  };
+
+  const sharePhotoToWorkflow = async () => {
+    if (!capturedPhoto) return;
+    
+    triggerHaptic();
+    try {
+      // Import the necessary services
+      const { uploadImageToCloudinaryWithFallback } = await import('../src/services/cloudinary');
+      const { postToInstagram, generateGameDescription } = await import('../src/services/instagramAPI');
+      
+      console.log('🔄 Starting photo upload workflow...');
+      
+      Alert.alert(
+        'Uploading Photo... 📸',
+        'Your photo is being uploaded and posted to Instagram!',
+        [{ text: 'OK' }]
+      );
+      
+      // Upload image with fallback presets
+      console.log('🔄 Step 1: Uploading image...');
+      const cloudinaryUrl = await uploadImageToCloudinaryWithFallback(capturedPhoto);
+      console.log('✅ Step 1 Complete: Image URL:', cloudinaryUrl);
+      
+      // Generate description
+      const description = generateGameDescription({
+        tileName: 'Roadkill Spotted',
+        gameMode: 'Standard'
+      });
+      console.log('🔄 Step 2: Generated description:', description);
+      
+      // Post to Instagram via n8n workflow
+      console.log('🔄 Step 3: Posting to Instagram via n8n...');
+      console.log('🔄 Webhook URL:', 'https://n8n.iconnectit.co.uk/webhook/instagram-post');
+      console.log('🔄 Image URL:', cloudinaryUrl);
+      console.log('🔄 Description:', description);
+      
+      try {
+        const result = await postToInstagram(cloudinaryUrl, description);
+        console.log('✅ Step 3 Complete: Instagram result:', result);
+        
+        if (result.success) {
+          Alert.alert(
+            'Success! 🎉',
+            `Photo uploaded and posted to @deadaheadroadkill!\n\nPost ID: ${result.post_id || 'Unknown'}`,
+            [
+              {
+                text: 'View on Instagram',
+                onPress: () => openInstagramAccount()
+              },
+              { text: 'OK' }
+            ]
+          );
+        } else {
+          throw new Error(result.message || 'Failed to post to Instagram');
+        }
+      } catch (instagramError) {
+        console.log('⚠️ Instagram posting failed, but photo was uploaded successfully');
+        console.log('⚠️ Error:', instagramError.message);
+        
+        // Fallback: Photo uploaded successfully but Instagram posting failed
+        Alert.alert(
+          'Photo Uploaded! 📸',
+          `Your photo was uploaded successfully!\n\nURL: ${cloudinaryUrl}\n\nInstagram posting failed (webhook needs activation), but you can manually share the image.`,
+          [
+            {
+              text: 'Copy URL',
+              onPress: () => {
+                // Copy URL to clipboard if available
+                if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                  navigator.clipboard.writeText(cloudinaryUrl);
+                }
+              }
+            },
+            {
+              text: 'View Instagram',
+              onPress: () => openInstagramAccount()
+            },
+            { text: 'OK' }
+          ]
+        );
+      }
+    } catch (error) {
+      console.error('❌ Camera upload error:', error);
+      Alert.alert(
+        'Upload Failed 😞',
+        `${error.message}\n\nPlease check your internet connection and try again.`,
+        [
+          { text: 'Retry', onPress: () => sharePhotoToWorkflow() },
+          { text: 'Cancel' }
+        ]
+      );
+    }
   };
 
   const flipCamera = () => {
@@ -275,7 +445,7 @@ export default function CameraScreen() {
     // Camera permissions are not granted yet
     return (
       <ThemeProvider>
-        <Box style={styles.container}>
+        <Box style={[styles.container, { paddingTop: insets.top + 40 }]}>
           <ThemedText style={styles.permissionText}>
             📸 Snap the Splat!
           </ThemedText>
@@ -283,16 +453,17 @@ export default function CameraScreen() {
             We need camera access to capture your roadkill evidence for the leaderboard!
           </ThemedText>
           <Button
-            title="Grant Camera Access"
             onPress={requestPermission}
             style={styles.permissionButton}
-          />
+          >
+            Grant Camera Access
+          </Button>
           <Button
-            title="Back to Game"
             onPress={() => router.back()}
-            variant="outline"
             style={styles.backButton}
-          />
+          >
+            Back to Game
+          </Button>
         </Box>
       </ThemeProvider>
     );
@@ -303,7 +474,7 @@ export default function CameraScreen() {
       <Box style={styles.container}>
         {capturedPhoto ? (
           // Photo Preview Screen
-          <View style={styles.previewContainer}>
+          <View style={[styles.previewContainer, { paddingTop: insets.top + 20 }]}>
             <Text style={styles.previewTitle}>🎯 Snap Successful!</Text>
             <View style={styles.photoContainer}>
               <Image
@@ -314,17 +485,18 @@ export default function CameraScreen() {
             </View>
             
             <View style={styles.previewButtons}>
-              <Button
-                title="💾 Save to Hall of Shame"
-                onPress={savePhoto}
-                style={styles.saveButton}
-              />
-              <Button
-                title="🔄 Retake"
+              <TouchableOpacity
+                onPress={sharePhotoToWorkflow}
+                style={styles.shareButton}
+              >
+                <Text style={styles.buttonText}>📤 Share Photo to Instagram</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
                 onPress={retakePhoto}
-                variant="outline"
                 style={styles.retakeButton}
-              />
+              >
+                <Text style={styles.buttonText}>🔄 Retake</Text>
+              </TouchableOpacity>
             </View>
           </View>
         ) : (
@@ -337,24 +509,24 @@ export default function CameraScreen() {
               ratio="16:9"
             >
               {/* Header */}
-              <View style={styles.header}>
-                <Button
-                  title="← Back"
+              <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+                <TouchableOpacity
                   onPress={() => router.back()}
-                  variant="outline"
                   style={styles.backButtonSmall}
-                />
+                >
+                  <Text style={styles.headerButtonText}>← Back</Text>
+                </TouchableOpacity>
                 <ThemedText style={styles.headerTitle}>Snap the Splat! 📸</ThemedText>
-                <Button
-                  title="🔄"
+                <TouchableOpacity
                   onPress={flipCamera}
-                  variant="outline"
                   style={styles.flipButton}
-                />
+                >
+                  <Text style={styles.headerButtonText}>🔄</Text>
+                </TouchableOpacity>
               </View>
 
               {/* Instructions */}
-              <View style={styles.instructions}>
+              <View style={[styles.instructions, { top: insets.top + 100 }]}>
                 <ThemedText style={styles.instructionText}>
                   🎯 Spot roadkill? Capture the evidence!
                 </ThemedText>
@@ -366,20 +538,25 @@ export default function CameraScreen() {
               {/* Bottom Controls */}
               <View style={styles.controls}>
                 <View style={styles.captureButtonContainer}>
-                  <Button
-                    title={isCapturing ? "📸 Capturing..." : "📸 SNAP!"}
+                  <TouchableOpacity
                     onPress={takePicture}
                     disabled={isCapturing}
                     style={[
                       styles.captureButton,
                       isCapturing && styles.captureButtonDisabled
                     ]}
-                  />
+                  >
+                    <Text style={styles.captureButtonText}>
+                      {isCapturing ? "📸 Capturing..." : "📸 SNAP!"}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </CameraView>
           </>
         )}
+        
+        <BottomNavigation />
       </Box>
     </ThemeProvider>
   );

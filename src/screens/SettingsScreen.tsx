@@ -2,9 +2,10 @@ import React, { useEffect } from 'react';
 import { View, TouchableOpacity, ScrollView, StatusBar, Switch, StyleSheet, Alert, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedText, ThemedView, Box } from '@joe111/neo-ui';
+import { ThemedText, Box } from '@joe111/neo-ui';
 import { useGameStore, GoreLevel } from '../stores/gameStore';
 import { soundManager } from '../services/soundManager';
+import { BottomNavigation } from '../components/BottomNavigation';
 
 interface SettingSectionProps {
   title: string;
@@ -109,17 +110,19 @@ export const SettingsScreen: React.FC = () => {
   const {
     soundEnabled,
     hapticEnabled,
-    goreLevel,
+    goreLevel: _goreLevel,
+    longRoadTripEnabled,
     setSoundEnabled,
     setHapticEnabled,
-    setGoreLevel,
+    setGoreLevel: _setGoreLevel,
+    setLongRoadTripEnabled,
     loadSettings
   } = useGameStore();
 
   // Load settings on component mount
   useEffect(() => {
     loadSettings();
-  }, []);
+  }, [loadSettings]);
 
   const handleBack = () => {
     try {
@@ -170,7 +173,19 @@ export const SettingsScreen: React.FC = () => {
         <View style={styles.placeholder} />
       </Box>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Game Mode */}
+        <SettingSection title="Game Mode">
+          <View style={styles.toggleContainer}>
+            <ToggleSetting
+              title="Long Road Trip"
+              description="4-in-a-row win condition for extended gameplay"
+              value={longRoadTripEnabled}
+              onValueChange={setLongRoadTripEnabled}
+            />
+          </View>
+        </SettingSection>
+
         {/* Audio & Haptics */}
         <SettingSection title="Audio & Haptics">
           <View style={styles.toggleContainer}>
@@ -222,10 +237,12 @@ export const SettingsScreen: React.FC = () => {
             <InfoItem icon="🎮" text="Dead Ahead: Roadkill Bingo" />
             <InfoItem icon="ℹ️" text="Version 1.0.0" />
             <InfoItem icon="⚠️" text="Rated 12+ for crude humor" />
-            <InfoItem icon="🎯" text="Get 3 in a row to win • Free Range center tile always marked" />
+            <InfoItem icon="🎯" text={`Get ${longRoadTripEnabled ? '4' : '3'} in a row to win • Free Range center tile always marked`} />
           </View>
         </SettingSection>
       </ScrollView>
+      
+      <BottomNavigation />
     </SafeAreaView>
   );
 };
@@ -267,6 +284,9 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
+  },
+  scrollContent: {
+    paddingBottom: 100, // Add space for bottom navigation
   },
   section: {
     backgroundColor: '#2a2a4a',

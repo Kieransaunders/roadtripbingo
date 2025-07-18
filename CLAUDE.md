@@ -22,6 +22,9 @@ Dead Ahead: Roadkill Bingo is a React Native/Expo mobile game where players spot
 - **ESLint** with Expo configuration
 - **React Query** for data fetching and caching
 
+### Development Tools
+- **Context7-mcp** for looking up up-to-date documentation for various libraries and frameworks
+
 ## Project Structure
 
 ```
