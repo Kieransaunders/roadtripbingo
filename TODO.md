@@ -71,12 +71,6 @@
 
 ## 🚧 In Progress / Next Priority
 
-### 📸 Camera Integration - "Snap the Splat!" (HIGH PRIORITY)
-- [ ] Implement expo-camera for photo capture
-- [ ] Add photo preview and validation functionality
-- [ ] Connect photos to leaderboard/Hall of Shame
-- [ ] Image compression and optimization
-- [ ] Photo upload to cloud storage
 
 ### 🔊 Audio & Enhanced Feedback (HIGH PRIORITY)
 - [ ] Add expo-av for sound effects
@@ -99,11 +93,6 @@
 - [ ] Implement photo sharing and validation
 - [ ] Add user profiles and authentication
 
-### 📸 Camera & Photo Features (Medium Priority)
-- [ ] Integrate expo-camera for Snap-a-Roadkill
-- [ ] Add photo capture and preview functionality
-- [ ] Implement image compression and optimization
-- [ ] Add photo upload to leaderboard
 
 ### ☁️ Backend & Storage (Medium Priority)
 - [ ] Set up Firebase/Supabase project
@@ -148,13 +137,12 @@
 - All main screens: ✅ Complete (Dashboard, Game, Hall of Shame, Settings)
 - Neo UI integration: ✅ Complete
 - Victory screen: ✅ Complete with animations, haptics, and particle effects
-- **NEXT**: Camera integration for the signature "Snap the Splat!" feature
+- **NEXT**: Sound effects integration for enhanced gameplay experience
 
 ## 🏃‍♂️ Immediate Next Steps (Victory Screen Complete!)
-1. **Camera Integration** - Implement the core "Snap the Splat!" photo capture feature
-2. **Sound Effects** - Add expo-av and implement victory sounds, tile taps, etc.
-3. **Real Data** - Connect all screens to live game statistics and persistence
-4. **Polish & Testing** - Fine-tune animations, test on devices, optimize performance
+1. **Sound Effects** - Add expo-av and implement victory sounds, tile taps, etc.
+2. **Real Data** - Connect all screens to live game statistics and persistence
+3. **Polish & Testing** - Fine-tune animations, test on devices, optimize performance
 
 ## 🎉 **Victory Screen Features Implemented:**
 - ✅ Animated "ROADKILL BINGO!" title with spring physics

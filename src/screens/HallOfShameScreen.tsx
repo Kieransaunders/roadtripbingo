@@ -156,6 +156,9 @@ export const HallOfShameScreen: React.FC = () => {
       case 'photo-gallery':
         return (
           <View style={styles.galleryContainer}>
+            <View style={styles.galleryHeader}>
+              <ThemedText style={styles.galleryTitle}>📸 Photo Gallery</ThemedText>
+            </View>
             <PhotoGallery />
           </View>
         );
@@ -171,10 +174,12 @@ export const HallOfShameScreen: React.FC = () => {
       <Box style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <ThemedText style={styles.backIcon}>‹</ThemedText>
+          <ThemedText style={styles.buttonLabel}>Back</ThemedText>
         </TouchableOpacity>
         <ThemedText style={styles.title}>Hall of Shame</ThemedText>
         <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
           <ThemedText style={styles.refreshIcon}>↻</ThemedText>
+          <ThemedText style={styles.buttonLabel}>Refresh</ThemedText>
         </TouchableOpacity>
       </Box>
 
@@ -204,17 +209,20 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   backButton: {
-    width: 44,
+    width: 60,
     height: 44,
     borderRadius: 22,
     backgroundColor: '#333',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 8,
   },
   backIcon: {
     fontSize: 24,
     color: 'white',
     fontWeight: 'bold',
+    marginRight: 4,
   },
   title: {
     fontSize: 24,
@@ -222,17 +230,25 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   refreshButton: {
-    width: 44,
+    width: 80,
     height: 44,
     borderRadius: 22,
     backgroundColor: '#FF4444',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 8,
   },
   refreshIcon: {
     fontSize: 20,
     color: 'white',
     fontWeight: 'bold',
+    marginRight: 4,
+  },
+  buttonLabel: {
+    fontSize: 12,
+    color: 'white',
+    fontWeight: '600',
   },
   flatListContent: {
     paddingHorizontal: 20,
@@ -341,5 +357,16 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 20,
     overflow: 'hidden',
+  },
+  galleryHeader: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#444',
+  },
+  galleryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
   },
 });

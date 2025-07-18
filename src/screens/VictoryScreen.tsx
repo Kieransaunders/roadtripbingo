@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Alert, View, Text } from 'react-native';
+import { Dimensions, Alert, View, Text, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@joe111/neo-ui';
 import { StyleSheet } from 'react-native-unistyles';
@@ -20,7 +20,8 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface VictoryScreenProps {
   onPlayAgain: () => void;
-  onBackToDashboard: () => void;
+  onBackToDashboard?: () => void;
+  screenshotUri?: string;
 }
 
 // Confetti/Splatter particle component
@@ -66,12 +67,15 @@ const SplatterParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
 
 // Main Victory Screen component
 export const VictoryScreen: React.FC<VictoryScreenProps> = ({ 
-  onPlayAgain, 
-  onBackToDashboard 
+  onPlayAgain,
+  onBackToDashboard,
+  screenshotUri
 }) => {
   const { gameStats: _gameStats, currentGrid, gameMode, gameStartTime, checkAchievements } = useGameStore();
   const [showStats, setShowStats] = useState(false);
   const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
+  const [showScreenshot, setShowScreenshot] = useState(false);
+  const [animationsComplete, setAnimationsComplete] = useState(false);
   const insets = useSafeAreaInsets();
 
   // Animation values
@@ -79,6 +83,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   const titleRotation = useSharedValue(-5);
   const statsOpacity = useSharedValue(0);
   const buttonsTranslateY = useSharedValue(50);
+  const screenshotOpacity = useSharedValue(0);
 
   // Calculate game duration
   const calculateGameTime = (): string => {
@@ -119,6 +124,16 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
       buttonsTranslateY.value = withSpring(0, { damping: 15, stiffness: 100 });
     }, 1800);
 
+    // Mark animations as complete and optionally show screenshot after all animations finish
+    setTimeout(() => {
+      setAnimationsComplete(true);
+      // Only show screenshot after all animations complete to prevent flicker
+      if (screenshotUri) {
+        setShowScreenshot(true);
+        screenshotOpacity.value = withTiming(1, { duration: 800 });
+      }
+    }, 2500);
+
     // Additional haptic feedback during animation
     setTimeout(() => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -138,6 +153,10 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
 
   const buttonsAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: buttonsTranslateY.value }],
+  }));
+
+  const screenshotAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: screenshotOpacity.value,
   }));
 
   // Calculate victory stats
@@ -210,10 +229,6 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
     onPlayAgain();
   };
 
-  const handleBackToDashboard = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onBackToDashboard();
-  };
 
   return (
     <View style={[styles.container, { 
@@ -299,15 +314,19 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
           >
             <Text style={styles.buttonText}>📸 Share Victory</Text>
           </Button>
-
-          <Button
-            style={[styles.button, styles.dashboardButton]}
-            onPress={handleBackToDashboard}
-          >
-            <Text style={styles.buttonText}>🏠 Back to Dashboard</Text>
-          </Button>
         </Animated.View>
       </View>
+      
+      {/* Optional Screenshot Preview - Only shown after animations complete */}
+      {showScreenshot && screenshotUri && (
+        <Animated.View style={[styles.screenshotContainer, screenshotAnimatedStyle]}>
+          <Image
+            source={{ uri: screenshotUri }}
+            style={styles.screenshotImage}
+            resizeMode="contain"
+          />
+        </Animated.View>
+      )}
       
       <BottomNavigation />
     </View>
@@ -323,6 +342,7 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 100, // Higher than screenshot but lower than particles
   },
   titleContainer: {
     alignItems: 'center',
@@ -429,11 +449,6 @@ const styles = StyleSheet.create((theme) => ({
   shareButton: {
     backgroundColor: '#FFD700',
   },
-  dashboardButton: {
-    backgroundColor: '#2a2a4a',
-    borderWidth: 2,
-    borderColor: '#FF4444',
-  },
   buttonText: {
     fontSize: theme.fonts.lg,
     fontWeight: 'bold',
@@ -445,10 +460,31 @@ const styles = StyleSheet.create((theme) => ({
     height: 10,
     borderRadius: 2, // Less round, more splatter-like
     top: -50,
-    zIndex: 1000,
+    zIndex: 1000, // Higher z-index than screenshot
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
+  },
+  screenshotContainer: {
+    position: 'absolute',
+    bottom: 150, // Above bottom navigation
+    right: 20,
+    width: 120,
+    height: 200,
+    borderRadius: 12,
+    backgroundColor: '#2a2a4a',
+    padding: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 10, // Lower z-index than particles/animations
+  },
+  screenshotImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
   },
 }));

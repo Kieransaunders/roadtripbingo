@@ -244,12 +244,12 @@ const stylesheet = StyleSheet.create((theme) => ({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.primary,
+    color: 'white',
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: '#CCCCCC',
     textAlign: 'center',
     marginTop: 4,
   },
@@ -257,7 +257,7 @@ const stylesheet = StyleSheet.create((theme) => ({
     textAlign: 'center',
     marginTop: 50,
     fontSize: 16,
-    color: theme.colors.textSecondary,
+    color: '#CCCCCC',
   },
   emptyState: {
     flex: 1,
@@ -268,14 +268,14 @@ const stylesheet = StyleSheet.create((theme) => ({
   emptyText: {
     fontSize: 18,
     textAlign: 'center',
-    color: theme.colors.textSecondary,
+    color: 'white',
     marginBottom: 8,
   },
   emptySubtext: {
     fontSize: 14,
     textAlign: 'center',
-    color: theme.colors.textSecondary,
-    opacity: 0.7,
+    color: '#CCCCCC',
+    opacity: 0.8,
   },
   photoList: {
     padding: 10,
@@ -310,7 +310,7 @@ const stylesheet = StyleSheet.create((theme) => ({
     fontWeight: '500',
   },
   tileName: {
-    color: theme.colors.secondary,
+    color: '#FFD700',
     fontSize: 10,
     marginTop: 2,
   },
