@@ -5,10 +5,12 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { ThemeProvider as NeoUIThemeProvider } from '@joe111/neo-ui';
 import { useGameStore } from '@/src/stores/gameStore';
+import { ConsentDialogProvider } from '@/src/hooks/useConsentDialog';
 
 // Custom dark theme for the game
 const GameTheme = {
@@ -41,19 +43,23 @@ export default function RootLayout() {
   }
 
   return (
-    <NeoUIThemeProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : GameTheme}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="game" options={{ headerShown: false }} />
-          <Stack.Screen name="victory" options={{ headerShown: false }} />
-          <Stack.Screen name="hall-of-shame" options={{ headerShown: false }} />
-          <Stack.Screen name="settings" options={{ headerShown: false }} />
-          <Stack.Screen name="camera" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="light" />
-      </ThemeProvider>
-    </NeoUIThemeProvider>
+    <SafeAreaProvider>
+      <NeoUIThemeProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : GameTheme}>
+          <ConsentDialogProvider>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="game" options={{ headerShown: false }} />
+              <Stack.Screen name="victory" options={{ headerShown: false }} />
+              <Stack.Screen name="hall-of-shame" options={{ headerShown: false }} />
+              <Stack.Screen name="settings" options={{ headerShown: false }} />
+              <Stack.Screen name="camera" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="light" />
+          </ConsentDialogProvider>
+        </ThemeProvider>
+      </NeoUIThemeProvider>
+    </SafeAreaProvider>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, TouchableOpacity, ScrollView, StatusBar, Switch, StyleSheet, Alert, Platform } from 'react-native';
 import { router } from 'expo-router';
+import * as Sentry from '@sentry/react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText, Box } from '@joe111/neo-ui';
 import { useGameStore, GoreLevel } from '../stores/gameStore';
@@ -134,8 +135,14 @@ export const SettingsScreen: React.FC = () => {
       }
     } catch (error) {
       console.warn('Navigation error:', error);
+      Sentry.captureException(error);
       // Force navigation to dashboard
-      router.replace('/');
+      try {
+        router.replace('/');
+      } catch (fallbackError) {
+        console.error('Fallback navigation also failed:', fallbackError);
+        Sentry.captureException(fallbackError);
+      }
     }
   };
 

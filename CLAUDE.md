@@ -62,7 +62,7 @@ Dead Ahead: Roadkill Bingo is a React Native/Expo mobile game where players spot
 - **GameState Interface**: Complete game state including grid, settings, stats
 - **Win Conditions**: 
   - Standard mode: 3-in-a-row
-  - Savage mode: 4-in-a-row
+  - Savage mode: 5-in-a-row
   - Checks rows, columns, and diagonals
 - **Grid Generation**: 5×5 grid with center "Free Range" tile always spotted
 
@@ -114,16 +114,22 @@ npx expo build        # Production builds (requires EAS)
 - ✅ Settings system (sound, haptics, dark humor filter)
 - ✅ Game statistics tracking
 - ✅ All game assets (tile images)
+- ✅ Camera integration for photo capture
+- ✅ Instagram API integration for photo sharing
+- ✅ Consent dialog system for user privacy
+- ✅ Bottom navigation across all screens
+- ✅ Victory screen with animations and sharing
+- ✅ Photo gallery and cloud storage integration
 
 ### TODO (Per PDR.md)
 - 🚧 Replace template screens with actual game UI
 - 🚧 Implement 5×5 bingo grid component
-- 🚧 Add camera integration for "Snap-a-Roadkill"
 - 🚧 Build leaderboard with image upload
-- 🚧 Add victory screen with animations
 - 🚧 Implement sound effects and haptic feedback
 - 🚧 Create settings screen
 - 🚧 Add card gallery for previous games
+- 🚧 Add game tutorial/onboarding screens
+- 🚧 Implement user statistics and achievements display
 
 ## Key Configuration Files
 

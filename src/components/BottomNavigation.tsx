@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, usePathname } from 'expo-router';
 import * as Haptics from 'expo-haptics';
@@ -22,7 +22,13 @@ const navigationButtons: NavigationButton[] = [
 ];
 
 export const BottomNavigation: React.FC = () => {
-  const insets = useSafeAreaInsets();
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    // Fallback if SafeAreaProvider is not available
+    insets = { bottom: Platform.OS === 'ios' ? 20 : 10 };
+  }
   const pathname = usePathname();
   const { startNewGame } = useGameStore();
 

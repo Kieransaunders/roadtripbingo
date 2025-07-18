@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Alert, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, Dimensions, TouchableOpacity, Platform } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { openInstagramAccount } from '../src/services/instagramAPI';
 import { savePhotoToGallery } from '../src/components/Camera/PhotoGallery';
 import { BottomNavigation } from '../src/components/BottomNavigation';
+import { useConsentDialog } from '../src/hooks/useConsentDialog';
 
 const { width, height } = Dimensions.get('window');
 
@@ -187,17 +188,6 @@ const stylesheet = StyleSheet.create(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  retakeButton: {
-    backgroundColor: 'transparent',
-    borderColor: '#888',
-    borderWidth: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginVertical: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   shareButton: {
     backgroundColor: '#4CAF50',
     paddingVertical: 16,
@@ -238,7 +228,13 @@ const stylesheet = StyleSheet.create(theme => ({
 
 export default function CameraScreen() {
   const styles = stylesheet;
-  const insets = useSafeAreaInsets();
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    // Fallback if SafeAreaProvider is not available
+    insets = { top: Platform.OS === 'ios' ? 44 : 24, bottom: Platform.OS === 'ios' ? 34 : 0 };
+  }
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
@@ -247,6 +243,12 @@ export default function CameraScreen() {
   const cameraRef = useRef<CameraView>(null);
   
   const { incrementPhotosUploaded, hapticEnabled } = useGameStore();
+  const { showConsentDialog } = useConsentDialog();
+  
+  // Debug: Log hook availability
+  console.log('🔍 Camera - Consent dialog hook available:', !!showConsentDialog);
+  
+  console.log('🔍 Camera component - useConsentDialog hook available:', !!showConsentDialog);
 
   useEffect(() => {
     // Request permissions on mount
@@ -313,10 +315,6 @@ export default function CameraScreen() {
     }
   };
 
-  const retakePhoto = () => {
-    triggerHaptic();
-    setCapturedPhoto(null);
-  };
 
   const viewDeadAheadInsta = async () => {
     triggerHaptic();
@@ -336,18 +334,28 @@ export default function CameraScreen() {
     if (!capturedPhoto) return;
     
     triggerHaptic();
+    
+    console.log('🔍 sharePhotoToWorkflow called - showing consent dialog');
+    
+    try {
+      const consentGiven = await showConsentDialog();
+      console.log('🔍 Consent dialog result:', consentGiven);
+      if (!consentGiven) {
+        console.log('🔍 Consent not given, exiting');
+        return;
+      }
+    } catch (error) {
+      console.error('Error showing consent dialog:', error);
+      Alert.alert('Error', 'Failed to show consent dialog. Please try again.');
+      return;
+    }
+    
     try {
       // Import the necessary services
       const { uploadImageToCloudinaryWithFallback } = await import('../src/services/cloudinary');
       const { postToInstagram, generateGameDescription } = await import('../src/services/instagramAPI');
       
       console.log('🔄 Starting photo upload workflow...');
-      
-      Alert.alert(
-        'Uploading Photo... 📸',
-        'Your photo is being uploaded and posted to Instagram!',
-        [{ text: 'OK' }]
-      );
       
       // Upload image with fallback presets
       console.log('🔄 Step 1: Uploading image...');
@@ -490,12 +498,6 @@ export default function CameraScreen() {
                 style={styles.shareButton}
               >
                 <Text style={styles.buttonText}>📤 Share Photo to Instagram</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={retakePhoto}
-                style={styles.retakeButton}
-              >
-                <Text style={styles.buttonText}>🔄 Retake</Text>
               </TouchableOpacity>
             </View>
           </View>

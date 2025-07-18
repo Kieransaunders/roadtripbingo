@@ -1,9 +1,10 @@
 import React from 'react';
-import { TouchableOpacity, StatusBar, Dimensions, View, Text, ScrollView } from 'react-native';
+import { TouchableOpacity, StatusBar, Dimensions, View, Text, ScrollView, Platform, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
-import { BottomNavigation } from '../components/BottomNavigation';
+import { useConsentDialog } from '../hooks/useConsentDialog';
+// import { BottomNavigation } from '../components/BottomNavigation';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -42,7 +43,15 @@ const MenuCard: React.FC<MenuCardProps> = ({ icon, title, subtitle, onPress }) =
 };
 
 export const DashboardScreen: React.FC = () => {
-  const insets = useSafeAreaInsets();
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    // Fallback if SafeAreaProvider is not available
+    insets = { top: Platform.OS === 'ios' ? 44 : 24 };
+  }
+
+  const { showConsentDialog } = useConsentDialog();
 
   const handleMenuPress = (screen: string) => {
     switch (screen) {
@@ -58,6 +67,18 @@ export const DashboardScreen: React.FC = () => {
       case 'settings':
         router.push('/settings');
         break;
+    }
+  };
+
+  const testConsentDialog = async () => {
+    console.log('🔍 Dashboard - Testing consent dialog');
+    try {
+      const result = await showConsentDialog();
+      console.log('🔍 Dashboard - Consent dialog result:', result);
+      Alert.alert('Test Result', `Consent dialog result: ${result ? 'Agreed' : 'Cancelled'}`);
+    } catch (error) {
+      console.error('🔍 Dashboard - Error testing consent dialog:', error);
+      Alert.alert('Error', 'Failed to show consent dialog');
     }
   };
 
@@ -109,6 +130,14 @@ export const DashboardScreen: React.FC = () => {
             subtitle="Gore level & sound options"
             onPress={() => handleMenuPress('settings')}
           />
+          
+          {/* Debug test button */}
+          <TouchableOpacity
+            style={styles.testButton}
+            onPress={testConsentDialog}
+          >
+            <Text style={styles.testButtonText}>🔍 Test Consent Dialog</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Footer Disclaimer - Fixed Panel */}
@@ -130,7 +159,7 @@ export const DashboardScreen: React.FC = () => {
         </View>
       </ScrollView>
       
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </View>
   );
 };
@@ -265,5 +294,17 @@ const styles = StyleSheet.create((theme) => ({
     fontSize: theme.fonts.lg,
     textAlign: 'center',
     marginTop: 8,
+  },
+  testButton: {
+    backgroundColor: '#FF4444',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  testButtonText: {
+    color: 'white',
+    fontSize: theme.fonts.md,
+    fontWeight: 'bold',
   },
 }));

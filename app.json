@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.deadaheadbingo"
+      "bundleIdentifier": "uk.co.iconnectit.deadahead"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.deadaheadbingo",
+      "package": "uk.co.iconnectit.deadahead",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",

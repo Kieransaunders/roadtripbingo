@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Alert, View, Text, Image } from 'react-native';
+import { Dimensions, Alert, View, Text, Image, TouchableOpacity, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '@joe111/neo-ui';
 import { StyleSheet } from 'react-native-unistyles';
 import Animated, { 
   useSharedValue, 
@@ -12,9 +11,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
+import * as Sentry from '@sentry/react-native';
 import { useGameStore, Achievement } from '../stores/gameStore';
 import { openInstagramAccount } from '../services/instagramAPI';
 import { BottomNavigation } from '../components/BottomNavigation';
+import { useConsentDialog } from '../hooks/useConsentDialog';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -72,11 +73,18 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   screenshotUri
 }) => {
   const { gameStats: _gameStats, currentGrid, gameMode, gameStartTime, checkAchievements } = useGameStore();
+  const { showConsentDialog } = useConsentDialog();
   const [showStats, setShowStats] = useState(false);
   const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
   const [showScreenshot, setShowScreenshot] = useState(false);
   const [animationsComplete, setAnimationsComplete] = useState(false);
-  const insets = useSafeAreaInsets();
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    // Fallback if SafeAreaProvider is not available
+    insets = { top: Platform.OS === 'ios' ? 44 : 24, bottom: Platform.OS === 'ios' ? 34 : 0 };
+  }
 
   // Animation values
   const titleScale = useSharedValue(0);
@@ -165,7 +173,19 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   const gameTime = calculateGameTime();
   const winningPattern = gameMode === 'standard' ? "3 in a row" : "4 in a row";
 
-  const handleShare = async () => {
+const handleShare = async () => {
+    try {
+      const consentGiven = await showConsentDialog();
+      if (!consentGiven) {
+        return;
+      }
+    } catch (error) {
+      console.error('Error showing consent dialog:', error);
+      Sentry.captureException(error);
+      Alert.alert('Error', 'Failed to show consent dialog. Please try again.');
+      return;
+    }
+    
     try {
       // Create victory message
       const victoryMessage = `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}! 🎉`;
@@ -179,23 +199,45 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
           { 
             text: "Copy Message", 
             onPress: async () => {
-              await Clipboard.setStringAsync(shareMessage);
-              Alert.alert(
-                "Copied! 📋", 
-                "Victory message copied to clipboard!\n\nYou can now paste it anywhere - Instagram, Twitter, Facebook, etc.",
-                [
-                  { 
-                    text: "View @deadaheadroadkill", 
-                    onPress: () => openInstagramAccount()
-                  },
-                  { text: "Done" }
-                ]
-              );
+              try {
+                await Clipboard.setStringAsync(shareMessage);
+                Alert.alert(
+                  "Copied! 📋", 
+                  "Victory message copied to clipboard!\n\nYou can now paste it anywhere - Instagram, Twitter, Facebook, etc.",
+                  [
+                    { 
+                      text: "View @deadaheadroadkill", 
+                      onPress: () => {
+                        try {
+                          openInstagramAccount();
+                        } catch (error) {
+                          console.error('Error opening Instagram:', error);
+                          Sentry.captureException(error);
+                          Alert.alert('Error', 'Failed to open Instagram. Please try again.');
+                        }
+                      }
+                    },
+                    { text: "Done" }
+                  ]
+                );
+              } catch (error) {
+                console.error('Error copying to clipboard:', error);
+                Sentry.captureException(error);
+                Alert.alert('Error', 'Failed to copy to clipboard. Please try again.');
+              }
             }
           },
           { 
             text: "View @deadaheadroadkill", 
-            onPress: () => openInstagramAccount()
+            onPress: () => {
+              try {
+                openInstagramAccount();
+              } catch (error) {
+                console.error('Error opening Instagram:', error);
+                Sentry.captureException(error);
+                Alert.alert('Error', 'Failed to open Instagram. Please try again.');
+              }
+            }
           },
           { text: "Later" }
         ]
@@ -214,8 +256,14 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
           { 
             text: "Copy Message", 
             onPress: async () => {
-              await Clipboard.setStringAsync(shareMessage);
-              Alert.alert("Copied!", "Victory message copied to clipboard!");
+              try {
+                await Clipboard.setStringAsync(shareMessage);
+                Alert.alert("Copied!", "Victory message copied to clipboard!");
+              } catch (error) {
+                console.error('Error copying to clipboard:', error);
+                Sentry.captureException(error);
+                Alert.alert('Error', 'Failed to copy to clipboard. Please try again.');
+              }
             }
           },
           { text: "OK" }
@@ -301,19 +349,19 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
 
         {/* Action Buttons */}
         <Animated.View style={[styles.buttonsContainer, buttonsAnimatedStyle]}>
-          <Button
+          <TouchableOpacity
             style={[styles.button, styles.playAgainButton]}
             onPress={handlePlayAgain}
           >
             <Text style={styles.buttonText}>🎮 Play Again</Text>
-          </Button>
+          </TouchableOpacity>
 
-          <Button
+          <TouchableOpacity
             style={[styles.button, styles.shareButton]}
             onPress={handleShare}
           >
             <Text style={styles.buttonText}>📸 Share Victory</Text>
-          </Button>
+          </TouchableOpacity>
         </Animated.View>
       </View>
       

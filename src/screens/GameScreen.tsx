@@ -1,15 +1,21 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, StatusBar, Text } from 'react-native';
+import { View, ScrollView, StatusBar, Text, Platform, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '@joe111/neo-ui';
 import { StyleSheet as UnistylesStyleSheet } from 'react-native-unistyles';
 import { BingoGrid } from '../components/BingoGrid';
 import { useGameStore } from '../stores/gameStore';
 import { router } from 'expo-router';
-import { BottomNavigation } from '../components/BottomNavigation';
+import * as Sentry from '@sentry/react-native';
+// import { BottomNavigation } from '../components/BottomNavigation';
 
 export const GameScreen: React.FC = () => {
-  const insets = useSafeAreaInsets();
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    // Fallback if SafeAreaProvider is not available
+    insets = { top: Platform.OS === 'ios' ? 44 : 24, bottom: Platform.OS === 'ios' ? 34 : 0 };
+  }
   const { 
     currentGrid, 
     isGameWon, 
@@ -28,7 +34,19 @@ export const GameScreen: React.FC = () => {
     if (isGameWon) {
       // Navigate to victory screen instead of showing alert
       setTimeout(() => {
-        router.push('/victory');
+        try {
+          router.push('/victory');
+        } catch (error) {
+          console.error('Error navigating to victory screen:', error);
+          Sentry.captureException(error);
+          // Fallback - try to navigate to home
+          try {
+            router.replace('/');
+          } catch (fallbackError) {
+            console.error('Fallback navigation also failed:', fallbackError);
+            Sentry.captureException(fallbackError);
+          }
+        }
       }, 500); // Small delay to let the final tile animation complete
     }
   }, [isGameWon]);
@@ -37,7 +55,12 @@ export const GameScreen: React.FC = () => {
   // Removed unused handleCallBingo function - win detection is automatic
 
   const handleSnapRoadkill = () => {
-    router.push('/camera');
+    try {
+      router.push('/camera');
+    } catch (error) {
+      console.error('Error navigating to camera screen:', error);
+      Sentry.captureException(error);
+    }
   };
 
 
@@ -89,24 +112,24 @@ export const GameScreen: React.FC = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button 
+        <TouchableOpacity 
           style={[styles.button, styles.snapButton]}
           onPress={handleSnapRoadkill}
         >
           <Text style={styles.buttonText}>📸 Snap the Splat!</Text>
-        </Button>
+        </TouchableOpacity>
 
-        <Button 
+        <TouchableOpacity 
           style={[styles.button, styles.newGameButton]}
           onPress={startNewGame}
         >
           <Text style={styles.buttonText}>New Game</Text>
-        </Button>
+        </TouchableOpacity>
 
       </View>
       </ScrollView>
       
-      <BottomNavigation />
+      {/* <BottomNavigation /> */}
     </View>
   );
 };

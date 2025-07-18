@@ -1,12 +1,13 @@
-import React, { useState, useRef } from 'react';
-import { View, Alert } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Alert, TouchableOpacity, Text } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { Button, ThemedText, Box } from '@joe111/neo-ui';
-import { StyleSheet } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { uploadImageToCloudinary } from '../../services/cloudinary';
 import { postToInstagram, openInstagramAccount, generateGameDescription } from '../../services/instagramAPI';
 import { savePhotoToGallery } from './PhotoGallery';
+import { useConsentDialog } from '../../hooks/useConsentDialog';
+import { Strings } from '../../constants/Strings';
 
 interface CameraCaptureProps {
   onPhotoTaken?: (photoUri: string) => void;
@@ -22,11 +23,38 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
   onClose,
   tileContext
 }) => {
-  const styles = stylesheet;
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [isUploading, setIsUploading] = useState(false);
+  const [hasShownConsent, setHasShownConsent] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
   const cameraRef = useRef<CameraView>(null);
+  const { showConsentDialog } = useConsentDialog();
+
+  // Show ConsentDialog when component mounts with permissions
+  useEffect(() => {
+    if (permission?.granted && !hasShownConsent) {
+      const handleConsentFlow = async () => {
+        try {
+          const consentGiven = await showConsentDialog();
+          
+          if (consentGiven) {
+            setHasShownConsent(true);
+            setShowCamera(true);
+          } else {
+            // User cancelled, navigate back/close gracefully
+            onClose?.();
+          }
+        } catch (error) {
+          console.error('Error showing consent dialog:', error);
+          // Fallback to closing the component
+          onClose?.();
+        }
+      };
+      
+      handleConsentFlow();
+    }
+  }, [permission?.granted, hasShownConsent, onClose, showConsentDialog]);
 
   if (!permission) {
     return <View />;
@@ -34,12 +62,14 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
 
   if (!permission.granted) {
     return (
-      <Box style={styles.container}>
-        <ThemedText style={styles.message}>
-          We need your permission to show the camera
-        </ThemedText>
-        <Button onPress={requestPermission} title="Grant Permission" />
-      </Box>
+      <View style={styles.container}>
+        <Text style={styles.message}>
+          {Strings.camera.permissions.title}
+        </Text>
+        <TouchableOpacity onPress={requestPermission} style={styles.button}>
+          <Text style={styles.buttonText}>{Strings.camera.permissions.grant}</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
@@ -107,7 +137,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
         ]
       );
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Upload error:', error);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(
@@ -128,48 +158,60 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   };
 
+  // Don't show camera preview until consent is given
+  if (!showCamera) {
+    return <View />;
+  }
+
   return (
-    <Box style={styles.container}>
+    <View style={styles.container}>
       <CameraView 
         ref={cameraRef} 
         style={styles.camera} 
         facing={facing}
       >
-        <Box style={styles.buttonContainer}>
-          <Button
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
             onPress={onClose}
-            title="Cancel"
-            variant="secondary"
-            style={styles.button}
-          />
+            style={[styles.button, styles.secondaryButton]}
+          >
+            <Text style={styles.buttonText}>{Strings.camera.controls.cancel}</Text>
+          </TouchableOpacity>
           
-          <Button
+          <TouchableOpacity
             onPress={takePicture}
-            title={isUploading ? "Uploading..." : "📸 Snap the Splat!"}
             disabled={isUploading}
             style={[styles.button, styles.captureButton]}
-          />
+          >
+            <Text style={styles.captureButtonText}>
+              {isUploading ? Strings.camera.states.uploading : Strings.camera.controls.capture}
+            </Text>
+          </TouchableOpacity>
           
-          <Button
+          <TouchableOpacity
             onPress={toggleCameraFacing}
-            title="Flip"
-            variant="secondary"
-            style={styles.button}
-          />
-        </Box>
+            style={[styles.button, styles.secondaryButton]}
+          >
+            <Text style={styles.buttonText}>{Strings.camera.controls.flip}</Text>
+          </TouchableOpacity>
+        </View>
       </CameraView>
-    </Box>
+    </View>
   );
 };
 
-const stylesheet = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: '#000',
   },
   message: {
     textAlign: 'center',
     paddingBottom: 10,
+    color: '#fff',
+    fontSize: 16,
+    margin: 20,
   },
   camera: {
     flex: 1,
@@ -186,10 +228,32 @@ const stylesheet = StyleSheet.create((theme) => ({
     flex: 0.3,
     alignSelf: 'flex-end',
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    minHeight: 48,
+  },
+  secondaryButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   captureButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: '#FF4444',
     borderRadius: 50,
     paddingVertical: 20,
   },
-}));
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  captureButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+});

@@ -1,0 +1,51 @@
+{
+  "consent": {
+    "title": "Consent Required",
+    "message": "By sharing this image, you consent to it being posted on our Instagram. Note: Images may be graphic.",
+    "understand": "I Understand",
+    "cancel": "Cancel",
+    "a11y": {
+      "dialog": "Consent dialog",
+      "backdrop": "consent-dialog-backdrop",
+      "header": "Consent Required",
+      "message": "Consent message",
+      "understandButton": "I understand and consent",
+      "understandHint": "Tap to consent to posting the image on Instagram",
+      "cancelButton": "Cancel",
+      "cancelHint": "Tap to cancel and not post the image"
+    }
+  },
+  "permissions": {
+    "camera": "Allow Dead Ahead Bingo to access your camera to capture roadkill evidence for the leaderboard.",
+    "photos": "Allow Dead Ahead Bingo to save your roadkill photos to your device.",
+    "savePhotos": "Allow Dead Ahead Bingo to save photos to your photo library."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm"
+  },
+  "game": {
+    "title": "Dead Ahead: Roadkill Bingo",
+    "snapTheSplat": "Snap the Splat",
+    "hallOfShame": "Hall of Shame",
+    "leaderboard": "Leaderboard",
+    "settings": "Settings"
+  },
+  "instagram": {
+    "posting": "Posting to Instagram...",
+    "success": "Successfully posted to Instagram!",
+    "error": "Failed to post to Instagram",
+    "consentRequired": "Consent required to share to Instagram"
+  },
+  "errors": {
+    "cameraPermission": "Camera permission is required to take photos",
+    "photoSaveError": "Failed to save photo to gallery",
+    "networkError": "Network error. Please check your connection.",
+    "genericError": "Something went wrong. Please try again."
+  }
+}

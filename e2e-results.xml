@@ -1,0 +1,88 @@
+<testsuites id="" name="" tests="17" failures="1" skipped="16" errors="0" time="0.32075999999999993">
+<testsuite name="setup.ts" timestamp="2025-07-18T13:21:00.887Z" hostname="setup" tests="1" failures="1" skipped="0" time="0.001" errors="0">
+<testcase name="basic setup" classname="setup.ts" time="0.001">
+<failure message="setup.ts:3:6 basic setup" type="FAILURE">
+<![CDATA[  [setup] › setup.ts:3:6 › basic setup ─────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /Users/MrZang/Library/Caches/ms-playwright/chromium_headless_shell-1181/chrome-mac/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="camera-capture.spec.ts" timestamp="2025-07-18T13:21:00.887Z" hostname="Mobile Safari" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Camera Capture Flow › should show consent dialog before camera access" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should close camera when consent is denied" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should show camera interface when consent is given" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should handle camera controls correctly" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should handle photo capture flow" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should handle photo upload errors gracefully" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should respect consent choice across camera sessions" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should handle camera permission denied gracefully" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="camera-capture.spec.ts" timestamp="2025-07-18T13:21:00.887Z" hostname="Mobile Chrome" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Camera Capture Flow › should show consent dialog before camera access" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should close camera when consent is denied" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should show camera interface when consent is given" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should handle camera controls correctly" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should handle photo capture flow" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should handle photo upload errors gracefully" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should respect consent choice across camera sessions" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Camera Capture Flow › should handle camera permission denied gracefully" classname="camera-capture.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>

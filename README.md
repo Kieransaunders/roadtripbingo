@@ -16,6 +16,49 @@ Dead Ahead: Roadkill Bingo is a mobile game where players identify various roads
 *   **Styling:** React Native Unistyles 3.0 (theming and responsive styling)
 *   **UI Components:** Neo UI
 *   **Animations:** React Native Reanimated 3.17
+*   **Camera:** Expo Camera with photo capture and gallery integration
+*   **Cloud Storage:** Cloudinary for image hosting and processing
+*   **Privacy:** Built-in consent dialog system for user privacy protection
+
+## Instagram Integration & Consent
+
+⚠️ **Important: Instagram Consent Requirement**
+
+This app includes a "Snap the Splat" camera feature that allows users to take photos and optionally share them to Instagram. **User consent is required** before any image can be posted to Instagram.
+
+### How It Works
+
+1. **Photo Capture**: Users take photos using the in-app camera
+2. **Consent Dialog**: Before sharing to Instagram, users must explicitly consent via a dialog
+3. **Consent Message**: "By sharing this image, you consent to it being posted on our Instagram. Note: Images may be graphic."
+4. **User Choice**: Users can either consent ("I Understand") or cancel the sharing
+
+### Technical Implementation
+
+- **Consent Dialog**: Located in `/src/components/ConsentDialog.tsx`
+- **Camera Integration**: Uses Expo Camera with automatic consent flow
+- **Instagram API**: Photos are posted via Instagram Basic Display API
+- **Privacy**: No photos are shared without explicit user consent
+- **Bottom Navigation**: Persistent navigation across all screens
+- **Victory Screen**: Animated victory screen with sharing capabilities
+
+### Current Features
+
+✅ **Fully Implemented:**
+- Camera photo capture with permission handling
+- Consent dialog system for Instagram sharing
+- Bottom navigation across all screens
+- Victory screen with animations and sharing
+- Photo gallery and cloud storage integration
+- User consent management and privacy protection
+
+### Setup Requirements
+
+- Instagram Basic Display API credentials
+- Facebook/Instagram long-lived access tokens (refresh every 60 days)
+- Proper permission handling for camera and media library access
+
+For detailed Instagram setup instructions, see [CAMERA_INSTAGRAM_SETUP.md](./CAMERA_INSTAGRAM_SETUP.md).
 
 ## Get Started
 
