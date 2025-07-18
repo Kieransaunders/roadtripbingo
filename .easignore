@@ -1,0 +1,114 @@
+# EAS Build Ignore File
+# This file specifies which files and directories should be excluded from EAS builds
+# to reduce archive size and build time
+
+# IMPORTANT: iOS and Android directories (EAS builds these from scratch)
+ios/
+android/
+
+# Expo development files
+.expo/
+.expo-shared/
+
+# Development and testing files
+__tests__/
+**/__tests__/
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.js
+*.spec.ts
+*.spec.tsx
+jest.config.js
+jest.setup.js
+e2e/
+playwright.config.ts
+playwright-report/
+test-results/
+e2e-results.xml
+
+# Documentation and project files
+README.md
+MANUAL_QA_TEST_PLAN.md
+TESTING.md
+TEST_IMPLEMENTATION_SUMMARY.md
+TODO.md
+CLAUDE.md
+PDR.md
+CAMERA_INSTAGRAM_SETUP.md
+*.md
+
+# Development dependencies and caches
+node_modules/
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Git and version control
+.git/
+.gitignore
+.gitattributes
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Source maps (if not needed for production)
+*.map
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Environment files (keep only what's needed)
+.env.local
+.env.development
+.env.test
+
+# Localization files (if not using all)
+src/locales/
+
+# Build artifacts that aren't needed
+dist/
+build/
+.next/
+
+# Editor configuration
+.editorconfig
+.eslintrc*
+.prettierrc*
+prettier.config.js
+
+# TypeScript build info
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Storybook
+.storybook/
+storybook-static/
+
+# Webpack
+webpack.config.js
+webpack.*.js
+
+# Other build tools
+rollup.config.js
+vite.config.js
+
+# Large asset optimization (keep only essential assets)
+# Note: Only exclude if you have duplicates or unused assets
+# assets/images/unused/

@@ -28,7 +28,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dead_badger',
     name: 'Dead Badger',
-    image: require('../../assets/images/dead_badger_roadkill.png'),
+    image: require('../../assets/images/dead_badger_roadkill.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.COMMON,
     description: 'Classic roadkill - badger pancake',
@@ -37,7 +37,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dead_rabbit',
     name: 'Dead Rabbit',
-    image: require('../../assets/images/dead_rabbit_roadkill.png'),
+    image: require('../../assets/images/dead_rabbit_roadkill.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.COMMON,
     description: 'Bunny gone wrong',
@@ -46,7 +46,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dead_hedgehog',
     name: 'Dead Hedgehog',
-    image: require('../../assets/images/dead_hedgehog_roadkill.png'),
+    image: require('../../assets/images/dead_hedgehog_roadkill.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.COMMON,
     description: 'Spiky splat',
@@ -55,7 +55,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dead_squirrel',
     name: 'Dead Squirrel',
-    image: require('../../assets/images/dead_squirrel_roadkill.png'),
+    image: require('../../assets/images/dead_squirrel_roadkill.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.COMMON,
     description: 'Nutty situation',
@@ -64,7 +64,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dead_bird',
     name: 'Dead Bird',
-    image: require('../../assets/images/dead_bird_roadkill.png'),
+    image: require('../../assets/images/dead_bird_roadkill.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.COMMON,
     description: 'Feathers everywhere',
@@ -73,7 +73,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dead_cat',
     name: 'Dead Cat',
-    image: require('../../assets/images/dead_cat_roadkill.png'),
+    image: require('../../assets/images/dead_cat_roadkill.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.UNCOMMON,
     description: 'Used up all 9 lives',
@@ -82,7 +82,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dead_deer',
     name: 'Dead Deer',
-    image: require('../../assets/images/dead_deer_roadkill.png'),
+    image: require('../../assets/images/dead_deer_roadkill.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.UNCOMMON,
     description: 'Venison special',
@@ -91,7 +91,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dead_deer_antlers',
     name: 'Deer Antlers',
-    image: require('../../assets/images/dead_deer_antlers.png'),
+    image: require('../../assets/images/dead_deer_antlers.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.UNCOMMON,
     description: 'Trophy remains',
@@ -100,7 +100,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dead_turkey',
     name: 'Dead Turkey',
-    image: require('../../assets/images/dead_turkey_roadkill.png'),
+    image: require('../../assets/images/dead_turkey_roadkill.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.UNCOMMON,
     description: 'Thanksgiving came early',
@@ -109,7 +109,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'roadkill_fox',
     name: 'Dead Fox',
-    image: require('../../assets/images/roadkill_fox.png'),
+    image: require('../../assets/images/roadkill_fox.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.UNCOMMON,
     description: 'Sly no more',
@@ -118,7 +118,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'roadkill_splatter',
     name: 'Mystery Splatter',
-    image: require('../../assets/images/roadkill_splatter.png'),
+    image: require('../../assets/images/roadkill_splatter.webp'),
     category: TileCategory.ROADKILL,
     rarity: TileRarity.RARE,
     description: 'Unidentifiable carnage',
@@ -129,7 +129,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'broken_down_car',
     name: 'Broken Down Car',
-    image: require('../../assets/images/broken_down_car.png'),
+    image: require('../../assets/images/broken_down_car.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.COMMON,
     description: 'Roadside breakdown',
@@ -138,7 +138,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'school_bus',
     name: 'School Bus',
-    image: require('../../assets/images/school_bus.png'),
+    image: require('../../assets/images/school_bus.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.COMMON,
     description: 'Yellow death trap',
@@ -147,7 +147,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'hazmat_truck',
     name: 'Hazmat Truck',
-    image: require('../../assets/images/hazmat_truck.png'),
+    image: require('../../assets/images/hazmat_truck.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.UNCOMMON,
     description: 'Toxic transport',
@@ -156,7 +156,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'horse_trailer',
     name: 'Horse Trailer',
-    image: require('../../assets/images/horse_trailer.png'),
+    image: require('../../assets/images/horse_trailer.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.UNCOMMON,
     description: 'Horsepower delivery',
@@ -165,7 +165,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'travel_trailer',
     name: 'Travel Trailer',
-    image: require('../../assets/images/travel_trailer.png'),
+    image: require('../../assets/images/travel_trailer.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.COMMON,
     description: 'Mobile home',
@@ -174,7 +174,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'volkswagen_van',
     name: 'VW Van',
-    image: require('../../assets/images/volkswagen_van.png'),
+    image: require('../../assets/images/volkswagen_van.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.UNCOMMON,
     description: 'Hippy wagon',
@@ -183,7 +183,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'free_estimates_van',
     name: 'Free Estimates Van',
-    image: require('../../assets/images/free_estimates_van.png'),
+    image: require('../../assets/images/free_estimates_van.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.RARE,
     description: 'Dodgy contractor',
@@ -194,7 +194,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'mattress_roadside',
     name: 'Roadside Mattress',
-    image: require('../../assets/images/mattress_roadside.png'),
+    image: require('../../assets/images/mattress_roadside.webp'),
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.COMMON,
     description: 'Fly-tipped furniture',
@@ -203,7 +203,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'lost_shoe',
     name: 'Lost Shoe',
-    image: require('../../assets/images/lost_shoe_roadside.png'),
+    image: require('../../assets/images/lost_shoe_roadside.webp'),
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.COMMON,
     description: 'Sole survivor',
@@ -212,7 +212,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'dentures_roadside',
     name: 'Dentures',
-    image: require('../../assets/images/dentures_roadside.png'),
+    image: require('../../assets/images/dentures_roadside.webp'),
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.UNCOMMON,
     description: 'Chompers abandoned',
@@ -221,7 +221,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'burrito_roadside',
     name: 'Roadside Burrito',
-    image: require('../../assets/images/burrito_roadside.png'),
+    image: require('../../assets/images/burrito_roadside.webp'),
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.UNCOMMON,
     description: 'Fast food fatality',
@@ -230,7 +230,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'bag_for_life',
     name: 'Bag for Life',
-    image: require('../../assets/images/bag_for_life.png'),
+    image: require('../../assets/images/bag_for_life.webp'),
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.COMMON,
     description: 'Ironically abandoned',
@@ -239,7 +239,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'takeout_container',
     name: 'Takeout Container',
-    image: require('../../assets/images/takeout_container_litter.png'),
+    image: require('../../assets/images/takeout_container_litter.webp'),
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.COMMON,
     description: 'Litter special',
@@ -248,7 +248,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'shotgun_shells',
     name: 'Shotgun Shells',
-    image: require('../../assets/images/shotgun_shells.png'),
+    image: require('../../assets/images/shotgun_shells.webp'),
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.RARE,
     description: 'Spent ammunition',
@@ -259,7 +259,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'man_peeing_bush',
     name: 'Man Peeing in Bush',
-    image: require('../../assets/images/man_peeing_bush.png'),
+    image: require('../../assets/images/man_peeing_bush.webp'),
     category: TileCategory.PEOPLE,
     rarity: TileRarity.UNCOMMON,
     description: 'Nature calls',
@@ -268,7 +268,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'person_peeing_roadside',
     name: 'Roadside Relief',
-    image: require('../../assets/images/person_peeing_roadside.png'),
+    image: require('../../assets/images/person_peeing_roadside.webp'),
     category: TileCategory.PEOPLE,
     rarity: TileRarity.UNCOMMON,
     description: 'Emergency stop',
@@ -277,7 +277,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'road_rage_argument',
     name: 'Road Rage Argument',
-    image: require('../../assets/images/road_rage_argument.png'),
+    image: require('../../assets/images/road_rage_argument.webp'),
     category: TileCategory.PEOPLE,
     rarity: TileRarity.RARE,
     description: 'Heated discussion',
@@ -288,7 +288,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'oil_spill',
     name: 'Oil Spill',
-    image: require('../../assets/images/oil_spill.png'),
+    image: require('../../assets/images/oil_spill.webp'),
     category: TileCategory.INFRASTRUCTURE,
     rarity: TileRarity.COMMON,
     description: 'Slippery situation',
@@ -297,7 +297,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'tire_tracks_skid',
     name: 'Skid Marks',
-    image: require('../../assets/images/tire_tracks_skid.png'),
+    image: require('../../assets/images/tire_tracks_skid.webp'),
     category: TileCategory.INFRASTRUCTURE,
     rarity: TileRarity.COMMON,
     description: 'Panic braking',
@@ -306,7 +306,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'traffic_cone_tree',
     name: 'Traffic Cone in Tree',
-    image: require('../../assets/images/traffic_cone_tree.png'),
+    image: require('../../assets/images/traffic_cone_tree.webp'),
     category: TileCategory.INFRASTRUCTURE,
     rarity: TileRarity.RARE,
     description: 'Gravity defying',
@@ -315,7 +315,7 @@ export const GAME_TILES: GameTile[] = [
   {
     id: 'layby_rest_stop',
     name: 'Layby Rest Stop',
-    image: require('../../assets/images/layby_rest_stop.png'),
+    image: require('../../assets/images/layby_rest_stop.webp'),
     category: TileCategory.INFRASTRUCTURE,
     rarity: TileRarity.COMMON,
     description: 'Trucker paradise',

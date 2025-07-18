@@ -152,9 +152,9 @@ npx expo build        # Production builds (requires EAS)
 ## Assets & Resources
 
 ### Game Assets (`assets/images/`)
-- 30+ PNG tile images (dead animals, vehicles, roadside items)
-- App icons and splash screens
-- Logo assets (`dead_ahead_logo.png`, `free_range_logo_square.jpg`)
+- 40+ WebP tile images (dead animals, vehicles, roadside items) - optimized for 80%+ size reduction
+- App icons and splash screens (PNG format for compatibility)
+- Logo assets (`dead_ahead_logo.webp`, `free_range_logo_square.jpg`)
 
 ### Notable Dependencies
 - **expo-camera**: For roadkill photo capture
@@ -177,7 +177,7 @@ npx expo build        # Production builds (requires EAS)
 - **Component organization**: Reusable components in `src/components/`
 - **Store pattern**: Zustand store handles all game state management
 - **Theme system**: Unistyles provides responsive, platform-aware styling
-- **Asset management**: Images bundled via `require()` statements
+- **Asset management**: Images bundled via `require()` statements, optimized with WebP format for 80%+ size reduction
 
 ## PDR Reference
 See `PDR.md` for complete product requirements, game rules, content categories, and development milestones. The technical implementation closely follows the PDR specifications with modern React Native/Expo architecture.
