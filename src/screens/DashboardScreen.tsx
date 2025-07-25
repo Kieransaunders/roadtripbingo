@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StatusBar, Dimensions, View, Text, ScrollView, Platform, Alert } from 'react-native';
+import { TouchableOpacity, StatusBar, Dimensions, View, Text, ScrollView, Platform, Alert, Linking } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
@@ -42,6 +42,36 @@ const MenuCard: React.FC<MenuCardProps> = ({ icon, title, subtitle, onPress }) =
   );
 };
 
+interface LinkItemProps {
+  icon: string;
+  text: string;
+  url: string;
+}
+
+const LinkItem: React.FC<LinkItemProps> = ({ icon, text, url }) => {
+  const handlePress = async () => {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'Unable to open link');
+      }
+    } catch (error) {
+      console.error('Error opening link:', error);
+      Alert.alert('Error', 'Unable to open link');
+    }
+  };
+
+  return (
+    <TouchableOpacity style={styles.linkItem} onPress={handlePress} activeOpacity={0.7}>
+      <Text style={styles.linkIcon}>{icon}</Text>
+      <Text style={styles.linkText}>{text}</Text>
+      <Text style={styles.externalIcon}>↗</Text>
+    </TouchableOpacity>
+  );
+};
+
 export const DashboardScreen: React.FC = () => {
   let insets;
   try {
@@ -70,17 +100,6 @@ export const DashboardScreen: React.FC = () => {
     }
   };
 
-  const testConsentDialog = async () => {
-    console.log('🔍 Dashboard - Testing consent dialog');
-    try {
-      const result = await showConsentDialog();
-      console.log('🔍 Dashboard - Consent dialog result:', result);
-      Alert.alert('Test Result', `Consent dialog result: ${result ? 'Agreed' : 'Cancelled'}`);
-    } catch (error) {
-      console.error('🔍 Dashboard - Error testing consent dialog:', error);
-      Alert.alert('Error', 'Failed to show consent dialog');
-    }
-  };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -98,8 +117,22 @@ export const DashboardScreen: React.FC = () => {
           <Text style={styles.tagline}>
             &quot;See it. Spot it. Shout it. Win shotgun or throw up trying.&quot;
           </Text>
+          
+          {/* Disclaimer - Top of Fold */}
+          <View style={styles.topDisclaimer}>
+            <View style={styles.disclaimerContainer}>
+              <View style={styles.ratingBadge}>
+                <Text style={styles.ratingText}>12+</Text>
+              </View>
+              <Text style={styles.disclaimerText}>
+                Rated 12+ for crude humor and mild violence
+              </Text>
+            </View>
+            <Text style={styles.disclaimerSubtext}>
+              No animals were harmed in the making of this game... By Us!
+            </Text>
+          </View>
         </View>
-
 
         {/* Menu Cards */}
         <View style={styles.menuContainer}>
@@ -130,33 +163,39 @@ export const DashboardScreen: React.FC = () => {
             subtitle="Gore level & sound options"
             onPress={() => handleMenuPress('settings')}
           />
-          
-          {/* Debug test button */}
-          <TouchableOpacity
-            style={styles.testButton}
-            onPress={testConsentDialog}
-          >
-            <Text style={styles.testButtonText}>🔍 Test Consent Dialog</Text>
-          </TouchableOpacity>
         </View>
 
-        {/* Footer Disclaimer - Fixed Panel */}
-        <View style={styles.footerContainer}>
-          <View style={styles.footer}>
-            <View style={styles.disclaimerContainer}>
-              <View style={styles.ratingBadge}>
-                <Text style={styles.ratingText}>12+</Text>
-              </View>
-              <Text style={styles.disclaimerText}>
-                Rated 12+ for crude humor and mild violence
-              </Text>
-            </View>
-            <Text style={styles.disclaimerSubtext}>
-              No animals were harmed in the making of this game... By Us!
-            </Text>
-            <Text style={styles.bloodSplat}>🩸</Text>
+        {/* Conservation Section */}
+        <View style={styles.conservationContainer}>
+          <Text style={styles.conservationTitle}>Help Real Wildlife</Text>
+          <Text style={styles.conservationText}>
+            Dead Ahead is a cheeky road-trip bingo game — but real roads aren't so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
+          </Text>
+          
+          <Text style={styles.conservationHeading}>Want to help?</Text>
+          <Text style={styles.conservationText}>
+            Log your sightings with the Mammals on Roads app by the People's Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
+          </Text>
+          
+          <View style={styles.linksContainer}>
+            <LinkItem 
+              icon="📱" 
+              text="App Store: PTES Mammals on Roads" 
+              url="https://apps.apple.com/gb/app/ptes-mammals-on-roads/id446109227"
+            />
+            <LinkItem 
+              icon="🤖" 
+              text="Google Play: Mammals on Roads" 
+              url="https://play.google.com/store/apps/details?id=org.ptes.mammalsonroads.v2&hl=en&gl=US&pli=1"
+            />
+            <LinkItem 
+              icon="🌐" 
+              text="To find out more about PTES' wider conservation work, visit www.ptes.org" 
+              url="https://www.ptes.org"
+            />
           </View>
         </View>
+
       </ScrollView>
       
       {/* <BottomNavigation /> */}
@@ -196,6 +235,13 @@ const styles = StyleSheet.create((theme) => ({
     marginTop: 20,
     paddingHorizontal: 20,
     lineHeight: theme.fonts.md * 1.4, // Responsive line height
+  },
+  topDisclaimer: {
+    alignItems: 'center',
+    marginTop: 24,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#333',
   },
   scrollView: {
     flex: 1,
@@ -253,17 +299,6 @@ const styles = StyleSheet.create((theme) => ({
     color: '#666',
     fontWeight: '300',
   },
-  footerContainer: {
-    backgroundColor: '#1a1a2e',
-    borderTopWidth: 1,
-    borderTopColor: '#333',
-    paddingTop: 16,
-    paddingBottom: 40,
-  },
-  footer: {
-    paddingHorizontal: 20,
-    alignItems: 'center',
-  },
   disclaimerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -290,21 +325,61 @@ const styles = StyleSheet.create((theme) => ({
     color: '#888',
     textAlign: 'center',
   },
-  bloodSplat: {
-    fontSize: theme.fonts.lg,
-    textAlign: 'center',
-    marginTop: 8,
-  },
-  testButton: {
-    backgroundColor: '#FF4444',
+  conservationContainer: {
+    backgroundColor: '#2a2a4a',
     borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 16,
+    padding: 20,
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 10,
   },
-  testButtonText: {
-    color: 'white',
+  conservationTitle: {
+    fontSize: theme.fonts.xl,
+    fontWeight: 'bold',
+    color: '#FFD700',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  conservationText: {
+    fontSize: theme.fonts.sm,
+    color: '#ccc',
+    lineHeight: theme.fonts.sm * 1.4,
+    marginBottom: 12,
+  },
+  conservationHeading: {
     fontSize: theme.fonts.md,
     fontWeight: 'bold',
+    color: '#FFD700',
+    marginBottom: 8,
+    marginTop: 4,
+  },
+  linksContainer: {
+    marginTop: 8,
+    gap: 8,
+  },
+  linkItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#3a3a5a',
+    borderRadius: 8,
+  },
+  linkIcon: {
+    fontSize: theme.fonts.md,
+    marginRight: 12,
+    width: 20,
+    textAlign: 'center',
+  },
+  linkText: {
+    fontSize: theme.fonts.sm,
+    color: '#FFD700',
+    flex: 1,
+    lineHeight: theme.fonts.sm * 1.4,
+  },
+  externalIcon: {
+    fontSize: theme.fonts.md,
+    color: '#888',
+    marginLeft: 8,
   },
 }));

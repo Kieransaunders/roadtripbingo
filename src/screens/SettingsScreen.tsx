@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, TouchableOpacity, ScrollView, StatusBar, Switch, StyleSheet, Alert, Platform } from 'react-native';
+import { View, TouchableOpacity, ScrollView, StatusBar, Switch, StyleSheet, Alert, Platform, Linking } from 'react-native';
 import { router } from 'expo-router';
 import * as Sentry from '@sentry/react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -102,6 +102,36 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon, text }) => {
       <ThemedText style={styles.infoIcon}>{icon}</ThemedText>
       <ThemedText style={styles.infoText}>{text}</ThemedText>
     </Box>
+  );
+};
+
+interface LinkItemProps {
+  icon: string;
+  text: string;
+  url: string;
+}
+
+const LinkItem: React.FC<LinkItemProps> = ({ icon, text, url }) => {
+  const handlePress = async () => {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'Unable to open link');
+      }
+    } catch (error) {
+      console.error('Error opening link:', error);
+      Alert.alert('Error', 'Unable to open link');
+    }
+  };
+
+  return (
+    <TouchableOpacity style={styles.linkItem} onPress={handlePress} activeOpacity={0.7}>
+      <ThemedText style={styles.infoIcon}>{icon}</ThemedText>
+      <ThemedText style={styles.linkText}>{text}</ThemedText>
+      <ThemedText style={styles.externalIcon}>↗</ThemedText>
+    </TouchableOpacity>
   );
 };
 
@@ -245,6 +275,35 @@ export const SettingsScreen: React.FC = () => {
             <InfoItem icon="ℹ️" text="Version 1.0.0" />
             <InfoItem icon="⚠️" text="Rated 12+ for crude humor" />
             <InfoItem icon="🎯" text={`Get ${longRoadTripEnabled ? '4' : '3'} in a row to win • Free Range center tile always marked`} />
+            
+            <View style={styles.conservationSection}>
+              <ThemedText style={styles.conservationText}>
+                Dead Ahead is a cheeky road-trip bingo game — but real roads aren't so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
+              </ThemedText>
+              
+              <ThemedText style={styles.conservationHeading}>Want to help?</ThemedText>
+              <ThemedText style={styles.conservationText}>
+                Log your sightings with the Mammals on Roads app by the People's Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
+              </ThemedText>
+              
+              <View style={styles.linksContainer}>
+                <LinkItem 
+                  icon="📱" 
+                  text="App Store: PTES Mammals on Roads" 
+                  url="https://apps.apple.com/gb/app/ptes-mammals-on-roads/id446109227"
+                />
+                <LinkItem 
+                  icon="🤖" 
+                  text="Google Play: Mammals on Roads" 
+                  url="https://play.google.com/store/apps/details?id=org.ptes.mammalsonroads.v2&hl=en&gl=US&pli=1"
+                />
+                <LinkItem 
+                  icon="🌐" 
+                  text="To find out more about PTES' wider conservation work, visit www.ptes.org" 
+                  url="https://www.ptes.org"
+                />
+              </View>
+            </View>
           </View>
         </SettingSection>
       </ScrollView>
@@ -418,5 +477,47 @@ const styles = StyleSheet.create({
     color: '#ccc',
     flex: 1,
     lineHeight: 20,
+  },
+  conservationSection: {
+    marginTop: 24,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#444',
+  },
+  conservationText: {
+    fontSize: 14,
+    color: '#ccc',
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  conservationHeading: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFD700',
+    marginBottom: 8,
+    marginTop: 4,
+  },
+  linksContainer: {
+    marginTop: 8,
+    gap: 8,
+  },
+  linkItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#3a3a5a',
+    borderRadius: 8,
+  },
+  linkText: {
+    fontSize: 14,
+    color: '#FFD700',
+    flex: 1,
+    lineHeight: 20,
+  },
+  externalIcon: {
+    fontSize: 16,
+    color: '#888',
+    marginLeft: 8,
   },
 });

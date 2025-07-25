@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, TouchableOpacity, Alert } from 'react-native';
+import { FlatList, TouchableOpacity, Alert, View, Text } from 'react-native';
 import { Image } from 'expo-image';
-import { Button, ThemedText, Box } from '@joe111/neo-ui';
 import { StyleSheet } from 'react-native-unistyles';
 import * as Haptics from 'expo-haptics';
 import { openInstagramAccount } from '../../services/instagramAPI';
@@ -122,50 +121,50 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
         contentFit="cover"
         transition={200}
       />
-      <Box style={styles.photoOverlay}>
-        <ThemedText style={styles.photoDate}>
+      <View style={styles.photoOverlay}>
+        <Text style={styles.photoDate}>
           {new Date(item.timestamp).toLocaleDateString()}
-        </ThemedText>
+        </Text>
         {item.tileName && (
-          <ThemedText style={styles.tileName}>
+          <Text style={styles.tileName}>
             {item.tileName}
-          </ThemedText>
+          </Text>
         )}
         {item.instagramPostId && (
-          <Box style={styles.instagramBadge}>
-            <ThemedText style={styles.instagramText}>📱</ThemedText>
-          </Box>
+          <View style={styles.instagramBadge}>
+            <Text style={styles.instagramText}>📱</Text>
+          </View>
         )}
-      </Box>
+      </View>
     </TouchableOpacity>
   );
 
   if (loading) {
     return (
-      <Box style={styles.container}>
-        <ThemedText style={styles.loadingText}>Loading photos...</ThemedText>
-      </Box>
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>Loading photos...</Text>
+      </View>
     );
   }
 
   return (
-    <Box style={styles.container}>
-      <Box style={styles.header}>
-        <ThemedText style={styles.title}>📸 Roadkill Gallery</ThemedText>
-        <ThemedText style={styles.subtitle}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>📸 Roadkill Gallery</Text>
+        <Text style={styles.subtitle}>
           {photos.length} photo{photos.length !== 1 ? 's' : ''} captured
-        </ThemedText>
-      </Box>
+        </Text>
+      </View>
 
       {photos.length === 0 ? (
-        <Box style={styles.emptyState}>
-          <ThemedText style={styles.emptyText}>
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyText}>
             No photos yet! 📸
-          </ThemedText>
-          <ThemedText style={styles.emptySubtext}>
+          </Text>
+          <Text style={styles.emptySubtext}>
             Start spotting roadkill and taking photos to build your gallery
-          </ThemedText>
-        </Box>
+          </Text>
+        </View>
       ) : (
         <FlatList
           data={photos}
@@ -177,30 +176,36 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
         />
       )}
 
-      <Box style={styles.footer}>
-        <Button
+      <View style={styles.footer}>
+        <TouchableOpacity
           onPress={() => openInstagramAccount()}
-          title="View @deadaheadroadkill"
-          variant="secondary"
           style={styles.instagramButton}
-        />
+          activeOpacity={0.7}
+        >
+          <Text style={styles.buttonText}>📱 View @deadaheadroadkill</Text>
+        </TouchableOpacity>
         
         {photos.length > 0 && (
-          <Button
+          <TouchableOpacity
             onPress={clearAllPhotos}
-            title="Clear All"
-            variant="destructive"
             style={styles.clearButton}
-          />
+            activeOpacity={0.7}
+          >
+            <Text style={styles.buttonText}>🗑️ Clear All</Text>
+          </TouchableOpacity>
         )}
         
-        <Button
-          onPress={onClose}
-          title="Close"
-          style={styles.closeButton}
-        />
-      </Box>
-    </Box>
+        {onClose && (
+          <TouchableOpacity
+            onPress={onClose}
+            style={styles.closeButton}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.buttonText}>✕ Close</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
   );
 };
 
@@ -234,15 +239,15 @@ export const savePhotoToGallery = async (photoData: Omit<PhotoRecord, 'id' | 'ti
 const stylesheet = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: '#1a1a2e',
   },
   header: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: '#444',
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
@@ -285,7 +290,7 @@ const stylesheet = StyleSheet.create((theme) => ({
     margin: 5,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: theme.colors.surface,
+    backgroundColor: '#2a2a4a',
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -331,16 +336,30 @@ const stylesheet = StyleSheet.create((theme) => ({
   footer: {
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    gap: 10,
+    borderTopColor: '#444',
+    gap: 12,
   },
   instagramButton: {
     backgroundColor: '#E4405F',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
   },
   clearButton: {
-    backgroundColor: theme.colors.error,
+    backgroundColor: '#FF4444',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
   },
   closeButton: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: '#333',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
   },
 }));

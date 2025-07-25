@@ -118,6 +118,17 @@ export const HallOfShameScreen: React.FC = () => {
         } else if (item.id === 'scoring') {
           return (
             <StatCard title="Scoring">
+              <View style={styles.scoreExplanation}>
+                <ThemedText style={styles.scoreExplanationTitle}>
+                  ⏱️ It's a Race Against Time!
+                </ThemedText>
+                <ThemedText style={styles.scoreExplanationText}>
+                  🏆 <ThemedText style={styles.scoreHighlight}>1000 points</ThemedText> base score minus 1 point per second
+                </ThemedText>
+                <ThemedText style={styles.scoreExplanationText}>
+                  ⚡ Minimum <ThemedText style={styles.scoreHighlight}>100 points</ThemedText> for any win (15+ min) • <ThemedText style={styles.scoreHighlight}>0 points</ThemedText> for abandoned games
+                </ThemedText>
+              </View>
               <View style={styles.statRow}>
                 <StatItem value={stats.totalScore.toLocaleString()} label="Total Score" color="#FFD700" />
                 <StatItem value={stats.gamesPlayed > 0 ? Math.round(stats.totalScore / stats.gamesPlayed).toString() : "0"} label="Avg Score" color="#9C27B0" />
@@ -171,17 +182,15 @@ export const HallOfShameScreen: React.FC = () => {
       <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
       
       {/* Header */}
-      <Box style={styles.header}>
+      <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <ThemedText style={styles.backIcon}>‹</ThemedText>
-          <ThemedText style={styles.buttonLabel}>Back</ThemedText>
         </TouchableOpacity>
         <ThemedText style={styles.title}>Hall of Shame</ThemedText>
         <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
           <ThemedText style={styles.refreshIcon}>↻</ThemedText>
-          <ThemedText style={styles.buttonLabel}>Refresh</ThemedText>
         </TouchableOpacity>
-      </Box>
+      </View>
 
       <FlatList
         data={screenData}
@@ -209,20 +218,17 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   backButton: {
-    width: 60,
+    width: 44,
     height: 44,
     borderRadius: 22,
     backgroundColor: '#333',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
-    paddingHorizontal: 8,
   },
   backIcon: {
     fontSize: 24,
     color: 'white',
     fontWeight: 'bold',
-    marginRight: 4,
   },
   title: {
     fontSize: 24,
@@ -230,25 +236,17 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   refreshButton: {
-    width: 80,
+    width: 44,
     height: 44,
     borderRadius: 22,
     backgroundColor: '#FF4444',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
-    paddingHorizontal: 8,
   },
   refreshIcon: {
     fontSize: 20,
     color: 'white',
     fontWeight: 'bold',
-    marginRight: 4,
-  },
-  buttonLabel: {
-    fontSize: 12,
-    color: 'white',
-    fontWeight: '600',
   },
   flatListContent: {
     paddingHorizontal: 20,
@@ -293,6 +291,29 @@ const styles = StyleSheet.create({
     color: '#888',
     textAlign: 'center',
     flexWrap: 'wrap',
+  },
+  scoreExplanation: {
+    backgroundColor: '#333',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  scoreExplanationTitle: {
+    fontSize: 15,
+    color: '#FF4444',
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginBottom: 8,
+  },
+  scoreExplanationText: {
+    fontSize: 13,
+    color: '#ccc',
+    marginBottom: 4,
+    lineHeight: 18,
+  },
+  scoreHighlight: {
+    color: '#FFD700',
+    fontWeight: 'bold',
   },
   achievementsContainer: {
     gap: 12,

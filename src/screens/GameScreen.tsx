@@ -21,6 +21,7 @@ export const GameScreen: React.FC = () => {
     isGameWon, 
     gameMode, 
     longRoadTripEnabled,
+    goreLevel,
     startNewGame
   } = useGameStore();
 
@@ -54,14 +55,6 @@ export const GameScreen: React.FC = () => {
 
   // Removed unused handleCallBingo function - win detection is automatic
 
-  const handleSnapRoadkill = () => {
-    try {
-      router.push('/camera');
-    } catch (error) {
-      console.error('Error navigating to camera screen:', error);
-      Sentry.captureException(error);
-    }
-  };
 
 
   const getSpottedCount = () => {
@@ -74,6 +67,19 @@ export const GameScreen: React.FC = () => {
 
   const getModeName = () => {
     return longRoadTripEnabled ? 'Long Trip' : 'Short Trip';
+  };
+
+  const getGoreLevel = () => {
+    return goreLevel.charAt(0).toUpperCase() + goreLevel.slice(1);
+  };
+
+  const handleModePress = () => {
+    try {
+      router.push('/settings');
+    } catch (error) {
+      console.error('Error navigating to settings screen:', error);
+      Sentry.captureException(error);
+    }
   };
 
   return (
@@ -92,14 +98,24 @@ export const GameScreen: React.FC = () => {
 
         <View style={styles.gameInfo}>
           <View style={styles.infoRow}>
-            <View style={styles.infoItem}>
+            <TouchableOpacity style={styles.infoItem} onPress={handleModePress} activeOpacity={0.7}>
               <Text style={styles.infoLabel}>Mode</Text>
-              <Text style={styles.infoValue}>{getModeName()}</Text>
-            </View>
-            <View style={styles.infoItem}>
+              <Text style={[styles.infoValue, styles.clickableInfoValue]}>
+                {getModeName()}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.infoItem} onPress={handleModePress} activeOpacity={0.7}>
               <Text style={styles.infoLabel}>Win Condition</Text>
-              <Text style={styles.infoValue}>{getWinRequirement()}</Text>
-            </View>
+              <Text style={[styles.infoValue, styles.clickableInfoValue]}>
+                {getWinRequirement()}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.infoItem} onPress={handleModePress} activeOpacity={0.7}>
+              <Text style={styles.infoLabel}>Gore Mode</Text>
+              <Text style={[styles.infoValue, styles.clickableInfoValue]}>
+                {getGoreLevel()}
+              </Text>
+            </TouchableOpacity>
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>Spotted</Text>
               <Text style={styles.infoValue}>{getSpottedCount()}/16</Text>
@@ -113,19 +129,11 @@ export const GameScreen: React.FC = () => {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
-          style={[styles.button, styles.snapButton]}
-          onPress={handleSnapRoadkill}
-        >
-          <Text style={styles.buttonText}>📸 Snap the Splat!</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
           style={[styles.button, styles.newGameButton]}
           onPress={startNewGame}
         >
           <Text style={styles.buttonText}>New Game</Text>
         </TouchableOpacity>
-
       </View>
       </ScrollView>
       
@@ -199,6 +207,10 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
+  clickableInfoValue: {
+    color: '#FFD700',
+    textDecorationLine: 'underline',
+  },
   gridContainer: {
     marginBottom: 20,
   },
@@ -219,9 +231,6 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     elevation: 3,
   },
   bingoButton: {
-    backgroundColor: '#FF4444',
-  },
-  snapButton: {
     backgroundColor: '#FF4444',
   },
   newGameButton: {
