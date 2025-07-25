@@ -227,19 +227,6 @@ export const HallOfShameScreen: React.FC = () => {
       case 'roadkill-gallery':
         return (
           <Card style={styles.galleryContainer} mode="contained">
-            <View style={styles.galleryHeader}>
-              <View style={styles.galleryTitleContainer}>
-                <IconSymbol 
-                  name="camera.fill" 
-                  size={24} 
-                  color="#FF4444"
-                />
-                <Text variant="headlineSmall" style={styles.galleryTitle}>
-                  Roadkill Gallery
-                </Text>
-              </View>
-            </View>
-            <Divider />
             <PhotoGallery />
           </Card>
         );
@@ -423,21 +410,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 20,
     overflow: 'hidden',
-  },
-  galleryHeader: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#444',
-  },
-  galleryTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-  },
-  galleryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
   },
 });
