@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, usePathname } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useGameStore } from '../stores/gameStore';
+import { IconSymbol } from './ui/IconSymbol';
 
 interface NavigationButton {
   id: string;
@@ -14,11 +15,11 @@ interface NavigationButton {
 }
 
 const navigationButtons: NavigationButton[] = [
-  { id: 'dashboard', icon: '🏠', label: 'Dashboard', route: '/' },
-  { id: 'new-game', icon: '🎮', label: 'New Game', route: '/game', isNewGame: true },
-  { id: 'camera', icon: '📷', label: 'Camera', route: '/camera' },
-  { id: 'settings', icon: '⚙️', label: 'Settings', route: '/settings' },
-  { id: 'hall-of-shame', icon: '🏆', label: 'Hall of Shame', route: '/hall-of-shame' },
+  { id: 'dashboard', icon: 'house.fill', label: 'Dashboard', route: '/' },
+  { id: 'new-game', icon: 'gamecontroller.fill', label: 'New Game', route: '/game', isNewGame: true },
+  { id: 'camera', icon: 'camera.fill', label: 'Camera', route: '/camera' },
+  { id: 'settings', icon: 'gearshape.fill', label: 'Settings', route: '/settings' },
+  { id: 'hall-of-shame', icon: 'trophy.fill', label: 'Hall of Shame', route: '/hall-of-shame' },
 ];
 
 export const BottomNavigation: React.FC = () => {
@@ -64,9 +65,12 @@ export const BottomNavigation: React.FC = () => {
               onPress={() => handlePress(button)}
               activeOpacity={0.7}
             >
-              <Text style={[styles.icon, active && styles.activeIcon]}>
-                {button.icon}
-              </Text>
+              <IconSymbol
+                name={button.icon as any}
+                size={20}
+                color={active ? '#FF4444' : '#888'}
+                style={{ marginBottom: 2 }}
+              />
               <Text style={[styles.label, active && styles.activeLabel]}>
                 {button.label}
               </Text>
@@ -111,14 +115,6 @@ const styles = StyleSheet.create({
   },
   activeButton: {
     backgroundColor: 'rgba(255, 68, 68, 0.1)',
-  },
-  icon: {
-    fontSize: 20,
-    marginBottom: 2,
-    color: '#888',
-  },
-  activeIcon: {
-    color: '#FF4444',
   },
   label: {
     fontSize: 10,
