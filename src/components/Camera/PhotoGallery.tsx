@@ -209,6 +209,36 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
   );
 };
 
+// Helper function to check daily photo limit
+export const checkDailyPhotoLimit = async (maxPhotosPerDay: number = 1): Promise<{ canUpload: boolean; remainingPhotos: number; todayCount: number }> => {
+  try {
+    const existingPhotos = await AsyncStorage.getItem('roadkill_photos');
+    const photos: PhotoRecord[] = existingPhotos ? JSON.parse(existingPhotos) : [];
+    
+    // Get start of today (midnight)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTimestamp = today.getTime();
+    
+    // Count photos uploaded today
+    const todayPhotos = photos.filter(photo => photo.timestamp >= todayTimestamp);
+    const todayCount = todayPhotos.length;
+    
+    const canUpload = todayCount < maxPhotosPerDay;
+    const remainingPhotos = Math.max(0, maxPhotosPerDay - todayCount);
+    
+    return {
+      canUpload,
+      remainingPhotos,
+      todayCount
+    };
+  } catch (error) {
+    console.error('❌ Error checking daily photo limit:', error);
+    // If there's an error, allow upload (fail open)
+    return { canUpload: true, remainingPhotos: 1, todayCount: 0 };
+  }
+};
+
 // Helper function to save photo to gallery
 export const savePhotoToGallery = async (photoData: Omit<PhotoRecord, 'id' | 'timestamp'>) => {
   try {

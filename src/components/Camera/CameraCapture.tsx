@@ -5,7 +5,7 @@ import { StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { uploadImageToCloudinary } from '../../services/cloudinary';
 import { postToInstagram, openInstagramAccount, generateGameDescription } from '../../services/instagramAPI';
-import { savePhotoToGallery } from './PhotoGallery';
+import { savePhotoToGallery, checkDailyPhotoLimit } from './PhotoGallery';
 import { useConsentDialog } from '../../hooks/useConsentDialog';
 import { Strings } from '../../constants/Strings';
 
@@ -28,6 +28,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [hasShownConsent, setHasShownConsent] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [dailyLimitInfo, setDailyLimitInfo] = useState<{ remainingPhotos: number; todayCount: number }>({ remainingPhotos: 1, todayCount: 0 });
   const cameraRef = useRef<CameraView>(null);
   const { showConsentDialog } = useConsentDialog();
 
@@ -56,6 +57,17 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
     }
   }, [permission?.granted, hasShownConsent, onClose, showConsentDialog]);
 
+  // Load daily limit info when camera shows
+  useEffect(() => {
+    if (showCamera) {
+      const loadDailyLimitInfo = async () => {
+        const { remainingPhotos, todayCount } = await checkDailyPhotoLimit(1);
+        setDailyLimitInfo({ remainingPhotos, todayCount });
+      };
+      loadDailyLimitInfo();
+    }
+  }, [showCamera]);
+
   if (!permission) {
     return <View />;
   }
@@ -75,6 +87,19 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
 
   const takePicture = async () => {
     try {
+      // Check daily photo limit before taking picture
+      const { canUpload, remainingPhotos, todayCount } = await checkDailyPhotoLimit(1);
+      
+      if (!canUpload) {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        Alert.alert(
+          '📸 Daily Limit Reached',
+          `You've already uploaded ${todayCount} photo${todayCount === 1 ? '' : 's'} today!\n\nDaily limit: 1 photo per day\nTry again tomorrow for more roadkill hunting! 🦫`,
+          [{ text: 'Got It' }]
+        );
+        return;
+      }
+
       if (cameraRef.current) {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         
@@ -170,6 +195,18 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
         style={styles.camera} 
         facing={facing}
       >
+        {/* Daily Limit Indicator */}
+        <View style={styles.dailyLimitContainer}>
+          <Text style={styles.dailyLimitText}>
+            📸 {dailyLimitInfo.remainingPhotos} photo{dailyLimitInfo.remainingPhotos === 1 ? '' : 's'} remaining today
+          </Text>
+          {dailyLimitInfo.todayCount > 0 && (
+            <Text style={styles.uploadedTodayText}>
+              {dailyLimitInfo.todayCount} uploaded today
+            </Text>
+          )}
+        </View>
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={onClose}
@@ -254,6 +291,28 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
+  },
+  dailyLimitContainer: {
+    position: 'absolute',
+    top: 60,
+    left: 20,
+    right: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+  },
+  dailyLimitText: {
+    color: '#FFD700',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  uploadedTodayText: {
+    color: '#ccc',
+    fontSize: 12,
+    marginTop: 4,
     textAlign: 'center',
   },
 });

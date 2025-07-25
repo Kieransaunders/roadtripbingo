@@ -72,56 +72,6 @@
 ## 🚧 In Progress / Next Priority
 
 
-### 🔊 Audio & Enhanced Feedback (HIGH PRIORITY)
-- [ ] Add expo-av for sound effects
-- [ ] Implement victory sound (horn, cheering, splatter sounds)
-- [ ] Add tile tap sound effects
-- [ ] Connect settings toggles to actual sound functionality
-- [ ] Background music for different screens
-
-### 🔗 Real Data Integration (MEDIUM PRIORITY)
-- [ ] Connect Hall of Shame to actual game statistics from Zustand store
-- [ ] Make achievement system functional based on real gameplay
-- [ ] Persist settings and game data with AsyncStorage
-- [ ] Implement actual game statistics tracking
-- [ ] Connect gore level setting to tile filtering
-
-### ☁️ Backend & Storage (MEDIUM PRIORITY)
-- [ ] Set up Firebase/Supabase project for leaderboards
-- [ ] Configure image upload to cloud storage
-- [ ] Create leaderboard database schema
-- [ ] Implement photo sharing and validation
-- [ ] Add user profiles and authentication
-
-
-### ☁️ Backend & Storage (Medium Priority)
-- [ ] Set up Firebase/Supabase project
-- [ ] Configure image upload to cloud storage
-- [ ] Create leaderboard database schema
-- [ ] Implement AsyncStorage for local game state
-
-### 📊 Game Features (Medium Priority)
-- [ ] Create Card Gallery for game history
-- [ ] Build Leaderboard screen with photo feed
-- [ ] Add game statistics and progress tracking
-- [ ] Implement share functionality for victories
-
-### ⚙️ Settings & Preferences (Low Priority)
-- [ ] Create Settings screen with toggles
-- [ ] Add Dark Humour Mode filter
-- [ ] Implement Game Mode selection (Standard/Savage)
-- [ ] Add sound toggle and audio management
-
-### 🔊 Audio & Feedback (Low Priority)
-- [ ] Add sound effects (tile tap, victory)
-- [ ] Implement haptic feedback for interactions
-- [ ] Create victory animations and confetti
-
-### 🧪 Testing & Polish (Low Priority)
-- [ ] Test on iOS and Android devices
-- [ ] Performance optimization and memory management
-- [ ] Add error handling and edge cases
-- [ ] Create app icons and splash screens
 
 ### 🚀 Deployment & Distribution (Low Priority)
 - [ ] Set up EAS Build for production
@@ -131,6 +81,7 @@
 ---
 
 ## 🎯 Current Status
+
 **The core game experience is now complete with epic victory celebrations!** 
 - Core game logic: ✅ Complete
 - Dashboard navigation: ✅ Complete
