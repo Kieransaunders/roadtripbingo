@@ -148,7 +148,7 @@ export const HallOfShameScreen: React.FC = () => {
     { id: 'scoring', type: 'stat-card', title: 'Scoring' },
     { id: 'streaks', type: 'stat-card', title: 'Streaks' },
     { id: 'achievements', type: 'stat-card', title: 'Achievements' },
-    { id: 'photo-gallery', type: 'photo-gallery', title: 'Photo Gallery' },
+    { id: 'roadkill-gallery', type: 'roadkill-gallery', title: 'Roadkill Gallery' },
   ];
 
   const renderItem = ({ item }: { item: any }) => {
@@ -215,12 +215,20 @@ export const HallOfShameScreen: React.FC = () => {
           );
         }
         break;
-      case 'photo-gallery':
+      case 'roadkill-gallery':
         return (
           <Card style={styles.galleryContainer} mode="contained">
             <Card.Title 
-              title="📸 Photo Gallery" 
+              title="Roadkill Gallery"
               titleStyle={styles.galleryTitle}
+              left={(props) => (
+                <IconSymbol 
+                  name="camera.fill" 
+                  size={24} 
+                  color="#FF4444"
+                  style={{ marginLeft: 8 }}
+                />
+              )}
             />
             <Divider />
             <PhotoGallery />
