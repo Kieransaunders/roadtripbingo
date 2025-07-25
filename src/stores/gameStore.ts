@@ -79,9 +79,14 @@ const generateBingoGrid = (goreLevel: GoreLevel): BingoCell[] => {
   const grid: BingoCell[] = [];
   const randomTiles = getRandomTiles(15, true); // 15 random tiles + 1 free range = 16 total
   
+  console.log('🎲 Generating grid with', randomTiles.length, 'random tiles');
+  console.log('🎯 Random tiles:', randomTiles.map(t => t.name).join(', '));
+  
   // Middle positions in 4x4 grid: 5, 6, 9, 10
   const middlePositions = [5, 6, 9, 10];
   const freeRangePosition = middlePositions[Math.floor(Math.random() * middlePositions.length)];
+  
+  console.log('🎯 Free range position:', freeRangePosition);
   
   for (let i = 0; i < 16; i++) {
     if (i === freeRangePosition) {
@@ -93,14 +98,19 @@ const generateBingoGrid = (goreLevel: GoreLevel): BingoCell[] => {
       });
     } else {
       const tileIndex = i > freeRangePosition ? i - 1 : i;
-      grid.push({
-        tile: randomTiles[tileIndex],
-        isSpotted: false,
-        position: i
-      });
+      if (randomTiles[tileIndex]) {
+        grid.push({
+          tile: randomTiles[tileIndex],
+          isSpotted: false,
+          position: i
+        });
+      } else {
+        console.error('❌ Missing tile at index', tileIndex, 'for position', i);
+      }
     }
   }
   
+  console.log('🎯 Generated grid with', grid.length, 'tiles');
   return grid;
 };
 

@@ -75,13 +75,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
   const [showScreenshot, setShowScreenshot] = useState(false);
   const [animationsComplete, setAnimationsComplete] = useState(false);
-  let insets;
-  try {
-    insets = useSafeAreaInsets();
-  } catch (error) {
-    // Fallback if SafeAreaProvider is not available
-    insets = { top: Platform.OS === 'ios' ? 44 : 24, bottom: Platform.OS === 'ios' ? 34 : 0 };
-  }
+  const insets = useSafeAreaInsets();
 
   // Animation values
   const titleScale = useSharedValue(0);

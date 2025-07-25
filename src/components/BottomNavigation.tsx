@@ -23,13 +23,7 @@ const navigationButtons: NavigationButton[] = [
 ];
 
 export const BottomNavigation: React.FC = () => {
-  let insets;
-  try {
-    insets = useSafeAreaInsets();
-  } catch (error) {
-    // Fallback if SafeAreaProvider is not available
-    insets = { bottom: Platform.OS === 'ios' ? 20 : 10 };
-  }
+  const insets = useSafeAreaInsets();
   const pathname = usePathname();
   const { startNewGame } = useGameStore();
 

@@ -1,29 +1,22 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, StatusBar, Platform } from 'react-native';
+import { View, ScrollView, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet as UnistylesStyleSheet } from 'react-native-unistyles';
-import { Surface, Chip, Text } from 'react-native-paper';
+import { Surface, Chip } from 'react-native-paper';
 import { BingoGrid } from '../components/BingoGrid';
 import { useGameStore } from '../stores/gameStore';
 import { router } from 'expo-router';
 import * as Sentry from '@sentry/react-native';
-import { Button, Card, Typography, Heading1, Heading3, Body } from '../components/design-system';
+import { Button, Heading1, Heading3, Body } from '../components/design-system';
 import { IconSymbol } from '../components/ui/IconSymbol';
-// import { BottomNavigation } from '../components/BottomNavigation';
+import { BottomNavigation } from '../components/BottomNavigation';
 
 export const GameScreen: React.FC = () => {
-  let insets;
-  try {
-    insets = useSafeAreaInsets();
-  } catch (error) {
-    // Fallback if SafeAreaProvider is not available
-    insets = { top: Platform.OS === 'ios' ? 44 : 24, bottom: Platform.OS === 'ios' ? 34 : 0 };
-  }
+  const insets = useSafeAreaInsets();
   const { 
     currentGrid, 
     isGameWon, 
     gameMode, 
-    longRoadTripEnabled,
     goreLevel,
     startNewGame
   } = useGameStore();
@@ -68,10 +61,6 @@ export const GameScreen: React.FC = () => {
     return gameMode === 'standard' ? '3 in a row' : '4 in a row';
   };
 
-  const getModeName = () => {
-    return longRoadTripEnabled ? 'Long Trip' : 'Short Trip';
-  };
-
   const getGoreLevel = () => {
     return goreLevel.charAt(0).toUpperCase() + goreLevel.slice(1);
   };
@@ -99,18 +88,8 @@ export const GameScreen: React.FC = () => {
           </Body>
         </Surface>
 
-        <Surface style={styles.gameInfo} elevation={2}>
+        <View style={styles.gameInfo}>
             <View style={styles.infoRow}>
-              <View style={styles.infoItem}>
-                <Chip 
-                  mode="outlined" 
-                  onPress={handleModePress}
-                  style={styles.clickableChip}
-                  textStyle={styles.chipText}
-                >
-                  {getModeName()}
-                </Chip>
-              </View>
               <View style={styles.infoItem}>
                 <Chip 
                   mode="outlined" 
@@ -141,7 +120,7 @@ export const GameScreen: React.FC = () => {
                 </Chip>
               </View>
             </View>
-        </Surface>
+        </View>
 
       <View style={styles.gridContainer}>
         <BingoGrid />
@@ -160,7 +139,7 @@ export const GameScreen: React.FC = () => {
       </View>
       </ScrollView>
       
-      {/* <BottomNavigation /> */}
+      <BottomNavigation />
     </View>
   );
 };
@@ -174,16 +153,16 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     flex: 1,
   },
   content: {
-    paddingTop: 32,
+    paddingTop: 16,
     paddingBottom: 100, // Add extra padding for bottom navigation
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
-    marginTop: 16,
+    marginBottom: 20,
+    marginTop: 8,
     paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 24,
+    paddingTop: 12,
+    paddingBottom: 16,
     zIndex: 10,
   },
   title: {
@@ -214,7 +193,7 @@ const styles = UnistylesStyleSheet.create((theme) => ({
   },
   gameInfo: {
     marginHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 12,
     marginTop: 0,
   },
   infoRow: {
@@ -250,7 +229,7 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     fontWeight: 'bold',
   },
   gridContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   buttonContainer: {
     paddingHorizontal: 20,

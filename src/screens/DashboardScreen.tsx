@@ -6,7 +6,6 @@ import {
   IconButton, 
   Surface, 
   List, 
-  Chip, 
   useTheme, 
   Text, 
   Card
@@ -108,15 +107,9 @@ const LinkItem: React.FC<LinkItemProps> = ({ icon, text, url }) => {
 export const DashboardScreen: React.FC = () => {
   const theme = useTheme();
   
-  let insets;
-  try {
-    insets = useSafeAreaInsets();
-  } catch (error) {
-    // Fallback if SafeAreaProvider is not available
-    insets = { top: Platform.OS === 'ios' ? 44 : 24 };
-  }
+  const insets = useSafeAreaInsets();
 
-  const { showConsentDialog } = useConsentDialog();
+  // const { showConsentDialog } = useConsentDialog();
 
   const handleMenuPress = (screen: string) => {
     switch (screen) {
@@ -154,7 +147,7 @@ export const DashboardScreen: React.FC = () => {
             Roadkill Bingo
           </Text>
           <Text variant="bodyLarge" style={[styles.tagline, { color: theme.colors.onSurfaceVariant }]}>
-            "See it. Spot it. Shout it. Win shotgun or throw up trying."
+            &quot;See it. Spot it. Shout it. Win shotgun or throw up trying.&quot;
           </Text>
           
           {/* Disclaimer - Top of Fold */}
@@ -220,7 +213,7 @@ export const DashboardScreen: React.FC = () => {
           />
           <Card.Content>
             <Text variant="bodyMedium" style={[styles.conservationText, { color: theme.colors.onSurfaceVariant }]}>
-              Dead Ahead is a cheeky road-trip bingo game — but real roads aren't so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
+              Dead Ahead is a cheeky road-trip bingo game — but real roads aren&apos;t so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
             </Text>
             
             <Text variant="titleMedium" style={[styles.conservationHeading, { color: theme.colors.secondary }]}>

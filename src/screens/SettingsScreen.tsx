@@ -315,12 +315,12 @@ export const SettingsScreen: React.FC = () => {
             <Card style={styles.conservationSection} mode="outlined">
               <Card.Content>
                 <Text variant="bodyMedium" style={styles.conservationText}>
-                  Dead Ahead is a cheeky road-trip bingo game — but real roads aren't so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
+                  Dead Ahead is a cheeky road-trip bingo game — but real roads aren&apos;t so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
                 </Text>
                 
                 <Text variant="titleMedium" style={styles.conservationHeading}>Want to help?</Text>
                 <Text variant="bodyMedium" style={styles.conservationText}>
-                  Log your sightings with the Mammals on Roads app by the People's Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
+                  Log your sightings with the Mammals on Roads app by the People&apos;s Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
                 </Text>
               </Card.Content>
             </Card>

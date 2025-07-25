@@ -6,7 +6,7 @@ import * as MediaLibrary from 'expo-media-library';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { StyleSheet } from 'react-native-unistyles';
-import { Card, Text, IconButton, Button, Surface, FAB, useTheme } from 'react-native-paper';
+import { Card, Text, IconButton, Button, Surface, FAB } from 'react-native-paper';
 import { useGameStore } from '../src/stores/gameStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { openInstagramAccount } from '../src/services/instagramAPI';
@@ -37,6 +37,12 @@ const stylesheet = StyleSheet.create(theme => ({
   },
   permissionContent: {
     alignItems: 'center',
+  },
+  permissionTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
   },
   permissionText: {
     textAlign: 'center',
@@ -73,10 +79,19 @@ const stylesheet = StyleSheet.create(theme => ({
   headerTitle: {
     color: 'white',
     textAlign: 'center',
+  },
+  headerTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     flex: 1,
   },
   flipButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  headerSpacer: {
+    width: 56, // Same width as IconButton to balance the layout
   },
   instructions: {
     position: 'absolute',
@@ -189,13 +204,7 @@ const stylesheet = StyleSheet.create(theme => ({
 
 export default function CameraScreen() {
   const styles = stylesheet;
-  let insets;
-  try {
-    insets = useSafeAreaInsets();
-  } catch (error) {
-    // Fallback if SafeAreaProvider is not available
-    insets = { top: Platform.OS === 'ios' ? 44 : 24, bottom: Platform.OS === 'ios' ? 34 : 0 };
-  }
+  const insets = useSafeAreaInsets();
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
@@ -361,7 +370,7 @@ export default function CameraScreen() {
         
         // Fallback: Photo uploaded successfully but Instagram posting failed
         Alert.alert(
-          'Photo Uploaded! 📸',
+          'Photo Uploaded!',
           `Your photo was uploaded successfully!\n\nURL: ${cloudinaryUrl}\n\nInstagram posting failed (webhook needs activation), but you can manually share the image.`,
           [
             {
@@ -414,9 +423,12 @@ export default function CameraScreen() {
       <Surface style={[styles.container, { paddingTop: insets.top + 40 }]}>
         <Card style={styles.permissionCard} mode="contained">
           <Card.Content style={styles.permissionContent}>
-            <Text variant="headlineMedium" style={styles.permissionText}>
-              📸 Snap the Splat!
-            </Text>
+            <View style={styles.permissionTitleContainer}>
+              <IconSymbol name="camera.fill" size={24} color="#FF4444" />
+              <Text variant="headlineMedium" style={styles.permissionText}>
+                Snap the Splat!
+              </Text>
+            </View>
             <Text variant="bodyMedium" style={styles.permissionSubtext}>
               We need camera access to capture your roadkill evidence for the leaderboard!
             </Text>
@@ -481,14 +493,7 @@ export default function CameraScreen() {
             >
               {/* Header */}
               <Surface style={[styles.header, { paddingTop: insets.top + 16 }]} elevation={3}>
-                <IconButton
-                  icon="arrow-left"
-                  size={24}
-                  onPress={() => router.back()}
-                  style={styles.backButtonSmall}
-                  iconColor="white"
-                />
-                <Text variant="titleLarge" style={styles.headerTitle}>Snap the Splat! 📸</Text>
+                <View style={styles.headerSpacer} />
                 <IconButton
                   icon="camera-flip"
                   size={24}

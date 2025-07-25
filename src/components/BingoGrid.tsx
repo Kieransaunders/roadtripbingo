@@ -13,12 +13,12 @@ export const BingoGrid: React.FC<BingoGridProps> = ({ onTilePress }) => {
   const theme = useTheme();
   
   const screenWidth = Dimensions.get('window').width;
-  const containerPadding = 16; // 4 * 4px spacing unit
-  const gridPadding = 8; // 2 * 4px spacing unit
-  const tileMargin = 4; // xs spacing
+  const containerPadding = 2; // Minimal container padding
+  const gridPadding = 1; // Minimal grid padding
+  const tileGap = 1; // Small gap between tiles
   
-  // Account for all padding layers
-  const totalSpacing = (containerPadding * 2) + (gridPadding * 2) + (tileMargin * 8);
+  // Account for all padding layers - 4x4 grid with minimal spacing
+  const totalSpacing = (containerPadding * 2) + (gridPadding * 2) + (tileGap * 3 * 2); // 3 gaps horizontally and vertically
   const tileSize = (screenWidth - totalSpacing) / 4;
   
   const handleTilePress = (position: number) => {
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 5,
-    gap: 4,
+    gap: 1,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     maxWidth: '100%',
     opacity: 0.5,
-    gap: 4,
+    gap: 2,
   },
   emptyTile: {
     borderRadius: 8,
