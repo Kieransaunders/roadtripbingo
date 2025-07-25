@@ -43,6 +43,10 @@ const MAPPING = {
   'arrow.clockwise': 'refresh',
   'checkmark.circle.fill': 'check-circle',
   'plus.circle.fill': 'add-circle',
+  
+  // Time & Progress Icons
+  'clock.fill': 'schedule',
+  'bolt.fill': 'flash-on',
 } as unknown as IconMapping;
 
 /**

@@ -169,15 +169,24 @@ export const HallOfShameScreen: React.FC = () => {
             <StatCard title="Scoring">
               <Card style={styles.scoreExplanation} mode="outlined">
                 <Card.Content>
-                  <Text variant="titleMedium" style={styles.scoreExplanationTitle}>
-                    ⏱️ It's a Race Against Time!
-                  </Text>
-                  <Text variant="bodyMedium" style={styles.scoreExplanationText}>
-                    🏆 <Text style={styles.scoreHighlight}>1000 points</Text> base score minus 1 point per second
-                  </Text>
-                  <Text variant="bodyMedium" style={styles.scoreExplanationText}>
-                    ⚡ Minimum <Text style={styles.scoreHighlight}>100 points</Text> for any win (15+ min) • <Text style={styles.scoreHighlight}>0 points</Text> for abandoned games
-                  </Text>
+                  <View style={styles.scoreExplanationHeader}>
+                    <IconSymbol name="clock.fill" size={18} color="#FF4444" />
+                    <Text variant="titleMedium" style={styles.scoreExplanationTitle}>
+                      It's a Race Against Time!
+                    </Text>
+                  </View>
+                  <View style={styles.scoreExplanationItem}>
+                    <IconSymbol name="trophy.fill" size={16} color="#FFD700" />
+                    <Text variant="bodyMedium" style={styles.scoreExplanationText}>
+                      <Text style={styles.scoreHighlight}>1000 points</Text> base score minus 1 point per second
+                    </Text>
+                  </View>
+                  <View style={styles.scoreExplanationItem}>
+                    <IconSymbol name="bolt.fill" size={16} color="#FF9800" />
+                    <Text variant="bodyMedium" style={styles.scoreExplanationText}>
+                      Minimum <Text style={styles.scoreHighlight}>100 points</Text> for any win (15+ min) • <Text style={styles.scoreHighlight}>0 points</Text> for abandoned games
+                    </Text>
+                  </View>
                 </Card.Content>
               </Card>
               <View style={styles.statRow}>
@@ -218,18 +227,18 @@ export const HallOfShameScreen: React.FC = () => {
       case 'roadkill-gallery':
         return (
           <Card style={styles.galleryContainer} mode="contained">
-            <Card.Title 
-              title="Roadkill Gallery"
-              titleStyle={styles.galleryTitle}
-              left={(props) => (
+            <View style={styles.galleryHeader}>
+              <View style={styles.galleryTitleContainer}>
                 <IconSymbol 
                   name="camera.fill" 
                   size={24} 
                   color="#FF4444"
-                  style={{ marginLeft: 8 }}
                 />
-              )}
-            />
+                <Text variant="headlineSmall" style={styles.galleryTitle}>
+                  Roadkill Gallery
+                </Text>
+              </View>
+            </View>
             <Divider />
             <PhotoGallery />
           </Card>
@@ -339,18 +348,29 @@ const styles = StyleSheet.create({
   scoreExplanation: {
     marginBottom: 16,
   },
+  scoreExplanationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
   scoreExplanationTitle: {
     fontSize: 15,
     color: '#FF4444',
     fontWeight: 'bold',
-    textAlign: 'left',
-    marginBottom: 8,
+    flex: 1,
+  },
+  scoreExplanationItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
   },
   scoreExplanationText: {
     fontSize: 13,
     color: '#ccc',
-    marginBottom: 4,
     lineHeight: 18,
+    flex: 1,
   },
   scoreHighlight: {
     color: '#FFD700',
@@ -409,10 +429,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#444',
   },
+  galleryTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
   galleryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    textAlign: 'center',
   },
 });
