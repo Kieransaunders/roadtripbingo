@@ -45,7 +45,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
 
   const handlePhotoPress = (photo: PhotoRecord) => {
     Alert.alert(
-      '📸 Photo Options',
+      'Photo Options',
       `Taken: ${new Date(photo.timestamp).toLocaleDateString()}\n${photo.tileName ? `Tile: ${photo.tileName}` : ''}`,
       [
         {
@@ -132,7 +132,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
         )}
         {item.instagramPostId && (
           <View style={styles.instagramBadge}>
-            <Text style={styles.instagramText}>📱</Text>
+            <Text style={styles.instagramText}>IG</Text>
           </View>
         )}
       </View>
@@ -150,7 +150,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>📸 Roadkill Gallery</Text>
+        <Text style={styles.title}>Roadkill Gallery</Text>
         <Text style={styles.subtitle}>
           {photos.length} photo{photos.length !== 1 ? 's' : ''} captured
         </Text>
@@ -159,7 +159,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
       {photos.length === 0 ? (
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>
-            No photos yet! 📸
+            No photos yet!
           </Text>
           <Text style={styles.emptySubtext}>
             Start spotting roadkill and taking photos to build your gallery
@@ -182,7 +182,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
           style={styles.instagramButton}
           activeOpacity={0.7}
         >
-          <Text style={styles.buttonText}>📱 View @deadaheadroadkill</Text>
+          <Text style={styles.buttonText}>View @deadaheadroadkill</Text>
         </TouchableOpacity>
         
         {photos.length > 0 && (
@@ -191,7 +191,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
             style={styles.clearButton}
             activeOpacity={0.7}
           >
-            <Text style={styles.buttonText}>🗑️ Clear All</Text>
+            <Text style={styles.buttonText}>Clear All</Text>
           </TouchableOpacity>
         )}
         
@@ -201,7 +201,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
             style={styles.closeButton}
             activeOpacity={0.7}
           >
-            <Text style={styles.buttonText}>✕ Close</Text>
+            <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity>
         )}
       </View>
