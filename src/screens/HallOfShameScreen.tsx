@@ -1,11 +1,22 @@
 import React from 'react';
-import { View, TouchableOpacity, FlatList, StatusBar, StyleSheet } from 'react-native';
+import { View, FlatList, StatusBar, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedText, Box } from '@joe111/neo-ui';
+import { Card, Text, IconButton, Chip, Button, Surface, Divider, useTheme } from 'react-native-paper';
+import { IconSymbol } from '../components/ui/IconSymbol';
 import { PhotoGallery } from '../components/Camera/PhotoGallery';
 import { useGameStore } from '../stores/gameStore';
 import { BottomNavigation } from '../components/BottomNavigation';
+
+// Map emoji achievement icons to modern icons
+const achievementIconMap: Record<string, string> = {
+  '🏆': 'trophy.fill',
+  '📷': 'camera.fill',
+  '💧': 'heart.fill', // Using heart for "blood" metaphor
+  '🎮': 'gamecontroller.fill',
+  '⚡': 'heart.fill', // Using heart for energy/speed
+  '💎': 'checkmark.circle.fill', // Using checkmark for perfection
+};
 
 interface StatCardProps {
   title: string;
@@ -14,10 +25,12 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, children }) => {
   return (
-    <Box style={styles.statCard}>
-      <ThemedText style={styles.statCardTitle}>{title}</ThemedText>
-      {children}
-    </Box>
+    <Card style={styles.statCard} mode="contained">
+      <Card.Content>
+        <Text variant="headlineSmall" style={styles.statCardTitle}>{title}</Text>
+        {children}
+      </Card.Content>
+    </Card>
   );
 };
 
@@ -29,16 +42,16 @@ interface StatItemProps {
 
 const StatItem: React.FC<StatItemProps> = ({ value, label, color = 'white' }) => {
   return (
-    <Box style={styles.statItem}>
-      <ThemedText 
+    <Surface style={styles.statItem} elevation={1}>
+      <Text 
+        variant="displaySmall"
         style={[styles.statValue, { color }]}
         numberOfLines={1}
-        adjustsFontSizeToFit
       >
         {value}
-      </ThemedText>
-      <ThemedText style={styles.statLabel}>{label}</ThemedText>
-    </Box>
+      </Text>
+      <Text variant="bodyMedium" style={styles.statLabel}>{label}</Text>
+    </Surface>
   );
 };
 
@@ -50,36 +63,72 @@ interface AchievementProps {
 }
 
 const Achievement: React.FC<AchievementProps> = ({ title, description, icon, completed }) => {
+  const theme = useTheme();
+  
   return (
-    <Box style={[styles.achievementCard, completed ? styles.achievementCompleted : styles.achievementLocked]}>
-      <Box style={styles.achievementContent}>
-        <Box style={[styles.achievementIcon, completed ? styles.achievementIconCompleted : styles.achievementIconLocked]}>
-          <ThemedText style={styles.achievementIconText}>{icon}</ThemedText>
-        </Box>
-        <Box style={styles.achievementText}>
-          <ThemedText style={[styles.achievementTitle, { color: completed ? 'white' : '#666' }]}>{title}</ThemedText>
-          <ThemedText style={[styles.achievementDescription, { color: completed ? '#ccc' : '#555' }]}>{description}</ThemedText>
-        </Box>
+    <Card 
+      style={[styles.achievementCard, { 
+        backgroundColor: completed ? theme.colors.primaryContainer : theme.colors.surfaceDisabled 
+      }]}
+      mode="contained"
+    >
+      <Card.Content style={styles.achievementContent}>
+        <Surface 
+          style={[styles.achievementIcon, {
+            backgroundColor: completed ? theme.colors.primary : theme.colors.surfaceVariant
+          }]}
+          elevation={2}
+        >
+          <IconSymbol 
+            name={(achievementIconMap[icon] || icon) as any} 
+            size={24} 
+            color={completed ? theme.colors.onPrimary : theme.colors.onSurfaceVariant}
+          />
+        </Surface>
+        <View style={styles.achievementText}>
+          <Text 
+            variant="titleMedium" 
+            style={{ color: completed ? theme.colors.onPrimaryContainer : theme.colors.onSurfaceDisabled }}
+          >
+            {title}
+          </Text>
+          <Text 
+            variant="bodyMedium" 
+            style={{ color: completed ? theme.colors.onPrimaryContainer : theme.colors.onSurfaceDisabled }}
+          >
+            {description}
+          </Text>
+        </View>
         {completed && (
-          <Box style={styles.checkmark}>
-            <ThemedText style={styles.checkmarkText}>✓</ThemedText>
-          </Box>
+          <Chip icon="check" mode="flat" compact>
+            Done
+          </Chip>
         )}
-      </Box>
-    </Box>
+      </Card.Content>
+    </Card>
   );
 };
 
 export const HallOfShameScreen: React.FC = () => {
-  const { stats, achievements } = useGameStore();
+  const { stats, achievements, loadSettings, checkAchievements } = useGameStore();
 
   const handleBack = () => {
     router.back();
   };
 
-  const handleRefresh = () => {
-    // TODO: Implement refresh logic
-    console.log('Refreshing stats...');
+  const handleRefresh = async () => {
+    console.log('🔄 Refreshing Hall of Shame stats...');
+    try {
+      // Reload all data from storage
+      await loadSettings();
+      
+      // Check for any new achievements that might have been unlocked
+      checkAchievements();
+      
+      console.log('✅ Hall of Shame refreshed successfully');
+    } catch (error) {
+      console.error('❌ Failed to refresh Hall of Shame:', error);
+    }
   };
 
   // Format time display
@@ -118,17 +167,19 @@ export const HallOfShameScreen: React.FC = () => {
         } else if (item.id === 'scoring') {
           return (
             <StatCard title="Scoring">
-              <View style={styles.scoreExplanation}>
-                <ThemedText style={styles.scoreExplanationTitle}>
-                  ⏱️ It's a Race Against Time!
-                </ThemedText>
-                <ThemedText style={styles.scoreExplanationText}>
-                  🏆 <ThemedText style={styles.scoreHighlight}>1000 points</ThemedText> base score minus 1 point per second
-                </ThemedText>
-                <ThemedText style={styles.scoreExplanationText}>
-                  ⚡ Minimum <ThemedText style={styles.scoreHighlight}>100 points</ThemedText> for any win (15+ min) • <ThemedText style={styles.scoreHighlight}>0 points</ThemedText> for abandoned games
-                </ThemedText>
-              </View>
+              <Card style={styles.scoreExplanation} mode="outlined">
+                <Card.Content>
+                  <Text variant="titleMedium" style={styles.scoreExplanationTitle}>
+                    ⏱️ It's a Race Against Time!
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.scoreExplanationText}>
+                    🏆 <Text style={styles.scoreHighlight}>1000 points</Text> base score minus 1 point per second
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.scoreExplanationText}>
+                    ⚡ Minimum <Text style={styles.scoreHighlight}>100 points</Text> for any win (15+ min) • <Text style={styles.scoreHighlight}>0 points</Text> for abandoned games
+                  </Text>
+                </Card.Content>
+              </Card>
               <View style={styles.statRow}>
                 <StatItem value={stats.totalScore.toLocaleString()} label="Total Score" color="#FFD700" />
                 <StatItem value={stats.gamesPlayed > 0 ? Math.round(stats.totalScore / stats.gamesPlayed).toString() : "0"} label="Avg Score" color="#9C27B0" />
@@ -166,12 +217,14 @@ export const HallOfShameScreen: React.FC = () => {
         break;
       case 'photo-gallery':
         return (
-          <View style={styles.galleryContainer}>
-            <View style={styles.galleryHeader}>
-              <ThemedText style={styles.galleryTitle}>📸 Photo Gallery</ThemedText>
-            </View>
+          <Card style={styles.galleryContainer} mode="contained">
+            <Card.Title 
+              title="📸 Photo Gallery" 
+              titleStyle={styles.galleryTitle}
+            />
+            <Divider />
             <PhotoGallery />
-          </View>
+          </Card>
         );
     }
     return null;
@@ -182,15 +235,23 @@ export const HallOfShameScreen: React.FC = () => {
       <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
       
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <ThemedText style={styles.backIcon}>‹</ThemedText>
-        </TouchableOpacity>
-        <ThemedText style={styles.title}>Hall of Shame</ThemedText>
-        <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
-          <ThemedText style={styles.refreshIcon}>↻</ThemedText>
-        </TouchableOpacity>
-      </View>
+      <Surface style={styles.header} elevation={2}>
+        <IconButton 
+          icon="arrow-left" 
+          size={24}
+          onPress={handleBack}
+          style={styles.backButton}
+          iconColor="white"
+        />
+        <Text variant="headlineMedium" style={styles.title}>Hall of Shame</Text>
+        <IconButton 
+          icon="refresh" 
+          size={24}
+          onPress={handleRefresh}
+          style={styles.refreshButton}
+          iconColor="white"
+        />
+      </Surface>
 
       <FlatList
         data={screenData}
@@ -216,37 +277,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
+    backgroundColor: '#2a2a4a',
   },
   backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backIcon: {
-    fontSize: 24,
-    color: 'white',
-    fontWeight: 'bold',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
     color: 'white',
+    textAlign: 'center',
   },
   refreshButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
     backgroundColor: '#FF4444',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  refreshIcon: {
-    fontSize: 20,
-    color: 'white',
-    fontWeight: 'bold',
   },
   flatListContent: {
     paddingHorizontal: 20,
@@ -254,14 +295,10 @@ const styles = StyleSheet.create({
     paddingBottom: 100, // Add space for bottom navigation
   },
   statCard: {
-    backgroundColor: '#2a2a4a',
-    borderRadius: 12,
-    padding: 20,
     marginBottom: 16,
+    marginHorizontal: 0,
   },
   statCardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
     color: 'white',
     marginBottom: 16,
   },
@@ -274,28 +311,24 @@ const styles = StyleSheet.create({
   statItem: {
     alignItems: 'center',
     flex: 1,
-    paddingHorizontal: 4,
-    paddingVertical: 8,
+    margin: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    minHeight: 80,
     justifyContent: 'center',
-    minHeight: 60,
   },
   statValue: {
-    fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 4,
     textAlign: 'center',
     lineHeight: 34,
   },
   statLabel: {
-    fontSize: 14,
     color: '#888',
     textAlign: 'center',
-    flexWrap: 'wrap',
   },
   scoreExplanation: {
-    backgroundColor: '#333',
-    borderRadius: 8,
-    padding: 12,
     marginBottom: 16,
   },
   scoreExplanationTitle: {
@@ -319,35 +352,19 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   achievementCard: {
-    borderRadius: 8,
-    padding: 16,
-  },
-  achievementCompleted: {
-    backgroundColor: '#4CAF50',
-  },
-  achievementLocked: {
-    backgroundColor: '#333',
+    marginBottom: 12,
   },
   achievementContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   achievementIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
-  },
-  achievementIconCompleted: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  achievementIconLocked: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  achievementIconText: {
-    fontSize: 18,
+    marginRight: 16,
   },
   achievementText: {
     flex: 1,

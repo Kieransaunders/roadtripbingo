@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, Image, Text, View, StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { BingoCell } from '../stores/gameStore';
 import { soundManager } from '../services/soundManager';
 
@@ -14,6 +15,7 @@ export const BingoTile: React.FC<BingoTileProps> = ({
   onPress, 
   size = 70 
 }) => {
+  const theme = useTheme();
   
   const handlePress = async () => {
     // Play category-specific sound effects
@@ -65,8 +67,13 @@ export const BingoTile: React.FC<BingoTileProps> = ({
     <Pressable
       style={[
         styles.container,
-        { width: size, height: size },
-        cell.isSpotted && styles.spottedContainer
+        { 
+          width: size, 
+          height: size,
+          backgroundColor: theme.colors.surfaceVariant,
+          borderColor: cell.isSpotted ? theme.colors.primary : 'transparent'
+        },
+        cell.isSpotted && { opacity: 0.5 }
       ]}
       onPress={handlePress}
     >
@@ -74,20 +81,26 @@ export const BingoTile: React.FC<BingoTileProps> = ({
         source={cell.tile.image}
         style={[
           styles.image,
-          cell.isSpotted && styles.spottedImage
+          cell.isSpotted && { opacity: 0.5 }
         ]}
         resizeMode="cover"
       />
       
       {cell.isSpotted && (
-        <View style={styles.spottedOverlay}>
-          <Text style={styles.spottedText}>✓</Text>
+        <View style={[
+          styles.spottedOverlay,
+          { backgroundColor: theme.colors.primary }
+        ]}>
+          <Text style={[styles.spottedText, { color: theme.colors.onPrimary }]}>✓</Text>
         </View>
       )}
       
       {cell.tile.category === 'special' && (
-        <View style={styles.specialBadge}>
-          <Text style={styles.specialText}>FREE</Text>
+        <View style={[
+          styles.specialBadge,
+          { backgroundColor: theme.colors.secondary }
+        ]}>
+          <Text style={[styles.specialText, { color: theme.colors.onSecondary }]}>FREE</Text>
         </View>
       )}
     </Pressable>
@@ -96,37 +109,29 @@ export const BingoTile: React.FC<BingoTileProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#2A2A2A',
     borderRadius: 8,
-    padding: 2,
-    margin: 1,
+    padding: 4,
+    margin: 2,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: 'transparent',
+    minHeight: 44,
+    minWidth: 44,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  spottedContainer: {
-    borderColor: '#FF4444',
-    backgroundColor: '#2A2A2A80',
-  },
   image: {
     width: '95%',
     height: '95%',
-    borderRadius: 6,
-  },
-  spottedImage: {
-    opacity: 0.5,
+    borderRadius: 4,
   },
   spottedOverlay: {
     position: 'absolute',
     top: 4,
     right: 4,
-    backgroundColor: '#FF4444',
     borderRadius: 10,
     width: 20,
     height: 20,
@@ -134,22 +139,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   spottedText: {
-    color: 'white',
     fontSize: 12,
     fontWeight: 'bold',
   },
   specialBadge: {
     position: 'absolute',
-    top: 2,
-    left: 2,
-    backgroundColor: '#FFD700',
-    borderRadius: 6,
+    top: 4,
+    left: 4,
+    borderRadius: 4,
     paddingHorizontal: 4,
-    paddingVertical: 1,
+    paddingVertical: 2,
   },
   specialText: {
-    color: '#000',
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: 'bold',
   },
 });

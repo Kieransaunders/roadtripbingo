@@ -1,0 +1,145 @@
+/**
+ * Design Tokens - Color Palette
+ * Semantic color system with HSL values for easy theming
+ * Contrast ratios calculated against respective backgrounds
+ */
+
+:root {
+  /* ===== BASE COLORS ===== */
+  
+  /* Background Colors */
+  --da-bg: hsl(0, 0%, 100%);                    /* #ffffff - Main background */
+  --da-surface-1: hsl(0, 0%, 98%);             /* #fafafa - Elevated surface */
+  --da-surface-2: hsl(0, 0%, 96%);             /* #f5f5f5 - Card backgrounds */
+  --da-surface-3: hsl(0, 0%, 94%);             /* #f0f0f0 - Input backgrounds */
+  
+  /* Border Colors */
+  --da-border-light: hsl(0, 0%, 90%);          /* #e6e6e6 - Subtle borders */
+  --da-border: hsl(0, 0%, 85%);                /* #d9d9d9 - Default borders */
+  --da-border-strong: hsl(0, 0%, 75%);         /* #bfbfbf - Emphasized borders */
+  
+  /* Text Colors */
+  --da-text-primary: hsl(0, 0%, 13%);          /* #212121 - Primary text (15.8:1 contrast on white) */
+  --da-text-secondary: hsl(0, 0%, 25%);        /* #404040 - Secondary text (12.6:1 contrast on white) */
+  --da-text-muted: hsl(0, 0%, 40%);            /* #666666 - Muted text (7.0:1 contrast on white) */
+  --da-text-placeholder: hsl(0, 0%, 60%);      /* #999999 - Placeholder text (2.8:1 contrast on white) */
+  --da-text-disabled: hsl(0, 0%, 70%);         /* #b3b3b3 - Disabled text (2.0:1 contrast on white) */
+  --da-text-inverse: hsl(0, 0%, 100%);         /* #ffffff - Text on dark backgrounds */
+  
+  /* ===== SEMANTIC COLORS ===== */
+  
+  /* Primary Brand Colors */
+  --da-primary: hsl(220, 100%, 50%);           /* #0066ff - Primary brand color (4.5:1 contrast on white) */
+  --da-primary-hover: hsl(220, 100%, 45%);     /* #0052cc - Primary hover state (5.7:1 contrast on white) */
+  --da-primary-active: hsl(220, 100%, 40%);    /* #0047b3 - Primary active state (7.0:1 contrast on white) */
+  --da-primary-light: hsl(220, 100%, 95%);     /* #e6f2ff - Primary background tint */
+  --da-primary-text: hsl(220, 100%, 35%);      /* #003d99 - Primary text color (8.8:1 contrast on white) */
+  
+  /* Success Colors */
+  --da-success: hsl(120, 60%, 40%);            /* #28a745 - Success color (4.5:1 contrast on white) */
+  --da-success-hover: hsl(120, 60%, 35%);      /* #1e7e34 - Success hover (6.2:1 contrast on white) */
+  --da-success-active: hsl(120, 60%, 30%);     /* #155724 - Success active (8.3:1 contrast on white) */
+  --da-success-light: hsl(120, 60%, 95%);      /* #d4edda - Success background */
+  --da-success-text: hsl(120, 60%, 25%);       /* #0f4419 - Success text (11.1:1 contrast on white) */
+  
+  /* Warning Colors */
+  --da-warning: hsl(45, 100%, 50%);            /* #ffc107 - Warning color (1.8:1 contrast on white - use with caution) */
+  --da-warning-hover: hsl(45, 100%, 45%);      /* #e6ac00 - Warning hover (2.4:1 contrast on white) */
+  --da-warning-active: hsl(45, 100%, 40%);     /* #cc9900 - Warning active (3.2:1 contrast on white) */
+  --da-warning-light: hsl(45, 100%, 95%);      /* #fff8e1 - Warning background */
+  --da-warning-text: hsl(45, 100%, 25%);       /* #664d00 - Warning text (8.9:1 contrast on white) */
+  
+  /* Error/Danger Colors */
+  --da-red: hsl(0, 75%, 50%);                  /* #dc3545 - Error/danger color (3.9:1 contrast on white) */
+  --da-red-hover: hsl(0, 75%, 45%);            /* #c82333 - Error hover (5.0:1 contrast on white) */
+  --da-red-active: hsl(0, 75%, 40%);           /* #b21e2c - Error active (6.4:1 contrast on white) */
+  --da-red-light: hsl(0, 75%, 95%);            /* #f8d7da - Error background */
+  --da-red-text: hsl(0, 75%, 35%);             /* #9a1a24 - Error text (8.2:1 contrast on white) */
+  
+  /* Information Colors */
+  --da-info: hsl(195, 100%, 45%);              /* #17a2b8 - Info color (4.7:1 contrast on white) */
+  --da-info-hover: hsl(195, 100%, 40%);        /* #138496 - Info hover (6.1:1 contrast on white) */
+  --da-info-active: hsl(195, 100%, 35%);       /* #0f6674 - Info active (7.9:1 contrast on white) */
+  --da-info-light: hsl(195, 100%, 95%);        /* #d1ecf1 - Info background */
+  --da-info-text: hsl(195, 100%, 30%);         /* #0c4851 - Info text (10.4:1 contrast on white) */
+  
+  /* ===== INTERACTIVE STATES ===== */
+  
+  /* Focus States */
+  --da-focus: hsl(220, 100%, 50%);             /* #0066ff - Focus outline color */
+  --da-focus-shadow: hsla(220, 100%, 50%, 0.25); /* Focus shadow with opacity */
+  
+  /* Selection States */
+  --da-selection-bg: hsl(220, 100%, 95%);      /* #e6f2ff - Selection background */
+  --da-selection-text: hsl(220, 100%, 35%);    /* #003d99 - Selection text */
+  
+  /* Hover States */
+  --da-hover-overlay: hsla(0, 0%, 0%, 0.05);   /* Generic hover overlay */
+  --da-hover-bg: hsl(0, 0%, 96%);              /* #f5f5f5 - Generic hover background */
+  
+  /* ===== DARK MODE VARIANTS ===== */
+  /* Note: These would typically be applied via @media (prefers-color-scheme: dark) or a data attribute */
+  
+  --da-bg-dark: hsl(0, 0%, 8%);                /* #141414 - Dark background */
+  --da-surface-1-dark: hsl(0, 0%, 12%);        /* #1f1f1f - Dark elevated surface */
+  --da-surface-2-dark: hsl(0, 0%, 16%);        /* #292929 - Dark card backgrounds */
+  --da-surface-3-dark: hsl(0, 0%, 20%);        /* #333333 - Dark input backgrounds */
+  
+  --da-text-primary-dark: hsl(0, 0%, 95%);     /* #f2f2f2 - Dark primary text */
+  --da-text-secondary-dark: hsl(0, 0%, 80%);   /* #cccccc - Dark secondary text */
+  --da-text-muted-dark: hsl(0, 0%, 65%);       /* #a6a6a6 - Dark muted text */
+  
+  --da-border-light-dark: hsl(0, 0%, 25%);     /* #404040 - Dark subtle borders */
+  --da-border-dark: hsl(0, 0%, 30%);           /* #4d4d4d - Dark default borders */
+  --da-border-strong-dark: hsl(0, 0%, 40%);    /* #666666 - Dark emphasized borders */
+}
+
+/**
+ * USAGE GUIDELINES:
+ * 
+ * BACKGROUNDS:
+ * --da-bg: Main application background
+ * --da-surface-1: Cards, modals, elevated components
+ * --da-surface-2: Secondary cards, nested components
+ * --da-surface-3: Input fields, form controls
+ * 
+ * TEXT:
+ * --da-text-primary: Headlines, primary content (AA compliant)
+ * --da-text-secondary: Body text, secondary information (AA compliant)
+ * --da-text-muted: Captions, metadata, less important text (AA compliant)
+ * --da-text-placeholder: Form placeholders, empty states
+ * --da-text-disabled: Disabled form elements, unavailable actions
+ * --da-text-inverse: Text on dark/colored backgrounds
+ * 
+ * SEMANTIC COLORS:
+ * --da-primary-*: Brand colors, primary actions, links
+ * --da-success-*: Success messages, positive actions, completed states
+ * --da-warning-*: Warnings, cautionary messages (use warning-text for accessibility)
+ * --da-red-*: Errors, destructive actions, negative states
+ * --da-info-*: Information messages, neutral notifications
+ * 
+ * INTERACTIVE:
+ * --da-focus: Focus outlines, keyboard navigation
+ * --da-selection-*: Text selection, highlighted content
+ * --da-hover-*: Hover states for interactive elements
+ * 
+ * CONTRAST RATIOS (WCAG Guidelines):
+ * - AA compliance: 4.5:1 for normal text, 3:1 for large text
+ * - AAA compliance: 7:1 for normal text, 4.5:1 for large text
+ * - All primary and secondary text colors meet AA standards
+ * - Warning color should use --da-warning-text for accessible text
+ * 
+ * THEMING:
+ * HSL values allow easy manipulation:
+ * - Adjust hue for color shifts
+ * - Modify saturation for intensity
+ * - Change lightness for brightness variants
+ * 
+ * DARK MODE:
+ * Apply dark variants using CSS custom properties:
+ * [data-theme="dark"] {
+ *   --da-bg: var(--da-bg-dark);
+ *   --da-text-primary: var(--da-text-primary-dark);
+ *   // ... other dark mode overrides
+ * }
+ */

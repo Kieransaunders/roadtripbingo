@@ -42,7 +42,7 @@ export const BottomNavigation: React.FC = () => {
     }
 
     // Navigate to the route
-    router.push(button.route);
+    router.push(button.route as any);
   };
 
   const isActive = (button: NavigationButton): boolean => {

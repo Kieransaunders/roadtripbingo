@@ -1,0 +1,45 @@
+/* Dead Ahead Bingo - Web Styles */
+
+/* Prevent flash of unstyled content during routing */
+#root {
+  background-color: #1a1a2e;
+  min-height: 100vh;
+}
+
+/* Hide content briefly while router initializes to prevent flash */
+body.router-loading #root > div {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+body.router-ready #root > div {
+  opacity: 1;
+}
+
+/* Smooth loading transition */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.router-transition {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Ensure consistent background during route changes */
+body, html, #root {
+  background-color: #1a1a2e !important;
+  margin: 0;
+  padding: 0;
+}
+
+/* Loading screen optimization */
+.loading-screen {
+  background-color: #1a1a2e;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}

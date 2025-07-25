@@ -141,7 +141,7 @@ export const uploadImageToCloudinaryWithFallback = async (
         console.log(`❌ Upload failed with preset ${preset}:`, data.error?.message);
       }
     } catch (error) {
-      console.log(`❌ Error with preset ${preset}:`, error.message);
+      console.log(`❌ Error with preset ${preset}:`, error instanceof Error ? error.message : String(error));
     }
   }
   
@@ -220,7 +220,7 @@ export const uploadImageToCloudinary = async (
     
   } catch (error) {
     console.error('❌ Cloudinary upload error:', error);
-    throw new Error(`Failed to upload image: ${error.message}`);
+    throw new Error(`Failed to upload image: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
 

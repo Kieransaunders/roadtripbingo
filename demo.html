@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dead Ahead Bingo - Design System Demo</title>
+    <link rel="stylesheet" href="consolidated-styles.css">
+    <style>
+        /* Additional demo-specific styles */
+        body {
+            font-family: var(--font-body);
+            line-height: var(--line-height-relaxed);
+            color: var(--da-text-primary);
+            background-color: var(--da-bg);
+            margin: 0;
+            padding: var(--space-4);
+        }
+        
+        .demo-section {
+            margin-bottom: var(--space-8);
+            padding: var(--space-6);
+            border-radius: var(--space-3);
+            background-color: var(--da-surface-1);
+            border: 1px solid var(--da-border-light);
+        }
+        
+        .demo-title {
+            font-family: var(--font-heading);
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--da-text-primary);
+            margin-bottom: var(--space-4);
+            border-bottom: 2px solid var(--da-primary);
+            padding-bottom: var(--space-2);
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+        
+        .demo-item {
+            padding: var(--space-3);
+            border-radius: var(--space-2);
+            background-color: var(--da-surface-2);
+            border: 1px solid var(--da-border-light);
+        }
+        
+        .code-snippet {
+            background-color: var(--da-surface-3);
+            padding: var(--space-3);
+            border-radius: var(--space-2);
+            font-family: var(--font-code, monospace);
+            font-size: var(--font-size-sm);
+            overflow-x: auto;
+            margin: var(--space-3) 0;
+            border-left: 4px solid var(--da-primary);
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: var(--font-size-sm);
+            color: var(--da-text-muted);
+            margin-top: var(--space-2);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--da-success);
+        }
+        
+        .active-state-demo {
+            padding: var(--space-4);
+            border: 2px dashed var(--da-border);
+            border-radius: var(--space-3);
+            background-color: var(--da-surface-2);
+            transition: all var(--transition-normal);
+        }
+        
+        .active-state-demo.active {
+            border-color: var(--da-primary);
+            background-color: var(--da-primary-light);
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="demo-section">
+        <h1 class="demo-title">Dead Ahead Bingo - Design System Demo</h1>
+        <p class="text-lg text-secondary">
+            This demo showcases the consolidated CSS design system with interactive components, 
+            JavaScript functionality, and Sentry instrumentation for performance monitoring.
+        </p>
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>Sentry monitoring active</span>
+        </div>
+    </header>
+
+    <!-- Button Components Section -->
+    <section class="demo-section">
+        <h2 class="demo-title">Button Components</h2>
+        <p class="text-base text-secondary m-3">
+            Interactive buttons with various states and Sentry click tracking.
+        </p>
+        
+        <div class="demo-grid">
+            <div class="demo-item">
+                <h3 class="text-lg font-semibold m-2">Primary Buttons</h3>
+                <div class="flex flex-col gap-3">
+                    <!-- Primary button with Sentry instrumentation -->
+                    <button class="btn btn--primary" id="primaryBtn" data-sentry-action="primary-click">
+                        <span class="btn__icon btn__icon--left">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </span>
+                        Primary Action
+                    </button>
+                    <button class="btn btn--primary btn--small" id="primarySmallBtn" data-sentry-action="primary-small-click">
+                        Small Primary
+                    </button>
+                    <button class="btn btn--primary btn--large" id="primaryLargeBtn" data-sentry-action="primary-large-click">
+                        Large Primary
+                    </button>
+                </div>
+            </div>
+
+            <div class="demo-item">
+                <h3 class="text-lg font-semibold m-2">Secondary Buttons</h3>
+                <div class="flex flex-col gap-3">
+                    <button class="btn btn--secondary" id="secondaryBtn" data-sentry-action="secondary-click">
+                        Secondary Action
+                    </button>
+                    <button class="btn btn--secondary btn--small" id="secondarySmallBtn" data-sentry-action="secondary-small-click">
+                        Small Secondary
+                    </button>
+                </div>
+            </div>
+
+            <div class="demo-item">
+                <h3 class="text-lg font-semibold m-2">Semantic Buttons</h3>
+                <div class="flex flex-col gap-3">
+                    <button class="btn btn--success" id="successBtn" data-sentry-action="success-click">
+                        Success Action
+                    </button>
+                    <button class="btn btn--danger" id="dangerBtn" data-sentry-action="danger-click">
+                        Danger Action
+                    </button>
+                </div>
+            </div>
+
+            <div class="demo-item">
+                <h3 class="text-lg font-semibold m-2">Special States</h3>
+                <div class="flex flex-col gap-3">
+                    <button class="btn btn--primary" id="loadingBtn" data-sentry-action="loading-click">
+                        Click to Load
+                    </button>
+                    <button class="btn btn--secondary" disabled>
+                        Disabled Button
+                    </button>
+                    <button class="btn btn--primary btn--icon" id="iconBtn" data-sentry-action="icon-click" title="Favorite">
+                        <span class="btn__icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="code-snippet">
+&lt;!-- Primary Button with Sentry Tracking --&gt;
+&lt;button class="btn btn--primary" id="primaryBtn" data-sentry-action="primary-click"&gt;
+    &lt;span class="btn__icon btn__icon--left"&gt;
+        &lt;svg&gt;...&lt;/svg&gt;
+    &lt;/span&gt;
+    Primary Action
+&lt;/button&gt;</div>
+    </section>
+
+    <!-- Card Components Section -->
+    <section class="demo-section">
+        <h2 class="demo-title">Card Components</h2>
+        
+        <div class="demo-grid">
+            <div class="card" id="interactiveCard" data-sentry-action="card-click">
+                <div class="card__header">
+                    <h3 class="card__title">Interactive Card</h3>
+                </div>
+                <div class="card__body">
+                    <p class="text-base">This card demonstrates hover effects and click tracking with Sentry.</p>
+                    <div class="flex gap-2">
+                        <span class="badge badge--primary">Primary</span>
+                        <span class="badge badge--success">Active</span>
+                    </div>
+                </div>
+                <div class="card__footer">
+                    <button class="btn btn--primary btn--small" data-sentry-action="card-action-click">
+                        Card Action
+                    </button>
+                </div>
+            </div>
+
+            <div class="card card--compact">
+                <div class="card__body">
+                    <h4 class="text-lg font-semibold">Compact Card</h4>
+                    <p class="text-sm text-secondary">Smaller padding for dense layouts.</p>
+                </div>
+            </div>
+
+            <div class="card card--spacious">
+                <div class="card__header">
+                    <h3 class="card__title">Spacious Card</h3>
+                </div>
+                <div class="card__body">
+                    <p class="text-base">More generous padding for comfortable reading.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Form Components Section -->
+    <section class="demo-section">
+        <h2 class="demo-title">Form Components</h2>
+        
+        <form class="flex flex-col gap-4" id="demoForm">
+            <div>
+                <label class="text-sm font-medium text-primary" for="textInput">Text Input</label>
+                <input type="text" class="input" id="textInput" placeholder="Enter some text..." data-sentry-field="text-input">
+            </div>
+            
+            <div>
+                <label class="text-sm font-medium text-primary" for="emailInput">Email Input</label>
+                <input type="email" class="input" id="emailInput" placeholder="your.email@example.com" data-sentry-field="email-input">
+            </div>
+            
+            <div class="flex gap-3">
+                <button type="submit" class="btn btn--primary" data-sentry-action="form-submit">
+                    Submit Form
+                </button>
+                <button type="reset" class="btn btn--secondary" data-sentry-action="form-reset">
+                    Reset
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Interactive State Demo Section -->
+    <section class="demo-section">
+        <h2 class="demo-title">Interactive State Demo</h2>
+        <p class="text-base text-secondary m-3">
+            Click the toggle button to see active state changes with Sentry span tracking.
+        </p>
+        
+        <div class="active-state-demo" id="toggleDemo">
+            <h3 class="text-lg font-semibold">Toggle Demo Area</h3>
+            <p class="text-base">This area will change appearance when activated.</p>
+            <p class="text-sm text-muted">Current state: <span id="stateIndicator">inactive</span></p>
+        </div>
+        
+        <div class="flex gap-3 m-4">
+            <button class="btn btn--primary" id="toggleBtn" data-sentry-action="toggle-state">
+                Toggle Active State
+            </button>
+            <button class="btn btn--secondary" id="resetStateBtn" data-sentry-action="reset-state">
+                Reset State
+            </button>
+        </div>
+        
+        <div class="code-snippet">
+// JavaScript with Sentry instrumentation
+const handleToggleClick = () => {
+    Sentry.startSpan(
+        {
+            op: "ui.click",
+            name: "Toggle Active State Button",
+        },
+        (span) => {
+            const isActive = toggleDemo.classList.contains('active');
+            span.setAttribute("previous_state", isActive ? "active" : "inactive");
+            span.setAttribute("component", "toggle-demo");
+            
+            // Toggle the state
+            toggleDemo.classList.toggle('active');
+            
+            span.setAttribute("new_state", toggleDemo.classList.contains('active') ? "active" : "inactive");
+        }
+    );
+};</div>
+    </section>
+
+    <!-- Utility Classes Demo -->
+    <section class="demo-section">
+        <h2 class="demo-title">Utility Classes Demo</h2>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-surface-2 text-center">
+                <h4 class="text-lg font-bold">Typography</h4>
+                <p class="text-xs">Extra Small Text</p>
+                <p class="text-sm">Small Text</p>
+                <p class="text-base">Base Text</p>
+                <p class="text-lg font-medium">Large Medium Text</p>
+                <p class="text-xl font-semibold">Extra Large Semibold</p>
+            </div>
+            
+            <div class="p-4 bg-surface-2">
+                <h4 class="text-lg font-bold text-center">Spacing & Layout</h4>
+                <div class="flex items-center justify-between p-2 m-2 bg-primary text-inverse">
+                    <span>Flex Layout</span>
+                    <span class="badge badge--warning">Badge</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 m-2">
+                    <div class="p-2 bg-surface-1 text-center text-sm">Grid 1</div>
+                    <div class="p-2 bg-surface-1 text-center text-sm">Grid 2</div>
+                    <div class="p-2 bg-surface-1 text-center text-sm">Grid 3</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sentry Configuration and Instrumentation -->
+    <script src="https://browser.sentry-cdn.com/8.44.0/bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+        /**
+         * Sentry Initialization and Configuration
+         * Following project rules for Sentry setup with logging enabled
+         */
+        Sentry.init({
+            // Using the DSN from the project rules
+            dsn: "https://303c875e64a5b5d1c60d8af7a8ba9995@o4509537295532033.ingest.de.sentry.io/4509615461171280",
+            
+            // Enable performance monitoring
+            tracesSampleRate: 1.0,
+            
+            // Enable logging as per project rules
+            _experiments: {
+                enableLogs: true,
+            },
+            
+            // Console logging integration for automatic log capture
+            integrations: [
+                Sentry.consoleLoggingIntegration({ levels: ["log", "error", "warn"] }),
+            ],
+            
+            // Environment and release information
+            environment: "demo",
+            release: "design-system-demo@1.0.0",
+            
+            // Additional configuration for better debugging
+            debug: true,
+            beforeSend(event) {
+                console.log('Sentry event:', event);
+                return event;
+            }
+        });
+
+        // Get logger instance for structured logging
+        const { logger } = Sentry;
+
+        /**
+         * Enhanced Button Click Handler with Comprehensive Sentry Instrumentation
+         * Creates custom spans for UI interactions following project patterns
+         */
+        function createButtonClickHandler(buttonElement) {
+            return function handleButtonClick(event) {
+                const action = buttonElement.dataset.sentryAction || 'button-click';
+                const buttonText = buttonElement.textContent.trim();
+                const buttonClasses = Array.from(buttonElement.classList);
+                
+                // Create comprehensive span for button click as per project rules
+                Sentry.startSpan(
+                    {
+                        op: "ui.click",
+                        name: `${buttonText} Button Click`,
+                    },
+                    (span) => {
+                        // Add detailed attributes for better monitoring
+                        span.setAttribute("component", "button");
+                        span.setAttribute("action", action);
+                        span.setAttribute("button_text", buttonText);
+                        span.setAttribute("button_classes", buttonClasses.join(' '));
+                        span.setAttribute("element_id", buttonElement.id || 'no-id');
+                        span.setAttribute("timestamp", new Date().toISOString());
+                        
+                        // Log the interaction using Sentry logger
+                        logger.info("Button clicked", {
+                            action: action,
+                            buttonText: buttonText,
+                            elementId: buttonElement.id,
+                            userAgent: navigator.userAgent
+                        });
+                        
+                        // Perform the actual button action
+                        performButtonAction(buttonElement, span);
+                    }
+                );
+            };
+        }
+
+        /**
+         * Button Action Logic with Span Attribution
+         * Handles different button behaviors based on their purpose
+         */
+        function performButtonAction(button, span) {
+            const action = button.dataset.sentryAction;
+            
+            switch (action) {
+                case 'loading-click':
+                    handleLoadingButton(button, span);
+                    break;
+                case 'toggle-state':
+                    handleToggleState(span);
+                    break;
+                case 'reset-state':
+                    handleResetState(span);
+                    break;
+                case 'form-submit':
+                    handleFormSubmit(span);
+                    break;
+                case 'form-reset':
+                    handleFormReset(span);
+                    break;
+                default:
+                    // Default action for other buttons
+                    span.setAttribute("default_action", "click_acknowledged");
+                    logger.debug(logger.fmt`Default button action for: ${button.textContent.trim()}`);
+            }
+        }
+
+        /**
+         * Loading Button Handler with State Management
+         */
+        function handleLoadingButton(button, span) {
+            if (button.classList.contains('btn--loading')) {
+                span.setAttribute("action_result", "already_loading");
+                return;
+            }
+            
+            span.setAttribute("loading_state", "initiated");
+            button.classList.add('btn--loading');
+            button.disabled = true;
+            
+            // Simulate async operation with timeout
+            setTimeout(() => {
+                Sentry.startSpan(
+                    {
+                        op: "ui.state_change",
+                        name: "Loading Complete",
+                    },
+                    (completionSpan) => {
+                        completionSpan.setAttribute("component", "button");
+                        completionSpan.setAttribute("loading_duration_ms", 2000);
+                        
+                        button.classList.remove('btn--loading');
+                        button.disabled = false;
+                        
+                        logger.info("Button loading completed", {
+                            buttonId: button.id,
+                            duration: 2000
+                        });
+                    }
+                );
+            }, 2000);
+            
+            span.setAttribute("action_result", "loading_started");
+        }
+
+        /**
+         * Toggle State Handler with Comprehensive Tracking
+         */
+        function handleToggleState(span) {
+            const toggleDemo = document.getElementById('toggleDemo');
+            const stateIndicator = document.getElementById('stateIndicator');
+            
+            const wasActive = toggleDemo.classList.contains('active');
+            span.setAttribute("previous_state", wasActive ? "active" : "inactive");
+            
+            // Toggle the active state
+            toggleDemo.classList.toggle('active');
+            const isNowActive = toggleDemo.classList.contains('active');
+            
+            // Update state indicator
+            stateIndicator.textContent = isNowActive ? 'active' : 'inactive';
+            stateIndicator.style.color = isNowActive ? 'var(--da-success)' : 'var(--da-text-muted)';
+            
+            span.setAttribute("new_state", isNowActive ? "active" : "inactive");
+            span.setAttribute("state_changed", wasActive !== isNowActive);
+            
+            // Log state change with structured data
+            logger.info("Toggle state changed", {
+                previousState: wasActive ? "active" : "inactive",
+                newState: isNowActive ? "active" : "inactive",
+                elementId: 'toggleDemo'
+            });
+        }
+
+        /**
+         * Reset State Handler
+         */
+        function handleResetState(span) {
+            const toggleDemo = document.getElementById('toggleDemo');
+            const stateIndicator = document.getElementById('stateIndicator');
+            
+            const wasActive = toggleDemo.classList.contains('active');
+            
+            toggleDemo.classList.remove('active');
+            stateIndicator.textContent = 'inactive';
+            stateIndicator.style.color = 'var(--da-text-muted)';
+            
+            span.setAttribute("reset_from_state", wasActive ? "active" : "inactive");
+            span.setAttribute("action_result", "state_reset");
+            
+            logger.info("State reset to inactive", {
+                previousState: wasActive ? "active" : "inactive"
+            });
+        }
+
+        /**
+         * Form Submission Handler with Validation Tracking
+         */
+        function handleFormSubmit(span) {
+            const form = document.getElementById('demoForm');
+            const textInput = document.getElementById('textInput');
+            const emailInput = document.getElementById('emailInput');
+            
+            // Validate form fields
+            const textValue = textInput.value.trim();
+            const emailValue = emailInput.value.trim();
+            const isValid = textValue.length > 0 && emailValue.includes('@');
+            
+            span.setAttribute("form_valid", isValid);
+            span.setAttribute("text_field_length", textValue.length);
+            span.setAttribute("email_field_filled", emailValue.length > 0);
+            span.setAttribute("email_format_valid", emailValue.includes('@'));
+            
+            if (isValid) {
+                logger.info("Form submitted successfully", {
+                    textFieldLength: textValue.length,
+                    emailProvided: true,
+                    formId: 'demoForm'
+                });
+                
+                // Show success feedback
+                alert('Form submitted successfully! (Demo only)');
+                span.setAttribute("submission_result", "success");
+            } else {
+                logger.warn("Form submission failed validation", {
+                    textFieldEmpty: textValue.length === 0,
+                    emailInvalid: !emailValue.includes('@'),
+                    formId: 'demoForm'
+                });
+                
+                alert('Please fill out all fields correctly.');
+                span.setAttribute("submission_result", "validation_failed");
+            }
+        }
+
+        /**
+         * Form Reset Handler
+         */
+        function handleFormReset(span) {
+            logger.info("Form reset requested", {
+                formId: 'demoForm'
+            });
+            
+            span.setAttribute("action_result", "form_reset");
+            // Form will reset automatically due to type="reset"
+        }
+
+        /**
+         * Card Click Handler for Interaction Tracking
+         */
+        function handleCardClick(event) {
+            const card = event.currentTarget;
+            const cardTitle = card.querySelector('.card__title')?.textContent || 'Unknown Card';
+            
+            Sentry.startSpan(
+                {
+                    op: "ui.click",
+                    name: `${cardTitle} Card Interaction`,
+                },
+                (span) => {
+                    span.setAttribute("component", "card");
+                    span.setAttribute("card_title", cardTitle);
+                    span.setAttribute("element_id", card.id || 'no-id');
+                    
+                    logger.debug("Card interaction recorded", {
+                        cardTitle: cardTitle,
+                        elementId: card.id
+                    });
+                    
+                    // Visual feedback
+                    card.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 150);
+                }
+            );
+        }
+
+        /**
+         * Input Field Focus Tracking
+         */
+        function handleInputFocus(event) {
+            const input = event.target;
+            const fieldName = input.dataset.sentryField || input.id || 'unknown-field';
+            
+            Sentry.startSpan(
+                {
+                    op: "ui.focus",
+                    name: `${fieldName} Input Focus`,
+                },
+                (span) => {
+                    span.setAttribute("component", "input");
+                    span.setAttribute("field_name", fieldName);
+                    span.setAttribute("field_type", input.type);
+                    span.setAttribute("has_value", input.value.length > 0);
+                    
+                    logger.debug(logger.fmt`Input field focused: ${fieldName}`);
+                }
+            );
+        }
+
+        /**
+         * Initialize Event Listeners and Instrumentation
+         * Sets up all interactive elements with Sentry tracking
+         */
+        function initializeDemo() {
+            logger.info("Design system demo initializing", {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                screenResolution: `${screen.width}x${screen.height}`
+            });
+
+            // Initialize all buttons with click handlers
+            const buttons = document.querySelectorAll('button[data-sentry-action]');
+            buttons.forEach(button => {
+                button.addEventListener('click', createButtonClickHandler(button));
+            });
+
+            // Initialize card interactions
+            const interactiveCard = document.getElementById('interactiveCard');
+            if (interactiveCard) {
+                interactiveCard.addEventListener('click', handleCardClick);
+                interactiveCard.style.cursor = 'pointer';
+            }
+
+            // Initialize input field tracking
+            const inputs = document.querySelectorAll('input[data-sentry-field]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', handleInputFocus);
+            });
+
+            // Prevent form submission for demo purposes
+            const form = document.getElementById('demoForm');
+            if (form) {
+                form.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    // The actual handling is done in the button click handler
+                });
+            }
+
+            logger.info("Design system demo initialized successfully", {
+                buttonsInstrumented: buttons.length,
+                inputsInstrumented: inputs.length,
+                cardsInstrumented: interactiveCard ? 1 : 0
+            });
+        }
+
+        /**
+         * Page Load Performance Tracking
+         */
+        Sentry.startSpan(
+            {
+                op: "navigation.load",
+                name: "Design System Demo Page Load",
+            },
+            (span) => {
+                span.setAttribute("page_type", "demo");
+                span.setAttribute("components_count", document.querySelectorAll('[class*="btn"], [class*="card"], [class*="input"]').length);
+                
+                // Initialize demo when DOM is ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initializeDemo);
+                } else {
+                    initializeDemo();
+                }
+                
+                span.setAttribute("initialization_method", document.readyState === 'loading' ? 'deferred' : 'immediate');
+            }
+        );
+
+        // Global error handler for uncaught errors
+        window.addEventListener('error', (event) => {
+            logger.error("Uncaught error in demo", {
+                message: event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno
+            });
+        });
+
+        // Log demo start
+        logger.info("Dead Ahead Bingo Design System Demo started", {
+            version: "1.0.0",
+            timestamp: new Date().toISOString()
+        });
+    </script>
+</body>
+</html>

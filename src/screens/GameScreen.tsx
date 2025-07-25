@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, StatusBar, Text, Platform, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StatusBar, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet as UnistylesStyleSheet } from 'react-native-unistyles';
+import { Surface, Chip, Text } from 'react-native-paper';
 import { BingoGrid } from '../components/BingoGrid';
 import { useGameStore } from '../stores/gameStore';
 import { router } from 'expo-router';
 import * as Sentry from '@sentry/react-native';
+import { Button, Card, Typography, Heading1, Heading3, Body } from '../components/design-system';
+import { IconSymbol } from '../components/ui/IconSymbol';
 // import { BottomNavigation } from '../components/BottomNavigation';
 
 export const GameScreen: React.FC = () => {
@@ -88,52 +91,72 @@ export const GameScreen: React.FC = () => {
       
 
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>DEAD AHEAD</Text>
-          <Text style={styles.subtitle}>Roadkill Bingo</Text>
-          <Text style={styles.tagline}>
+        <Surface style={styles.header} elevation={3}>
+          <Heading1 align="center" color="accent" style={styles.title}>DEAD AHEAD</Heading1>
+          <Heading3 align="center" style={styles.subtitle}>Roadkill Bingo</Heading3>
+          <Body align="center" style={styles.tagline}>
             &quot;See it. Spot it. Shout it. Win shotgun or throw up trying.&quot;
-          </Text>
-        </View>
+          </Body>
+        </Surface>
 
-        <View style={styles.gameInfo}>
-          <View style={styles.infoRow}>
-            <TouchableOpacity style={styles.infoItem} onPress={handleModePress} activeOpacity={0.7}>
-              <Text style={styles.infoLabel}>Mode</Text>
-              <Text style={[styles.infoValue, styles.clickableInfoValue]}>
-                {getModeName()}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.infoItem} onPress={handleModePress} activeOpacity={0.7}>
-              <Text style={styles.infoLabel}>Win Condition</Text>
-              <Text style={[styles.infoValue, styles.clickableInfoValue]}>
-                {getWinRequirement()}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.infoItem} onPress={handleModePress} activeOpacity={0.7}>
-              <Text style={styles.infoLabel}>Gore Mode</Text>
-              <Text style={[styles.infoValue, styles.clickableInfoValue]}>
-                {getGoreLevel()}
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Spotted</Text>
-              <Text style={styles.infoValue}>{getSpottedCount()}/16</Text>
+        <Surface style={styles.gameInfo} elevation={2}>
+            <View style={styles.infoRow}>
+              <View style={styles.infoItem}>
+                <Chip 
+                  mode="outlined" 
+                  onPress={handleModePress}
+                  style={styles.clickableChip}
+                  textStyle={styles.chipText}
+                >
+                  {getModeName()}
+                </Chip>
+              </View>
+              <View style={styles.infoItem}>
+                <Chip 
+                  mode="outlined" 
+                  onPress={handleModePress}
+                  style={styles.clickableChip}
+                  textStyle={styles.chipText}
+                >
+                  {getWinRequirement()}
+                </Chip>
+              </View>
+              <View style={styles.infoItem}>
+                <Chip 
+                  mode="outlined" 
+                  onPress={handleModePress}
+                  style={styles.clickableChip}
+                  textStyle={styles.chipText}
+                >
+                  {getGoreLevel()}
+                </Chip>
+              </View>
+              <View style={styles.infoItem}>
+                <Chip 
+                  mode="flat" 
+                  style={styles.spottedChip}
+                  textStyle={styles.spottedChipText}
+                >
+                  {getSpottedCount()}/16
+                </Chip>
+              </View>
             </View>
-          </View>
-        </View>
+        </Surface>
 
       <View style={styles.gridContainer}>
         <BingoGrid />
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={[styles.button, styles.newGameButton]}
+        <Button 
+          variant="primary"
           onPress={startNewGame}
+          testID="new-game-button"
+          icon={<IconSymbol name="arrow.clockwise" size={20} color="white" />}
+          iconPosition="left"
         >
-          <Text style={styles.buttonText}>New Game</Text>
-        </TouchableOpacity>
+          New Game
+        </Button>
       </View>
       </ScrollView>
       
@@ -151,14 +174,17 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     flex: 1,
   },
   content: {
-    paddingVertical: 20,
+    paddingTop: 32,
     paddingBottom: 100, // Add extra padding for bottom navigation
   },
   header: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 40,
+    marginTop: 16,
     paddingHorizontal: 20,
-    paddingTop: 4,
+    paddingTop: 24,
+    paddingBottom: 24,
+    zIndex: 10,
   },
   title: {
     fontSize: theme.fonts.massive,
@@ -166,12 +192,15 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     color: '#FF4444',
     textAlign: 'center',
     letterSpacing: 2,
+    lineHeight: theme.fonts.massive * 1.1,
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: theme.fonts.lg,
     color: '#FFD700',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
+    lineHeight: theme.fonts.lg * 1.2,
   },
   tagline: {
     fontSize: theme.fonts.sm,
@@ -179,37 +208,46 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     textAlign: 'center',
     fontStyle: 'italic',
     opacity: 0.8,
+    lineHeight: theme.fonts.sm * 1.3,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   gameInfo: {
     marginHorizontal: 20,
     marginBottom: 20,
-    backgroundColor: '#2A2A2A',
-    borderRadius: 12,
-    padding: 16,
+    marginTop: 0,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    gap: 8,
   },
   infoItem: {
     alignItems: 'center',
     flex: 1,
   },
   infoLabel: {
-    fontSize: theme.fonts.xs,
     color: '#CCCCCC',
     opacity: 0.7,
-    marginBottom: 4,
+    marginTop: 4,
+    textAlign: 'center',
   },
-  infoValue: {
-    fontSize: theme.fonts.sm,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+  clickableChip: {
+    backgroundColor: 'rgba(255, 212, 0, 0.1)',
+    borderColor: '#FFD700',
   },
-  clickableInfoValue: {
+  chipText: {
     color: '#FFD700',
-    textDecorationLine: 'underline',
+    fontSize: 11,
+  },
+  spottedChip: {
+    backgroundColor: 'rgba(255, 68, 68, 0.2)',
+  },
+  spottedChipText: {
+    color: '#FF4444',
+    fontSize: 11,
+    fontWeight: 'bold',
   },
   gridContainer: {
     marginBottom: 20,
@@ -218,29 +256,15 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     paddingHorizontal: 20,
     gap: 12,
   },
-  button: {
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  bingoButton: {
-    backgroundColor: '#FF4444',
-  },
   newGameButton: {
-    backgroundColor: '#2A2A2A',
-    borderWidth: 2,
     borderColor: '#FF4444',
+    borderWidth: 2,
+  },
+  buttonContent: {
+    paddingVertical: 8,
   },
   buttonText: {
-    fontSize: theme.fonts.md,
+    color: '#FF4444',
     fontWeight: 'bold',
-    color: 'white',
   },
 }));

@@ -1,0 +1,317 @@
+// =============================================================================
+// BUTTON COMPONENT - DESIGN SYSTEM
+// =============================================================================
+
+// Color Variables
+$color-primary: #dc2626;        // Red accent
+$color-primary-light: #ef4444;  // Lighter red for hover
+$color-primary-dark: #b91c1c;   // Darker red for active
+$color-text-primary: #ffffff;
+$color-text-secondary: #374151;
+$color-border: #d1d5db;
+$color-focus: #3b82f6;          // Blue for focus ring
+$color-disabled: rgba(0, 0, 0, 0.4);
+
+// Spacing Variables
+$btn-padding-y: 12px;
+$btn-padding-x: 24px;
+$btn-padding-y-sm: 8px;
+$btn-padding-x-sm: 16px;
+$btn-border-radius: 8px;
+$btn-border-width: 2px;
+$btn-focus-ring-width: 2px;
+$btn-icon-spacing: 8px;
+$btn-icon-only-size: 44px;
+
+// Typography
+$btn-font-size: 16px;
+$btn-font-weight: 600;
+$btn-line-height: 1.5;
+
+// =============================================================================
+// MIXINS
+// =============================================================================
+
+// Button Reset Mixin
+@mixin btn-reset {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+// Base Button Styles Mixin
+@mixin btn-base {
+  @include btn-reset;
+  
+  padding: $btn-padding-y $btn-padding-x;
+  border-radius: $btn-border-radius;
+  font-size: $btn-font-size;
+  font-weight: $btn-font-weight;
+  line-height: $btn-line-height;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  min-height: 44px; // Accessibility: minimum touch target
+  
+  // Prevent text selection
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+// Focus Ring Mixin
+@mixin btn-focus-ring($color: $color-focus) {
+  &:focus-visible {
+    box-shadow: 0 0 0 $btn-focus-ring-width $color inset;
+    outline: none;
+  }
+}
+
+// Disabled State Mixin
+@mixin btn-disabled {
+  &:disabled,
+  &.btn--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// Icon Spacing Mixin
+@mixin btn-icon-spacing {
+  .btn__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    &--left {
+      margin-right: $btn-icon-spacing;
+    }
+    
+    &--right {
+      margin-left: $btn-icon-spacing;
+    }
+  }
+}
+
+// =============================================================================
+// BASE BUTTON CLASS
+// =============================================================================
+
+.btn {
+  @include btn-base;
+  @include btn-focus-ring;
+  @include btn-disabled;
+  @include btn-icon-spacing;
+  
+  // Icon-only button modifier
+  &--icon {
+    width: $btn-icon-only-size;
+    height: $btn-icon-only-size;
+    padding: 0;
+    border-radius: 50%;
+    
+    .btn__icon {
+      margin: 0;
+    }
+  }
+  
+  // Small size modifier
+  &--small {
+    padding: $btn-padding-y-sm $btn-padding-x-sm;
+    font-size: 14px;
+    min-height: 36px;
+    
+    &.btn--icon {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+// =============================================================================
+// PRIMARY BUTTON (Default with red accent)
+// =============================================================================
+
+.btn--primary {
+  background-color: $color-primary;
+  color: $color-text-primary;
+  border: $btn-border-width solid transparent;
+  
+  &:hover {
+    background-color: $color-primary-light;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba($color-primary, 0.3);
+  }
+  
+  &:active {
+    background-color: $color-primary-dark;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba($color-primary, 0.3);
+  }
+  
+  @include btn-focus-ring($color-primary-light);
+}
+
+// =============================================================================
+// SECONDARY BUTTON (Outlined)
+// =============================================================================
+
+.btn--secondary {
+  background-color: transparent;
+  color: $color-primary;
+  border: $btn-border-width solid $color-primary;
+  
+  &:hover {
+    background-color: $color-primary;
+    color: $color-text-primary;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba($color-primary, 0.2);
+  }
+  
+  &:active {
+    background-color: $color-primary-dark;
+    border-color: $color-primary-dark;
+    color: $color-text-primary;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba($color-primary, 0.2);
+  }
+  
+  @include btn-focus-ring($color-primary);
+}
+
+// =============================================================================
+// BUTTON ELEMENTS (BEM Structure)
+// =============================================================================
+
+.btn__text {
+  display: inline-block;
+}
+
+.btn__icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+}
+
+// =============================================================================
+// UTILITY CLASSES
+// =============================================================================
+
+.btn--full-width {
+  width: 100%;
+}
+
+.btn--loading {
+  position: relative;
+  color: transparent;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: btn-spin 1s linear infinite;
+  }
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// =============================================================================
+// BUTTON GROUP
+// =============================================================================
+
+.btn-group {
+  display: inline-flex;
+  
+  .btn {
+    &:not(:first-child) {
+      margin-left: -$btn-border-width;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    
+    &:not(:last-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    
+    &:hover {
+      z-index: 1;
+    }
+  }
+}
+
+// =============================================================================
+// EXAMPLES AND DOCUMENTATION
+// =============================================================================
+
+/*
+USAGE EXAMPLES:
+
+<!-- Primary Button -->
+<button class="btn btn--primary">
+  <span class="btn__text">Primary Button</span>
+</button>
+
+<!-- Secondary Button -->
+<button class="btn btn--secondary">
+  <span class="btn__text">Secondary Button</span>
+</button>
+
+<!-- Button with Left Icon -->
+<button class="btn btn--primary">
+  <span class="btn__icon btn__icon--left">
+    <svg>...</svg>
+  </span>
+  <span class="btn__text">With Icon</span>
+</button>
+
+<!-- Icon-only Button -->
+<button class="btn btn--primary btn--icon">
+  <span class="btn__icon">
+    <svg>...</svg>
+  </span>
+</button>
+
+<!-- Disabled Button -->
+<button class="btn btn--primary" disabled>
+  <span class="btn__text">Disabled</span>
+</button>
+
+<!-- Small Button -->
+<button class="btn btn--primary btn--small">
+  <span class="btn__text">Small Button</span>
+</button>
+
+<!-- Loading Button -->
+<button class="btn btn--primary btn--loading">
+  <span class="btn__text">Loading...</span>
+</button>
+*/

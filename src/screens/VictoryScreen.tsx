@@ -10,12 +10,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import * as Clipboard from 'expo-clipboard';
 import * as Sentry from '@sentry/react-native';
 import { useGameStore, Achievement } from '../stores/gameStore';
-import { openInstagramAccount } from '../services/instagramAPI';
 import { BottomNavigation } from '../components/BottomNavigation';
-import { useConsentDialog } from '../hooks/useConsentDialog';
+import { IconSymbol } from '../components/ui/IconSymbol';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -72,8 +70,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   onBackToDashboard,
   screenshotUri
 }) => {
-  const { gameStats: _gameStats, currentGrid, gameMode, gameStartTime, checkAchievements } = useGameStore();
-  const { showConsentDialog } = useConsentDialog();
+  const { currentGrid, gameMode, gameStartTime, checkAchievements } = useGameStore();
   const [showStats, setShowStats] = useState(false);
   const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
   const [showScreenshot, setShowScreenshot] = useState(false);
@@ -173,104 +170,6 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   const gameTime = calculateGameTime();
   const winningPattern = gameMode === 'standard' ? "3 in a row" : "4 in a row";
 
-const handleShare = async () => {
-    try {
-      const consentGiven = await showConsentDialog();
-      if (!consentGiven) {
-        return;
-      }
-    } catch (error) {
-      console.error('Error showing consent dialog:', error);
-      Sentry.captureException(error);
-      Alert.alert('Error', 'Failed to show consent dialog. Please try again.');
-      return;
-    }
-    
-    try {
-      // Create victory message
-      const victoryMessage = `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}! 🎉`;
-      const shareMessage = `${victoryMessage} #deadahead #roadkill #roadkillbingo`;
-      
-      // Show sharing dialog with copy option first
-      Alert.alert(
-        "Share Your Victory! 🎉", 
-        `${victoryMessage}\n\nShare your victory on social media!`,
-        [
-          { 
-            text: "Copy Message", 
-            onPress: async () => {
-              try {
-                await Clipboard.setStringAsync(shareMessage);
-                Alert.alert(
-                  "Copied! 📋", 
-                  "Victory message copied to clipboard!\n\nYou can now paste it anywhere - Instagram, Twitter, Facebook, etc.",
-                  [
-                    { 
-                      text: "View @deadaheadroadkill", 
-                      onPress: () => {
-                        try {
-                          openInstagramAccount();
-                        } catch (error) {
-                          console.error('Error opening Instagram:', error);
-                          Sentry.captureException(error);
-                          Alert.alert('Error', 'Failed to open Instagram. Please try again.');
-                        }
-                      }
-                    },
-                    { text: "Done" }
-                  ]
-                );
-              } catch (error) {
-                console.error('Error copying to clipboard:', error);
-                Sentry.captureException(error);
-                Alert.alert('Error', 'Failed to copy to clipboard. Please try again.');
-              }
-            }
-          },
-          { 
-            text: "View @deadaheadroadkill", 
-            onPress: () => {
-              try {
-                openInstagramAccount();
-              } catch (error) {
-                console.error('Error opening Instagram:', error);
-                Sentry.captureException(error);
-                Alert.alert('Error', 'Failed to open Instagram. Please try again.');
-              }
-            }
-          },
-          { text: "Later" }
-        ]
-      );
-    } catch (error) {
-      console.error('Error sharing victory:', error);
-      
-      // Simple fallback
-      const victoryMessage = `I just won ROADKILL BINGO with ${spottedCount}/25 tiles spotted in ${gameTime}! 🎉`;
-      const shareMessage = `${victoryMessage} #deadahead #roadkill #roadkillbingo`;
-      
-      Alert.alert(
-        "Share Your Victory! 🎉", 
-        victoryMessage,
-        [
-          { 
-            text: "Copy Message", 
-            onPress: async () => {
-              try {
-                await Clipboard.setStringAsync(shareMessage);
-                Alert.alert("Copied!", "Victory message copied to clipboard!");
-              } catch (error) {
-                console.error('Error copying to clipboard:', error);
-                Sentry.captureException(error);
-                Alert.alert('Error', 'Failed to copy to clipboard. Please try again.');
-              }
-            }
-          },
-          { text: "OK" }
-        ]
-      );
-    }
-  };
 
   const handlePlayAgain = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -282,8 +181,8 @@ const handleShare = async () => {
     <View style={[styles.container, { 
       paddingTop: insets.top + 20,
       paddingBottom: insets.bottom + 100, // Add extra padding for bottom navigation
-      paddingLeft: insets.left + 20,
-      paddingRight: insets.right + 20,
+      paddingLeft: (insets.left || 0) + 20,
+      paddingRight: (insets.right || 0) + 20,
     }]}>
       {/* Blood splatter/Confetti particles */}
       {Array.from({ length: 30 }, (_, i) => (
@@ -353,14 +252,15 @@ const handleShare = async () => {
             style={[styles.button, styles.playAgainButton]}
             onPress={handlePlayAgain}
           >
-            <Text style={styles.buttonText}>🎮 Play Again</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.shareButton]}
-            onPress={handleShare}
-          >
-            <Text style={styles.buttonText}>📸 Share Victory</Text>
+            <View style={styles.buttonContent}>
+              <IconSymbol 
+                name="gamecontroller.fill" 
+                size={24} 
+                color="white"
+                style={styles.buttonIcon}
+              />
+              <Text style={styles.buttonText}>Play Again</Text>
+            </View>
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -408,7 +308,7 @@ const styles = StyleSheet.create((theme) => ({
     textShadowRadius: 4,
   },
   bingoTitle: {
-    fontSize: theme.fonts.gigantic,
+    fontSize: theme.fonts.huge,
     fontWeight: 'bold',
     color: '#FFD700',
     textAlign: 'center',
@@ -494,8 +394,13 @@ const styles = StyleSheet.create((theme) => ({
   playAgainButton: {
     backgroundColor: '#FF4444',
   },
-  shareButton: {
-    backgroundColor: '#FFD700',
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonIcon: {
+    marginRight: 8,
   },
   buttonText: {
     fontSize: theme.fonts.lg,

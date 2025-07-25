@@ -1,18 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Alert, Dimensions, TouchableOpacity, Platform } from 'react-native';
+import { View, Alert, Dimensions, Platform } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { StyleSheet } from 'react-native-unistyles';
-import { ThemeProvider, Button, Box, ThemedText } from '@joe111/neo-ui';
+import { Card, Text, IconButton, Button, Surface, FAB, useTheme } from 'react-native-paper';
 import { useGameStore } from '../src/stores/gameStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { openInstagramAccount } from '../src/services/instagramAPI';
 import { savePhotoToGallery } from '../src/components/Camera/PhotoGallery';
 import { BottomNavigation } from '../src/components/BottomNavigation';
 import { useConsentDialog } from '../src/hooks/useConsentDialog';
+import { IconSymbol } from '../src/components/ui/IconSymbol';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,26 +31,32 @@ const stylesheet = StyleSheet.create(theme => ({
     textAlign: 'center',
     color: theme.colors.text,
   },
+  permissionCard: {
+    marginHorizontal: 20,
+    padding: 20,
+  },
+  permissionContent: {
+    alignItems: 'center',
+  },
   permissionText: {
-    fontSize: 24,
-    fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 16,
     color: theme.colors.primary,
   },
   permissionSubtext: {
-    fontSize: 16,
     textAlign: 'center',
     marginBottom: 32,
     color: '#888',
-    paddingHorizontal: 20,
   },
   permissionButton: {
-    marginHorizontal: 20,
     marginBottom: 12,
+    width: '100%',
   },
   backButton: {
-    marginHorizontal: 20,
+    width: '100%',
+  },
+  buttonContent: {
+    paddingVertical: 8,
   },
   header: {
     flexDirection: 'row',
@@ -58,54 +65,31 @@ const stylesheet = StyleSheet.create(theme => ({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   backButtonSmall: {
-    minWidth: 60,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
+    flex: 1,
   },
   flipButton: {
-    minWidth: 60,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   instructions: {
     position: 'absolute',
-    top: 140,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    paddingVertical: 12,
+    left: 20,
+    right: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   instructionText: {
-    fontSize: 16,
-    fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
     marginBottom: 4,
   },
   instructionSubtext: {
-    fontSize: 14,
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
   },
@@ -122,44 +106,27 @@ const stylesheet = StyleSheet.create(theme => ({
     alignItems: 'center',
   },
   captureButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
     backgroundColor: theme.colors.primary,
-    borderWidth: 4,
-    borderColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  captureButtonDisabled: {
-    opacity: 0.6,
   },
   previewContainer: {
     flex: 1,
     padding: 20,
-    paddingBottom: 100, // Add space for bottom navigation
+    paddingBottom: 100,
     justifyContent: 'center',
     backgroundColor: theme.colors.background,
   },
   previewTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 32,
     color: theme.colors.primary,
   },
-  photoContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  photoCard: {
     marginBottom: 32,
+    overflow: 'hidden',
   },
   capturedImage: {
-    width: width * 0.9,
+    width: '100%',
     height: height * 0.5,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: theme.colors.primary,
   },
   photoPlaceholder: {
     width: width * 0.8,
@@ -190,12 +157,6 @@ const stylesheet = StyleSheet.create(theme => ({
   },
   shareButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginVertical: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   instagramButton: {
     backgroundColor: '#E4405F',
@@ -396,7 +357,7 @@ export default function CameraScreen() {
         }
       } catch (instagramError) {
         console.log('⚠️ Instagram posting failed, but photo was uploaded successfully');
-        console.log('⚠️ Error:', instagramError.message);
+        console.log('⚠️ Error:', instagramError instanceof Error ? instagramError.message : String(instagramError));
         
         // Fallback: Photo uploaded successfully but Instagram posting failed
         Alert.alert(
@@ -424,7 +385,7 @@ export default function CameraScreen() {
       console.error('❌ Camera upload error:', error);
       Alert.alert(
         'Upload Failed 😞',
-        `${error.message}\n\nPlease check your internet connection and try again.`,
+        `${error instanceof Error ? error.message : 'An unknown error occurred'}\n\nPlease check your internet connection and try again.`,
         [
           { text: 'Retry', onPress: () => sharePhotoToWorkflow() },
           { text: 'Cancel' }
@@ -441,66 +402,74 @@ export default function CameraScreen() {
   if (!permission) {
     // Camera permissions are still loading
     return (
-      <ThemeProvider>
-        <Box style={styles.container}>
-          <ThemedText style={styles.loadingText}>Loading camera...</ThemedText>
-        </Box>
-      </ThemeProvider>
+      <View style={styles.container}>
+        <Text variant="bodyLarge" style={styles.loadingText}>Loading camera...</Text>
+      </View>
     );
   }
 
   if (!permission.granted) {
     // Camera permissions are not granted yet
     return (
-      <ThemeProvider>
-        <Box style={[styles.container, { paddingTop: insets.top + 40 }]}>
-          <ThemedText style={styles.permissionText}>
-            📸 Snap the Splat!
-          </ThemedText>
-          <ThemedText style={styles.permissionSubtext}>
-            We need camera access to capture your roadkill evidence for the leaderboard!
-          </ThemedText>
-          <Button
-            onPress={requestPermission}
-            style={styles.permissionButton}
-          >
-            Grant Camera Access
-          </Button>
-          <Button
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            Back to Game
-          </Button>
-        </Box>
-      </ThemeProvider>
+      <Surface style={[styles.container, { paddingTop: insets.top + 40 }]}>
+        <Card style={styles.permissionCard} mode="contained">
+          <Card.Content style={styles.permissionContent}>
+            <Text variant="headlineMedium" style={styles.permissionText}>
+              📸 Snap the Splat!
+            </Text>
+            <Text variant="bodyMedium" style={styles.permissionSubtext}>
+              We need camera access to capture your roadkill evidence for the leaderboard!
+            </Text>
+            <Button
+              mode="contained"
+              onPress={requestPermission}
+              style={styles.permissionButton}
+              contentStyle={styles.buttonContent}
+              icon="camera"
+            >
+              Grant Camera Access
+            </Button>
+            <Button
+              mode="outlined"
+              onPress={() => router.back()}
+              style={styles.backButton}
+              contentStyle={styles.buttonContent}
+              icon="arrow-left"
+            >
+              Back to Game
+            </Button>
+          </Card.Content>
+        </Card>
+      </Surface>
     );
   }
 
   return (
-    <ThemeProvider>
-      <Box style={styles.container}>
+    <View style={styles.container}>
         {capturedPhoto ? (
           // Photo Preview Screen
-          <View style={[styles.previewContainer, { paddingTop: insets.top + 20 }]}>
-            <Text style={styles.previewTitle}>🎯 Snap Successful!</Text>
-            <View style={styles.photoContainer}>
+          <Surface style={[styles.previewContainer, { paddingTop: insets.top + 20 }]}>
+            <Text variant="headlineMedium" style={styles.previewTitle}>🎯 Snap Successful!</Text>
+            <Card style={styles.photoCard} mode="outlined">
               <Image
                 source={{ uri: capturedPhoto }}
                 style={styles.capturedImage}
                 contentFit="cover"
               />
-            </View>
+            </Card>
             
             <View style={styles.previewButtons}>
-              <TouchableOpacity
+              <Button
+                mode="contained"
                 onPress={sharePhotoToWorkflow}
                 style={styles.shareButton}
+                contentStyle={styles.buttonContent}
+                icon="share"
               >
-                <Text style={styles.buttonText}>📤 Share Photo to Instagram</Text>
-              </TouchableOpacity>
+                Share Photo to Instagram
+              </Button>
             </View>
-          </View>
+          </Surface>
         ) : (
           // Camera View
           <>
@@ -511,47 +480,51 @@ export default function CameraScreen() {
               ratio="16:9"
             >
               {/* Header */}
-              <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-                <TouchableOpacity
+              <Surface style={[styles.header, { paddingTop: insets.top + 16 }]} elevation={3}>
+                <IconButton
+                  icon="arrow-left"
+                  size={24}
                   onPress={() => router.back()}
                   style={styles.backButtonSmall}
-                >
-                  <Text style={styles.headerButtonText}>← Back</Text>
-                </TouchableOpacity>
-                <ThemedText style={styles.headerTitle}>Snap the Splat! 📸</ThemedText>
-                <TouchableOpacity
+                  iconColor="white"
+                />
+                <Text variant="titleLarge" style={styles.headerTitle}>Snap the Splat! 📸</Text>
+                <IconButton
+                  icon="camera-flip"
+                  size={24}
                   onPress={flipCamera}
                   style={styles.flipButton}
-                >
-                  <Text style={styles.headerButtonText}>🔄</Text>
-                </TouchableOpacity>
-              </View>
+                  iconColor="white"
+                />
+              </Surface>
 
               {/* Instructions */}
-              <View style={[styles.instructions, { top: insets.top + 100 }]}>
-                <ThemedText style={styles.instructionText}>
-                  🎯 Spot roadkill? Capture the evidence!
-                </ThemedText>
-                <ThemedText style={styles.instructionSubtext}>
-                  Photos help verify your bingo wins
-                </ThemedText>
-              </View>
+              <Card style={[styles.instructions, { top: insets.top + 100 }]} mode="contained">
+                <Card.Content>
+                  <Text variant="titleMedium" style={styles.instructionText}>
+                    🎯 Spot roadkill? Capture the evidence!
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.instructionSubtext}>
+                    Photos help verify your bingo wins
+                  </Text>
+                </Card.Content>
+              </Card>
 
               {/* Bottom Controls */}
               <View style={styles.controls}>
                 <View style={styles.captureButtonContainer}>
-                  <TouchableOpacity
+                  <FAB
+                    icon={(props) => (
+                      <IconSymbol name="camera.fill" size={props.size ?? 24} color={props.color ?? 'white'} />
+                    )}
                     onPress={takePicture}
                     disabled={isCapturing}
-                    style={[
-                      styles.captureButton,
-                      isCapturing && styles.captureButtonDisabled
-                    ]}
-                  >
-                    <Text style={styles.captureButtonText}>
-                      {isCapturing ? "📸 Capturing..." : "📸 SNAP!"}
-                    </Text>
-                  </TouchableOpacity>
+                    style={styles.captureButton}
+                    size="large"
+                    label={isCapturing ? "Capturing..." : "SNAP!"}
+                    mode="elevated"
+                    accessibilityLabel="Take Picture"
+                  />
                 </View>
               </View>
             </CameraView>
@@ -559,7 +532,6 @@ export default function CameraScreen() {
         )}
         
         <BottomNavigation />
-      </Box>
-    </ThemeProvider>
+    </View>
   );
 }

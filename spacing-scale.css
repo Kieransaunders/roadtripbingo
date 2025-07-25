@@ -1,0 +1,310 @@
+/* 
+ * 8-Point Spacing Scale
+ * Base unit: 8px with 2px increments for fine-tuning
+ * Derived from industry best practices for consistent spacing
+ */
+
+:root {
+  /* Core 8-point spacing scale */
+  --space-1: 4px;   /* 0.5 × 8px - micro spacing */
+  --space-2: 8px;   /* 1 × 8px - base unit */
+  --space-3: 12px;  /* 1.5 × 8px - small spacing */
+  --space-4: 16px;  /* 2 × 8px - medium spacing */
+  --space-5: 24px;  /* 3 × 8px - large spacing */
+  --space-6: 32px;  /* 4 × 8px - extra large spacing */
+  --space-7: 48px;  /* 6 × 8px - section spacing */
+  --space-8: 64px;  /* 8 × 8px - layout spacing */
+
+  /* Extended scale for larger layouts */
+  --space-9: 96px;   /* 12 × 8px - major sections */
+  --space-10: 128px; /* 16 × 8px - page sections */
+
+  /* 2px increments for fine-tuning when needed */
+  --space-xs: 2px;   /* micro adjustments */
+  --space-xxs: 1px;  /* hairline borders/adjustments */
+
+  /* Touch target minimum size */
+  --touch-target-min: 44px; /* WCAG AAA minimum touch target */
+  --touch-target-comfortable: 48px; /* More comfortable touch target */
+}
+
+/* =============================================================================
+   USAGE EXAMPLES
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   PADDING EXAMPLES
+   ----------------------------------------------------------------------------- */
+
+/* Component padding patterns */
+.btn {
+  padding: var(--space-2) var(--space-4); /* 8px vertical, 16px horizontal */
+  min-height: var(--touch-target-min); /* 44px minimum */
+  min-width: var(--touch-target-min);
+}
+
+.btn--large {
+  padding: var(--space-3) var(--space-5); /* 12px vertical, 24px horizontal */
+  min-height: var(--touch-target-comfortable); /* 48px */
+}
+
+.btn--small {
+  padding: var(--space-1) var(--space-3); /* 4px vertical, 12px horizontal */
+  min-height: var(--touch-target-min); /* Still maintain 44px minimum */
+}
+
+.card {
+  padding: var(--space-4); /* 16px all around */
+}
+
+.card--compact {
+  padding: var(--space-3); /* 12px all around */
+}
+
+.card--spacious {
+  padding: var(--space-6); /* 32px all around */
+}
+
+/* Input field padding */
+.input {
+  padding: var(--space-3) var(--space-4); /* 12px vertical, 16px horizontal */
+  min-height: var(--touch-target-min);
+}
+
+/* Container padding */
+.container {
+  padding-inline: var(--space-4); /* 16px horizontal */
+}
+
+.container--wide {
+  padding-inline: var(--space-6); /* 32px horizontal */
+}
+
+/* -----------------------------------------------------------------------------
+   MARGIN EXAMPLES
+   ----------------------------------------------------------------------------- */
+
+/* Vertical rhythm for text elements */
+.heading {
+  margin-bottom: var(--space-3); /* 12px */
+}
+
+.paragraph {
+  margin-bottom: var(--space-4); /* 16px */
+}
+
+.section {
+  margin-bottom: var(--space-7); /* 48px */
+}
+
+/* Component spacing */
+.form-field {
+  margin-bottom: var(--space-4); /* 16px between fields */
+}
+
+.form-field--tight {
+  margin-bottom: var(--space-3); /* 12px for compact forms */
+}
+
+/* Card grid spacing */
+.card-grid {
+  gap: var(--space-4); /* 16px between cards */
+}
+
+.card-grid--loose {
+  gap: var(--space-6); /* 32px for more breathing room */
+}
+
+/* Navigation spacing */
+.nav-item {
+  margin-right: var(--space-4); /* 16px between nav items */
+}
+
+.nav-item:last-child {
+  margin-right: 0;
+}
+
+/* -----------------------------------------------------------------------------
+   ICON GAP EXAMPLES
+   ----------------------------------------------------------------------------- */
+
+/* Icon with text combinations */
+.btn-with-icon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2); /* 8px between icon and text */
+}
+
+.btn-with-icon--tight {
+  gap: var(--space-1); /* 4px for smaller buttons */
+}
+
+.list-item-with-icon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3); /* 12px between icon and content */
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2); /* 8px between breadcrumb items */
+}
+
+/* Icon button spacing */
+.icon-btn {
+  padding: var(--space-2); /* 8px padding around icon */
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn--small {
+  padding: var(--space-1); /* 4px padding */
+  min-height: var(--space-6); /* 32px minimum for small icons */
+  min-width: var(--space-6);
+}
+
+/* -----------------------------------------------------------------------------
+   LAYOUT EXAMPLES
+   ----------------------------------------------------------------------------- */
+
+/* Grid and flexbox gaps */
+.layout-grid {
+  display: grid;
+  gap: var(--space-4); /* 16px grid gap */
+}
+
+.layout-grid--tight {
+  gap: var(--space-2); /* 8px for compact layouts */
+}
+
+.layout-grid--loose {
+  gap: var(--space-6); /* 32px for spacious layouts */
+}
+
+.flex-row {
+  display: flex;
+  gap: var(--space-3); /* 12px between flex items */
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4); /* 16px vertical spacing */
+}
+
+/* -----------------------------------------------------------------------------
+   RESPONSIVE SPACING
+   ----------------------------------------------------------------------------- */
+
+/* Scale spacing for different screen sizes */
+@media (min-width: 768px) {
+  .container {
+    padding-inline: var(--space-6); /* 32px on tablets+ */
+  }
+  
+  .section {
+    margin-bottom: var(--space-8); /* 64px on larger screens */
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-inline: var(--space-8); /* 64px on desktop */
+  }
+  
+  .section {
+    margin-bottom: var(--space-9); /* 96px on desktop */
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   UTILITY CLASSES
+   ----------------------------------------------------------------------------- */
+
+/* Padding utilities */
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+.p-6 { padding: var(--space-6); }
+.p-7 { padding: var(--space-7); }
+.p-8 { padding: var(--space-8); }
+
+/* Margin utilities */
+.m-1 { margin: var(--space-1); }
+.m-2 { margin: var(--space-2); }
+.m-3 { margin: var(--space-3); }
+.m-4 { margin: var(--space-4); }
+.m-5 { margin: var(--space-5); }
+.m-6 { margin: var(--space-6); }
+.m-7 { margin: var(--space-7); }
+.m-8 { margin: var(--space-8); }
+
+/* Gap utilities */
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-5 { gap: var(--space-5); }
+.gap-6 { gap: var(--space-6); }
+.gap-7 { gap: var(--space-7); }
+.gap-8 { gap: var(--space-8); }
+
+/* -----------------------------------------------------------------------------
+   ACCESSIBILITY & TOUCH TARGETS
+   ----------------------------------------------------------------------------- */
+
+/*
+ * Touch Target Guidelines:
+ * - Minimum: 44×44px (WCAG AAA)
+ * - Comfortable: 48×48px
+ * - Ensure adequate spacing between touch targets (8px minimum)
+ */
+
+.touch-target {
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+}
+
+.touch-target--comfortable {
+  min-height: var(--touch-target-comfortable);
+  min-width: var(--touch-target-comfortable);
+}
+
+/* Ensure proper spacing between adjacent touch targets */
+.touch-group > * + * {
+  margin-left: var(--space-2); /* 8px minimum between touch targets */
+}
+
+/* -----------------------------------------------------------------------------
+   SPACING SCALE REFERENCE
+   ----------------------------------------------------------------------------- */
+
+/*
+ * Quick Reference:
+ * 
+ * --space-1: 4px   | Micro spacing, fine adjustments
+ * --space-2: 8px   | Base unit, icon gaps, small padding
+ * --space-3: 12px  | Small spacing, compact padding
+ * --space-4: 16px  | Medium spacing, standard padding/margins
+ * --space-5: 24px  | Large spacing, generous padding
+ * --space-6: 32px  | Extra large spacing, component separation
+ * --space-7: 48px  | Section spacing, major component gaps
+ * --space-8: 64px  | Layout spacing, page section separation
+ * 
+ * Touch Targets:
+ * --touch-target-min: 44px         | WCAG AAA minimum
+ * --touch-target-comfortable: 48px | Recommended comfortable size
+ * 
+ * Usage Guidelines:
+ * - Use consistently across your design system
+ * - Prefer larger values (space-4+) for touch interfaces
+ * - Use space-1 and space-2 for fine-tuning only
+ * - Maintain minimum 44px touch targets for accessibility
+ * - Consider responsive scaling for different screen sizes
+ */

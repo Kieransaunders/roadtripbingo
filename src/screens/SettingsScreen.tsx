@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { View, TouchableOpacity, ScrollView, StatusBar, Switch, StyleSheet, Alert, Platform, Linking } from 'react-native';
+import { View, ScrollView, StatusBar, StyleSheet, Alert, Platform, Linking } from 'react-native';
 import { router } from 'expo-router';
 import * as Sentry from '@sentry/react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedText, Box } from '@joe111/neo-ui';
+import { Card, Text, IconButton, Switch, Button, Surface, Divider, List, useTheme } from 'react-native-paper';
+import { IconSymbol } from '../components/ui/IconSymbol';
 import { useGameStore, GoreLevel } from '../stores/gameStore';
 import { soundManager } from '../services/soundManager';
 import { BottomNavigation } from '../components/BottomNavigation';
@@ -15,10 +16,12 @@ interface SettingSectionProps {
 
 const SettingSection: React.FC<SettingSectionProps> = ({ title, children }) => {
   return (
-    <Box style={styles.section}>
-      <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
-      {children}
-    </Box>
+    <Card style={styles.section} mode="contained">
+      <Card.Content>
+        <Text variant="headlineSmall" style={styles.sectionTitle}>{title}</Text>
+        {children}
+      </Card.Content>
+    </Card>
   );
 };
 
@@ -31,18 +34,19 @@ interface ToggleSettingProps {
 
 const ToggleSetting: React.FC<ToggleSettingProps> = ({ title, description, value, onValueChange }) => {
   return (
-    <Box style={styles.toggleSetting}>
-      <Box style={styles.toggleContent}>
-        <ThemedText style={styles.toggleTitle}>{title}</ThemedText>
-        <ThemedText style={styles.toggleDescription}>{description}</ThemedText>
-      </Box>
-      <Switch
-        value={value}
-        onValueChange={onValueChange}
-        trackColor={{ false: '#333', true: '#FF4444' }}
-        thumbColor={value ? '#fff' : '#666'}
-      />
-    </Box>
+    <List.Item
+      title={title}
+      description={description}
+      titleStyle={styles.toggleTitle}
+      descriptionStyle={styles.toggleDescription}
+      right={() => (
+        <Switch
+          value={value}
+          onValueChange={onValueChange}
+        />
+      )}
+      style={styles.toggleSetting}
+    />
   );
 };
 
@@ -54,40 +58,26 @@ interface RadioOptionProps {
 }
 
 const RadioOption: React.FC<RadioOptionProps> = ({ title, description, selected, onPress }) => {
-  const isDisabled = description.includes('DISABLED');
+  const theme = useTheme();
   
   return (
-    <TouchableOpacity 
-      style={[
-        styles.radioOption, 
-        selected && styles.radioOptionSelected,
-        isDisabled && styles.radioOptionDisabled
-      ]} 
+    <List.Item
+      title={title}
+      description={description}
       onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <Box style={styles.radioContent}>
-        <Box style={[
-          styles.radioButton, 
-          selected && styles.radioButtonSelected,
-          isDisabled && styles.radioButtonDisabled
-        ]}>
-          {selected && <Box style={styles.radioButtonInner} />}
-        </Box>
-        <Box style={styles.radioText}>
-          <ThemedText style={[
-            styles.radioTitle, 
-            selected && styles.radioTitleSelected,
-            isDisabled && styles.radioTitleDisabled
-          ]}>{title}</ThemedText>
-          <ThemedText style={[
-            styles.radioDescription, 
-            selected && styles.radioDescriptionSelected,
-            isDisabled && styles.radioDescriptionDisabled
-          ]}>{description}</ThemedText>
-        </Box>
-      </Box>
-    </TouchableOpacity>
+      left={() => (
+        <List.Icon 
+          icon={selected ? 'radiobox-marked' : 'radiobox-blank'} 
+          color={selected ? theme.colors.primary : theme.colors.outline}
+        />
+      )}
+      titleStyle={styles.radioTitle}
+      descriptionStyle={styles.radioDescription}
+      style={[
+        styles.radioOption,
+        selected && { backgroundColor: theme.colors.primaryContainer }
+      ]}
+    />
   );
 };
 
@@ -97,11 +87,22 @@ interface InfoItemProps {
 }
 
 const InfoItem: React.FC<InfoItemProps> = ({ icon, text }) => {
+  const theme = useTheme();
+  
   return (
-    <Box style={styles.infoItem}>
-      <ThemedText style={styles.infoIcon}>{icon}</ThemedText>
-      <ThemedText style={styles.infoText}>{text}</ThemedText>
-    </Box>
+    <List.Item
+      title={text}
+      left={() => (
+        <IconSymbol 
+          name={icon as any} 
+          size={20} 
+          color={theme.colors.onSurfaceVariant}
+          style={styles.infoIcon}
+        />
+      )}
+      titleStyle={styles.infoText}
+      titleNumberOfLines={3}
+    />
   );
 };
 
@@ -112,6 +113,8 @@ interface LinkItemProps {
 }
 
 const LinkItem: React.FC<LinkItemProps> = ({ icon, text, url }) => {
+  const theme = useTheme();
+  
   const handlePress = async () => {
     try {
       const supported = await Linking.canOpenURL(url);
@@ -127,11 +130,22 @@ const LinkItem: React.FC<LinkItemProps> = ({ icon, text, url }) => {
   };
 
   return (
-    <TouchableOpacity style={styles.linkItem} onPress={handlePress} activeOpacity={0.7}>
-      <ThemedText style={styles.infoIcon}>{icon}</ThemedText>
-      <ThemedText style={styles.linkText}>{text}</ThemedText>
-      <ThemedText style={styles.externalIcon}>↗</ThemedText>
-    </TouchableOpacity>
+    <List.Item
+      title={text}
+      onPress={handlePress}
+      left={() => (
+        <IconSymbol 
+          name={icon as any} 
+          size={20} 
+          color={theme.colors.secondary}
+          style={styles.infoIcon}
+        />
+      )}
+      right={() => <List.Icon icon="open-in-new" />}
+      titleStyle={styles.linkText}
+      titleNumberOfLines={3}
+      style={styles.linkItem}
+    />
   );
 };
 
@@ -177,24 +191,42 @@ export const SettingsScreen: React.FC = () => {
   };
 
   const handleGoreLevelChange = async (level: GoreLevel) => {
-    // Play creepy monster sound when they try to change mode 👹
-    await soundManager.playCreepySound();
+    console.log('🎮 Gore level change attempted:', level);
+    
+    try {
+      // Play creepy monster sound when they try to change mode 👹
+      console.log('🔊 Playing creepy sound...');
+      await soundManager.playCreepySound();
+      console.log('✅ Creepy sound played successfully');
+    } catch (error) {
+      console.error('❌ Failed to play creepy sound:', error);
+    }
     
     // Show the message for ANY click on gore level options
     const message = 'Extreme mode is baked in. Like roadkill on hot tarmac.';
     
-    if (Platform.OS === 'web') {
-      // Use browser alert for web
-      window.alert(`🩸 Extreme Mode Only\n\n${message}`);
-    } else {
-      // Use React Native Alert for mobile
+    try {
+      // Use React Native Alert for all platforms for consistent experience
+      console.log('📱 Showing alert dialog...');
       Alert.alert(
         '🩸 Extreme Mode Only',
         message,
-        [{ text: 'Got It!', style: 'default' }]
+        [
+          { 
+            text: 'Got It!', 
+            style: 'default',
+            onPress: () => console.log('✅ User dismissed gore level dialog')
+          }
+        ]
       );
+    } catch (error) {
+      console.error('❌ Failed to show dialog:', error);
+      // Fallback to console log
+      console.log('🩸 Extreme Mode Only:', message);
     }
+    
     // Always keep it on extreme regardless of what they clicked
+    console.log('🔒 Keeping gore level locked to extreme');
   };
 
   return (
@@ -202,13 +234,17 @@ export const SettingsScreen: React.FC = () => {
       <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
       
       {/* Header */}
-      <Box style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <ThemedText style={styles.backIcon}>‹</ThemedText>
-        </TouchableOpacity>
-        <ThemedText style={styles.title}>Settings</ThemedText>
+      <Surface style={styles.header} elevation={2}>
+        <IconButton 
+          icon="arrow-left" 
+          size={24}
+          onPress={handleBack}
+          style={styles.backButton}
+          iconColor="white"
+        />
+        <Text variant="headlineMedium" style={styles.title}>Settings</Text>
         <View style={styles.placeholder} />
-      </Box>
+      </Surface>
 
       <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Game Mode */}
@@ -243,27 +279,27 @@ export const SettingsScreen: React.FC = () => {
 
         {/* Gore Level */}
         <SettingSection title="Gore Level">
-          <ThemedText style={styles.goreLevelDescription}>
+          <Text variant="bodyMedium" style={styles.goreLevelDescription}>
             Extreme mode is the only way to experience true roadkill chaos
-          </ThemedText>
+          </Text>
           <View style={styles.radioContainer}>
             <RadioOption
               title="Mild"
-              description="For cowards • DISABLED"
+              description="For cowards who can't handle the truth"
               selected={false}
               onPress={() => handleGoreLevelChange('mild')}
             />
             <RadioOption
               title="Moderate"
-              description="Still too tame • DISABLED"
+              description="Still too tame for roadkill reality"
               selected={false}
               onPress={() => handleGoreLevelChange('moderate')}
             />
             <RadioOption
               title="Extreme"
-              description="Full horror experience • LOCKED"
+              description="Full horror experience - the only way"
               selected={true}
-              onPress={() => {}} // No action needed - already locked to extreme
+              onPress={() => handleGoreLevelChange('extreme')}
             />
           </View>
         </SettingSection>
@@ -271,40 +307,42 @@ export const SettingsScreen: React.FC = () => {
         {/* About */}
         <SettingSection title="About">
           <View style={styles.aboutContainer}>
-            <InfoItem icon="🎮" text="Dead Ahead: Roadkill Bingo" />
-            <InfoItem icon="ℹ️" text="Version 1.0.0" />
-            <InfoItem icon="⚠️" text="Rated 12+ for crude humor" />
-            <InfoItem icon="🎯" text={`Get ${longRoadTripEnabled ? '4' : '3'} in a row to win • Free Range center tile always marked`} />
+            <InfoItem icon="gamecontroller.fill" text="Dead Ahead: Roadkill Bingo" />
+            <InfoItem icon="info.circle.fill" text="Version 1.0.0" />
+            <InfoItem icon="exclamationmark.triangle.fill" text="Rated 12+ for crude humor" />
+            <InfoItem icon="target" text={`Get ${longRoadTripEnabled ? '4' : '3'} in a row to win • Free Range center tile always marked`} />
             
-            <View style={styles.conservationSection}>
-              <ThemedText style={styles.conservationText}>
-                Dead Ahead is a cheeky road-trip bingo game — but real roads aren't so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
-              </ThemedText>
-              
-              <ThemedText style={styles.conservationHeading}>Want to help?</ThemedText>
-              <ThemedText style={styles.conservationText}>
-                Log your sightings with the Mammals on Roads app by the People's Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
-              </ThemedText>
+            <Card style={styles.conservationSection} mode="outlined">
+              <Card.Content>
+                <Text variant="bodyMedium" style={styles.conservationText}>
+                  Dead Ahead is a cheeky road-trip bingo game — but real roads aren't so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
+                </Text>
+                
+                <Text variant="titleMedium" style={styles.conservationHeading}>Want to help?</Text>
+                <Text variant="bodyMedium" style={styles.conservationText}>
+                  Log your sightings with the Mammals on Roads app by the People's Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
+                </Text>
+              </Card.Content>
+            </Card>
               
               <View style={styles.linksContainer}>
                 <LinkItem 
-                  icon="📱" 
+                  icon="iphone" 
                   text="App Store: PTES Mammals on Roads" 
                   url="https://apps.apple.com/gb/app/ptes-mammals-on-roads/id446109227"
                 />
                 <LinkItem 
-                  icon="🤖" 
+                  icon="androidrobot" 
                   text="Google Play: Mammals on Roads" 
                   url="https://play.google.com/store/apps/details?id=org.ptes.mammalsonroads.v2&hl=en&gl=US&pli=1"
                 />
                 <LinkItem 
-                  icon="🌐" 
+                  icon="globe" 
                   text="To find out more about PTES' wider conservation work, visit www.ptes.org" 
                   url="https://www.ptes.org"
                 />
               </View>
             </View>
-          </View>
         </SettingSection>
       </ScrollView>
       
@@ -324,24 +362,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
+    backgroundColor: '#2a2a4a',
   },
   backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backIcon: {
-    fontSize: 24,
-    color: 'white',
-    fontWeight: 'bold',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
     color: 'white',
+    textAlign: 'center',
   },
   placeholder: {
     width: 44,
@@ -355,14 +383,10 @@ const styles = StyleSheet.create({
     paddingBottom: 100, // Add space for bottom navigation
   },
   section: {
-    backgroundColor: '#2a2a4a',
-    borderRadius: 12,
-    padding: 20,
     marginBottom: 16,
+    marginHorizontal: 0,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
     color: 'white',
     marginBottom: 16,
   },
@@ -370,22 +394,13 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   toggleSetting: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  toggleContent: {
-    flex: 1,
-    marginRight: 16,
+    paddingVertical: 8,
   },
   toggleTitle: {
-    fontSize: 16,
-    fontWeight: '600',
     color: 'white',
-    marginBottom: 4,
+    fontWeight: '600',
   },
   toggleDescription: {
-    fontSize: 14,
     color: '#888',
   },
   goreLevelDescription: {
@@ -398,12 +413,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   radioOption: {
+    marginVertical: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 8,
-    padding: 16,
-    backgroundColor: '#3a3a5a',
-  },
-  radioOptionSelected: {
-    backgroundColor: '#FF4444',
   },
   radioContent: {
     flexDirection: 'row',
@@ -467,10 +480,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   infoIcon: {
-    fontSize: 16,
     marginRight: 12,
     width: 20,
-    textAlign: 'center',
   },
   infoText: {
     fontSize: 14,

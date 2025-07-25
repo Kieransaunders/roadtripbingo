@@ -1,44 +1,61 @@
 import React from 'react';
-import { TouchableOpacity, StatusBar, Dimensions, View, Text, ScrollView, Platform, Alert, Linking } from 'react-native';
+import { StatusBar, Dimensions, View, ScrollView, Platform, Alert, Linking, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StyleSheet } from 'react-native-unistyles';
+import { 
+  IconButton, 
+  Surface, 
+  List, 
+  Chip, 
+  useTheme, 
+  Text, 
+  Card
+} from 'react-native-paper';
+import { IconSymbol } from '../components/ui/IconSymbol';
 import { useConsentDialog } from '../hooks/useConsentDialog';
 // import { BottomNavigation } from '../components/BottomNavigation';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-// Icons (using simple Unicode symbols for now - can be replaced with proper icon library)
+// Modern SF Symbol/Material Design icons
 const MenuIcons = {
-  car: '🚗',
-  camera: '📷', 
-  trophy: '🏆',
-  settings: '⚙️',
-};
+  car: 'car',
+  camera: 'camera.fill', 
+  trophy: 'trophy.fill',
+  gear: 'gearshape.fill',
+} as const;
 
 interface MenuCardProps {
-  icon: string;
+  icon: keyof typeof MenuIcons;
   title: string;
   subtitle: string;
   onPress: () => void;
 }
 
 const MenuCard: React.FC<MenuCardProps> = ({ icon, title, subtitle, onPress }) => {
+  const theme = useTheme();
+  
   return (
-    <TouchableOpacity style={styles.menuCard} onPress={onPress} activeOpacity={0.8}>
-      <View style={styles.menuCardContent}>
-        <View style={styles.iconContainer}>
-          <Text style={styles.iconText}>{icon}</Text>
-        </View>
+    <Card mode="elevated" onPress={onPress} style={styles.menuCard}>
+      <Card.Content style={styles.menuCardContent}>
+        <Surface style={[styles.iconContainer, { backgroundColor: theme.colors.primary }]} elevation={2}>
+          <IconSymbol 
+            name={MenuIcons[icon]} 
+            size={32} 
+            color={theme.colors.onPrimary}
+          />
+        </Surface>
         <View style={styles.textContainer}>
-          <Text style={styles.menuTitle}>{title}</Text>
-          <Text style={styles.menuSubtitle}>{subtitle}</Text>
+          <Text variant="titleMedium" style={[styles.menuTitle, { color: theme.colors.onSurface }]}>
+            {title}
+          </Text>
+          <Text variant="bodyMedium" style={[styles.menuSubtitle, { color: theme.colors.onSurfaceVariant }]}>
+            {subtitle}
+          </Text>
         </View>
-        <View style={styles.chevronContainer}>
-          <Text style={styles.chevron}>›</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+        <IconButton icon="chevron-right" size={20} iconColor={theme.colors.onSurfaceVariant} />
+      </Card.Content>
+    </Card>
   );
 };
 
@@ -63,16 +80,34 @@ const LinkItem: React.FC<LinkItemProps> = ({ icon, text, url }) => {
     }
   };
 
+  const theme = useTheme();
+  
   return (
-    <TouchableOpacity style={styles.linkItem} onPress={handlePress} activeOpacity={0.7}>
-      <Text style={styles.linkIcon}>{icon}</Text>
-      <Text style={styles.linkText}>{text}</Text>
-      <Text style={styles.externalIcon}>↗</Text>
-    </TouchableOpacity>
+    <List.Item
+      title={text}
+      onPress={handlePress}
+      left={() => (
+        <IconSymbol 
+          name={icon as any} 
+          size={20} 
+          color={theme.colors.secondary}
+          style={styles.linkIcon}
+        />
+      )}
+      right={() => <List.Icon icon="open-in-new" />}
+      titleStyle={[styles.linkText, { color: 'white' }]}
+      titleNumberOfLines={3}
+      style={[styles.linkItem, { 
+        backgroundColor: theme.colors.surfaceVariant,
+        borderColor: theme.colors.outline 
+      }]}
+    />
   );
 };
 
 export const DashboardScreen: React.FC = () => {
+  const theme = useTheme();
+  
   let insets;
   try {
     insets = useSafeAreaInsets();
@@ -103,7 +138,7 @@ export const DashboardScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
+      <StatusBar barStyle="light-content" backgroundColor={theme.colors.background} />
       
       <ScrollView 
         style={styles.scrollView}
@@ -111,54 +146,65 @@ export const DashboardScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.mainTitle}>DEAD AHEAD</Text>
-          <Text style={styles.subtitle}>Roadkill Bingo</Text>
-          <Text style={styles.tagline}>
-            &quot;See it. Spot it. Shout it. Win shotgun or throw up trying.&quot;
+        <Surface style={[styles.header, { backgroundColor: theme.colors.surface }]} elevation={3}>
+          <Text variant="displayLarge" style={[styles.mainTitle, { color: theme.colors.primary }]}>
+            DEAD AHEAD
+          </Text>
+          <Text variant="displayMedium" style={[styles.subtitle, { color: theme.colors.secondary }]}>
+            Roadkill Bingo
+          </Text>
+          <Text variant="bodyLarge" style={[styles.tagline, { color: theme.colors.onSurfaceVariant }]}>
+            "See it. Spot it. Shout it. Win shotgun or throw up trying."
           </Text>
           
           {/* Disclaimer - Top of Fold */}
-          <View style={styles.topDisclaimer}>
-            <View style={styles.disclaimerContainer}>
-              <View style={styles.ratingBadge}>
-                <Text style={styles.ratingText}>12+</Text>
+          <Card mode="outlined" style={styles.topDisclaimer}>
+            <Card.Content>
+              <View style={styles.disclaimerContainer}>
+                <Surface 
+                  style={[styles.ratingCircle, { backgroundColor: theme.colors.primary }]} 
+                  elevation={1}
+                >
+                  <Text style={[styles.ratingText, { color: theme.colors.onPrimary }]}>
+                    12+
+                  </Text>
+                </Surface>
+                <Text variant="bodyMedium" style={[styles.disclaimerText, { color: theme.colors.onSurfaceVariant }]}>
+                  Rated 12+ for crude humor and mild violence
+                </Text>
               </View>
-              <Text style={styles.disclaimerText}>
-                Rated 12+ for crude humor and mild violence
+              <Text variant="bodySmall" style={[styles.disclaimerSubtext, { color: theme.colors.onSurfaceVariant }]}>
+                No animals were harmed in the making of this game... By Us!
               </Text>
-            </View>
-            <Text style={styles.disclaimerSubtext}>
-              No animals were harmed in the making of this game... By Us!
-            </Text>
-          </View>
-        </View>
+            </Card.Content>
+          </Card>
+        </Surface>
 
         {/* Menu Cards */}
         <View style={styles.menuContainer}>
           <MenuCard
-            icon={MenuIcons.car}
+            icon="car"
             title="Play Game"
             subtitle="Practice your spotting skills"
             onPress={() => handleMenuPress('game')}
           />
           
           <MenuCard
-            icon={MenuIcons.camera}
+            icon="camera"
             title="Snap the Splat!"
             subtitle="Use camera to validate finds"
             onPress={() => handleMenuPress('camera')}
           />
           
           <MenuCard
-            icon={MenuIcons.trophy}
+            icon="trophy"
             title="Hall of Shame"
             subtitle="View your achievements"
             onPress={() => handleMenuPress('hall-of-shame')}
           />
           
           <MenuCard
-            icon={MenuIcons.settings}
+            icon="gear"
             title="Settings"
             subtitle="Gore level & sound options"
             onPress={() => handleMenuPress('settings')}
@@ -166,35 +212,43 @@ export const DashboardScreen: React.FC = () => {
         </View>
 
         {/* Conservation Section */}
-        <View style={styles.conservationContainer}>
-          <Text style={styles.conservationTitle}>Help Real Wildlife</Text>
-          <Text style={styles.conservationText}>
-            Dead Ahead is a cheeky road-trip bingo game — but real roads aren't so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
-          </Text>
-          
-          <Text style={styles.conservationHeading}>Want to help?</Text>
-          <Text style={styles.conservationText}>
-            Log your sightings with the Mammals on Roads app by the People's Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
-          </Text>
-          
-          <View style={styles.linksContainer}>
-            <LinkItem 
-              icon="📱" 
-              text="App Store: PTES Mammals on Roads" 
-              url="https://apps.apple.com/gb/app/ptes-mammals-on-roads/id446109227"
-            />
-            <LinkItem 
-              icon="🤖" 
-              text="Google Play: Mammals on Roads" 
-              url="https://play.google.com/store/apps/details?id=org.ptes.mammalsonroads.v2&hl=en&gl=US&pli=1"
-            />
-            <LinkItem 
-              icon="🌐" 
-              text="To find out more about PTES' wider conservation work, visit www.ptes.org" 
-              url="https://www.ptes.org"
-            />
-          </View>
-        </View>
+        <Card mode="contained" style={styles.conservationContainer}>
+          <Card.Title 
+            title="Help Real Wildlife" 
+            titleStyle={[styles.conservationTitle, { color: theme.colors.secondary }]}
+            left={(props) => <IconButton {...props} icon="heart" iconColor="#FF4444" />}
+          />
+          <Card.Content>
+            <Text variant="bodyMedium" style={[styles.conservationText, { color: theme.colors.onSurfaceVariant }]}>
+              Dead Ahead is a cheeky road-trip bingo game — but real roads aren't so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
+            </Text>
+            
+            <Text variant="titleMedium" style={[styles.conservationHeading, { color: theme.colors.secondary }]}>
+              Want to help?
+            </Text>
+            <Text variant="bodyMedium" style={[styles.conservationText, { color: theme.colors.onSurfaceVariant }]}>
+              Log your sightings with the Mammals on Roads app by the People's Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
+            </Text>
+            
+            <View style={styles.linksContainer}>
+              <LinkItem 
+                icon="iphone" 
+                text="App Store: PTES Mammals on Roads" 
+                url="https://apps.apple.com/gb/app/ptes-mammals-on-roads/id446109227"
+              />
+              <LinkItem 
+                icon="androidrobot" 
+                text="Google Play: Mammals on Roads" 
+                url="https://play.google.com/store/apps/details?id=org.ptes.mammalsonroads.v2&hl=en&gl=US&pli=1"
+              />
+              <LinkItem 
+                icon="globe" 
+                text="To find out more about PTES' wider conservation work, visit www.ptes.org" 
+                url="https://www.ptes.org"
+              />
+            </View>
+          </Card.Content>
+        </Card>
 
       </ScrollView>
       
@@ -203,153 +257,112 @@ export const DashboardScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
   },
   header: {
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 30, // Reduced padding for better spacing
-    paddingBottom: 40,
-    justifyContent: 'flex-start', // Align to top instead of center
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 48,
+    justifyContent: 'flex-start',
   },
   mainTitle: {
-    fontSize: theme.fonts.gigantic,
-    fontWeight: 'bold',
-    color: '#FF4444',
-    letterSpacing: screenWidth * 0.005, // Responsive letter spacing
     textAlign: 'center',
+    fontWeight: 'bold',
   },
   subtitle: {
-    fontSize: theme.fonts.huge,
-    color: '#FFD700',
     marginTop: 8,
     textAlign: 'center',
+    fontWeight: '600',
   },
   tagline: {
-    fontSize: theme.fonts.md,
-    color: '#888',
     textAlign: 'center',
-    marginTop: 20,
-    paddingHorizontal: 20,
-    lineHeight: theme.fonts.md * 1.4, // Responsive line height
+    marginTop: 24,
+    paddingHorizontal: 24,
   },
   topDisclaimer: {
-    alignItems: 'center',
     marginTop: 24,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#333',
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 80, // Add padding for bottom navigation
+    paddingBottom: 80,
   },
   menuContainer: {
     paddingHorizontal: 20,
-    gap: 16,
-    paddingBottom: 20, // Add space above footer
+    paddingBottom: 20,
   },
   menuCard: {
-    backgroundColor: '#2a2a4a',
-    borderRadius: 12,
-    overflow: 'hidden',
+    marginBottom: 16,
   },
   menuCardContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
   },
   iconContainer: {
-    width: screenWidth * 0.15, // Responsive icon size
-    height: screenWidth * 0.15,
-    borderRadius: screenWidth * 0.075,
-    backgroundColor: '#FF4444',
+    width: screenWidth * 0.12,
+    height: screenWidth * 0.12,
+    borderRadius: screenWidth * 0.06,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
-  },
-  iconText: {
-    fontSize: theme.fonts.xxl,
-    color: 'white',
   },
   textContainer: {
     flex: 1,
   },
   menuTitle: {
-    fontSize: theme.fonts.xl,
     fontWeight: '600',
-    color: 'white',
-    marginBottom: 4,
+    fontSize: 18,
   },
   menuSubtitle: {
-    fontSize: theme.fonts.sm,
-    color: '#888',
-  },
-  chevronContainer: {
-    justifyContent: 'center',
-  },
-  chevron: {
-    fontSize: theme.fonts.xxl,
-    color: '#666',
-    fontWeight: '300',
+    fontSize: 14,
   },
   disclaimerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
   },
-  ratingBadge: {
-    backgroundColor: '#FF4444',
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginRight: 8,
+  ratingCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
   },
   ratingText: {
-    color: 'white',
-    fontSize: theme.fonts.xs,
+    fontSize: 14,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   disclaimerText: {
-    fontSize: theme.fonts.xs,
-    color: '#888',
+    fontSize: 12,
   },
   disclaimerSubtext: {
-    fontSize: theme.fonts.xs,
-    color: '#888',
+    fontSize: 12,
     textAlign: 'center',
   },
   conservationContainer: {
-    backgroundColor: '#2a2a4a',
-    borderRadius: 12,
-    padding: 20,
     marginHorizontal: 20,
     marginTop: 20,
     marginBottom: 10,
   },
   conservationTitle: {
-    fontSize: theme.fonts.xl,
     fontWeight: 'bold',
-    color: '#FFD700',
-    marginBottom: 12,
-    textAlign: 'center',
+    fontSize: 18,
   },
   conservationText: {
-    fontSize: theme.fonts.sm,
-    color: '#ccc',
-    lineHeight: theme.fonts.sm * 1.4,
+    fontSize: 14,
+    lineHeight: 20,
     marginBottom: 12,
   },
   conservationHeading: {
-    fontSize: theme.fonts.md,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFD700',
     marginBottom: 8,
     marginTop: 4,
   },
@@ -362,24 +375,20 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#3a3a5a',
     borderRadius: 8,
+    borderWidth: 1,
   },
   linkIcon: {
-    fontSize: theme.fonts.md,
     marginRight: 12,
     width: 20,
-    textAlign: 'center',
   },
   linkText: {
-    fontSize: theme.fonts.sm,
-    color: '#FFD700',
+    fontSize: 14,
     flex: 1,
-    lineHeight: theme.fonts.sm * 1.4,
+    lineHeight: 20,
   },
   externalIcon: {
-    fontSize: theme.fonts.md,
-    color: '#888',
+    fontSize: 16,
     marginLeft: 8,
   },
-}));
+});

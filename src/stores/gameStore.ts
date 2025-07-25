@@ -251,7 +251,14 @@ export const useGameStore = create<GameState>((set, get) => ({
   
   // Actions
   startNewGame: () => {
-    const { goreLevel, longRoadTripEnabled } = get();
+    const { goreLevel, longRoadTripEnabled, gameStartTime } = get();
+    
+    // If there was a previous game in progress, count it as abandoned
+    if (gameStartTime && !get().isGameWon) {
+      console.log('📊 Previous game abandoned, updating stats...');
+      get().completeGame(false); // This will count as a game played but not won
+    }
+    
     const newGrid = generateBingoGrid(goreLevel);
     
     set({
@@ -260,6 +267,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       gameStartTime: new Date(),
       gameMode: longRoadTripEnabled ? 'savage' : 'standard'
     });
+    
+    console.log('🎮 New game started!');
   },
   
   toggleTile: (position: number) => {

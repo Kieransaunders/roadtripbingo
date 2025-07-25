@@ -113,7 +113,7 @@ See it. Spot it. Shout it. Win shotgun or throw up trying! 🤢
     
   } catch (error) {
     console.error('❌ Instagram posting error:', error);
-    throw new Error(`Failed to post to Instagram: ${error.message}`);
+    throw new Error(`Failed to post to Instagram: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
 

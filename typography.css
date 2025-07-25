@@ -1,0 +1,533 @@
+/**
+ * Dead Ahead Bingo - Typography Design System
+ * 
+ * Complete typography specification including:
+ * - Primary and fallback font stacks
+ * - Font weight scale and letter spacing
+ * - Size scale and line height ratios
+ * - Utility classes for common text patterns
+ * - CSS custom properties for easy theming
+ * - Font loading strategies
+ */
+
+/* ===== FONT FACE DECLARATIONS ===== */
+
+/* Primary Brand Font - Space Mono (already available) */
+@font-face {
+  font-family: 'SpaceMono';
+  src: url('./assets/fonts/SpaceMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Google Fonts Import for additional weights and web support */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+/* ===== FONT STACK DEFINITIONS ===== */
+
+:root {
+  /* ===== PRIMARY FONT STACKS ===== */
+  
+  /* Heading Font Stack - Distinctive, brand-focused */
+  --font-heading: 'Space Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+  
+  /* Body Font Stack - Highly readable, web-safe */
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  
+  /* UI Font Stack - System optimized for interface elements */
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  
+  /* Code Font Stack - Monospace for code snippets */
+  --font-code: 'Space Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+
+  /* ===== FONT WEIGHT SCALE ===== */
+  
+  --font-weight-thin: 100;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  /* ===== FONT SIZE SCALE ===== */
+  /* Mobile-first responsive scale with fluid typography */
+  
+  --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);    /* 12-14px */
+  --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);     /* 14-16px */
+  --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);     /* 16-18px */
+  --font-size-md: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);    /* 18-20px */
+  --font-size-lg: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);     /* 20-24px */
+  --font-size-xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);           /* 24-32px */
+  --font-size-xxl: clamp(2rem, 1.7rem + 1.5vw, 2.5rem);        /* 32-40px */
+  --font-size-huge: clamp(2.5rem, 2rem + 2.5vw, 3.5rem);       /* 40-56px */
+  --font-size-massive: clamp(3.5rem, 2.5rem + 5vw, 5rem);      /* 56-80px */
+
+  /* ===== LINE HEIGHT SCALE ===== */
+  /* Optimized for readability across different font sizes */
+  
+  --line-height-tight: 1.1;    /* Headlines, large text */
+  --line-height-snug: 1.2;     /* Subheadings */
+  --line-height-normal: 1.4;   /* UI elements, buttons */
+  --line-height-relaxed: 1.5;  /* Body text, optimal reading */
+  --line-height-loose: 1.75;   /* Long-form content */
+
+  /* ===== LETTER SPACING SCALE ===== */
+  
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+
+  /* ===== TEXT TRANSFORM UTILITIES ===== */
+  
+  --text-transform-uppercase: uppercase;
+  --text-transform-lowercase: lowercase;
+  --text-transform-capitalize: capitalize;
+  --text-transform-none: none;
+
+  /* ===== FONT FEATURE SETTINGS ===== */
+  /* Modern typography features for enhanced readability */
+  
+  --font-features-default: "kern" 1, "liga" 1, "calt" 1;
+  --font-features-numeric: "kern" 1, "liga" 1, "calt" 1, "tnum" 1;
+  --font-features-small-caps: "kern" 1, "liga" 1, "calt" 1, "smcp" 1;
+}
+
+/* ===== HEADING UTILITY CLASSES ===== */
+
+.h1-hero {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-massive);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.h1-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-huge);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.h2-section {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.h3-subsection {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.h4-component {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+/* ===== BODY TEXT UTILITY CLASSES ===== */
+
+.body-large {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-relaxed);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.body-default {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-relaxed);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.body-small {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-text-secondary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.caption {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--da-text-muted);
+  font-feature-settings: var(--font-features-default);
+}
+
+/* ===== UI ELEMENT UTILITY CLASSES ===== */
+
+.btn-label {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: var(--text-transform-none);
+  color: var(--da-text-inverse);
+  font-feature-settings: var(--font-features-default);
+}
+
+.btn-label-small {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: var(--text-transform-none);
+  color: var(--da-text-inverse);
+  font-feature-settings: var(--font-features-default);
+}
+
+.nav-label {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: var(--text-transform-uppercase);
+  color: var(--da-text-secondary);
+  font-feature-settings: var(--font-features-small-caps);
+}
+
+.tab-label {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: var(--text-transform-uppercase);
+  color: var(--da-text-muted);
+  font-feature-settings: var(--font-features-small-caps);
+}
+
+.input-label {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.input-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.input-placeholder {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-text-placeholder);
+  font-feature-settings: var(--font-features-default);
+}
+
+/* ===== SPECIALIZED TEXT CLASSES ===== */
+
+.link-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  font-feature-settings: var(--font-features-default);
+}
+
+.link-text:hover {
+  color: var(--da-primary-hover);
+  text-decoration-thickness: 2px;
+}
+
+.code-inline {
+  font-family: var(--font-code);
+  font-size: 0.9em;
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  background-color: var(--da-surface-2);
+  color: var(--da-text-primary);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-feature-settings: var(--font-features-default);
+}
+
+.code-block {
+  font-family: var(--font-code);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-relaxed);
+  letter-spacing: var(--letter-spacing-normal);
+  background-color: var(--da-surface-2);
+  color: var(--da-text-primary);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  font-feature-settings: var(--font-features-default);
+}
+
+.number-display {
+  font-family: var(--font-code);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-number {
+  font-family: var(--font-code);
+  font-size: var(--font-size-huge);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--da-primary);
+  font-feature-settings: var(--font-features-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.error-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-red-text);
+  font-feature-settings: var(--font-features-default);
+}
+
+.success-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-success-text);
+  font-feature-settings: var(--font-features-default);
+}
+
+.warning-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-warning-text);
+  font-feature-settings: var(--font-features-default);
+}
+
+/* ===== GAME-SPECIFIC TYPOGRAPHY ===== */
+
+.bingo-tile-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-normal);
+  text-align: center;
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-default);
+}
+
+.game-score {
+  font-family: var(--font-code);
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--da-primary);
+  font-feature-settings: var(--font-features-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.game-timer {
+  font-family: var(--font-code);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--da-text-primary);
+  font-feature-settings: var(--font-features-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.victory-text {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-huge);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  text-transform: var(--text-transform-uppercase);
+  color: var(--da-success);
+  text-align: center;
+  font-feature-settings: var(--font-features-default);
+}
+
+/* ===== RESPONSIVE TYPOGRAPHY HELPERS ===== */
+
+/* Mobile-specific overrides */
+@media (max-width: 374px) {
+  .h1-hero,
+  .h1-title {
+    font-size: var(--font-size-xxl);
+  }
+  
+  .stat-number {
+    font-size: var(--font-size-xl);
+  }
+  
+  .victory-text {
+    font-size: var(--font-size-xxl);
+  }
+}
+
+/* Tablet and desktop enhancements */
+@media (min-width: 768px) {
+  .body-default,
+  .body-large {
+    line-height: var(--line-height-loose);
+  }
+}
+
+/* High-resolution display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .h1-hero,
+  .h1-title,
+  .h2-section {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .link-text {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .body-small,
+  .caption {
+    color: var(--da-text-primary);
+  }
+  
+  .link-text {
+    text-decoration-thickness: 2px;
+  }
+}
+
+/* ===== USAGE GUIDELINES ===== */
+
+/**
+ * FONT HIERARCHY GUIDELINES:
+ * 
+ * HEADINGS:
+ * .h1-hero - Marketing pages, splash screens
+ * .h1-title - Main page titles, primary headings
+ * .h2-section - Section dividers, card titles
+ * .h3-subsection - Component titles, form sections
+ * .h4-component - Small headings, list titles
+ * 
+ * BODY TEXT:
+ * .body-large - Lead paragraphs, important descriptions
+ * .body-default - Standard content, main text
+ * .body-small - Secondary information, metadata
+ * .caption - Image captions, footnotes, disclaimers
+ * 
+ * UI ELEMENTS:
+ * .btn-label - Primary and secondary buttons
+ * .btn-label-small - Compact buttons, toolbar actions
+ * .nav-label - Main navigation items
+ * .tab-label - Tab navigation, filter options
+ * .input-label - Form field labels
+ * .input-text - Form field content
+ * .input-placeholder - Placeholder text
+ * 
+ * SPECIALIZED:
+ * .link-text - Hyperlinks, clickable text
+ * .code-inline - Inline code, technical terms
+ * .code-block - Code snippets, configuration
+ * .number-display - Scores, counters, statistics
+ * .stat-number - Large numerical displays
+ * .error-text - Error messages, validation
+ * .success-text - Success confirmations
+ * .warning-text - Warning messages
+ * 
+ * GAME-SPECIFIC:
+ * .bingo-tile-text - Bingo tile content
+ * .game-score - Current game score
+ * .game-timer - Game timer display
+ * .victory-text - Victory/completion messages
+ * 
+ * RESPONSIVE CONSIDERATIONS:
+ * - All font sizes use clamp() for fluid scaling
+ * - Mobile-first approach with progressive enhancement
+ * - Minimum 12px font size for accessibility
+ * - Line heights optimized for different screen sizes
+ * 
+ * ACCESSIBILITY:
+ * - All text maintains WCAG AA contrast ratios
+ * - Tabular numbers for consistent alignment
+ * - Font features enhance readability
+ * - Respects user preferences for motion and contrast
+ * 
+ * PERFORMANCE:
+ * - font-display: swap prevents invisible text
+ * - Subset font loading for faster performance
+ * - System font fallbacks for instant rendering
+ */
