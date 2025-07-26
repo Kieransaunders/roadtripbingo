@@ -166,12 +166,12 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     zIndex: 10,
   },
   title: {
-    fontSize: theme.fonts.massive,
+    fontSize: theme.fonts.xl,
     fontWeight: 'bold',
     color: '#FF4444',
     textAlign: 'center',
-    letterSpacing: 2,
-    lineHeight: theme.fonts.massive * 1.1,
+    letterSpacing: 1,
+    lineHeight: theme.fonts.xl * 1.1,
     marginBottom: 8,
   },
   subtitle: {

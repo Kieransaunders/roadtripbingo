@@ -23,22 +23,25 @@ interface VictoryScreenProps {
   screenshotUri?: string;
 }
 
-// Confetti/Splatter particle component
-const SplatterParticle: React.FC<{ delay: number; color: string }> = ({ delay, color }) => {
+// Blood splatter particle component
+const BloodSplatterParticle: React.FC<{ delay: number; imageVariation: number }> = ({ delay, imageVariation }) => {
   const translateY = useSharedValue(-50);
   const translateX = useSharedValue(0);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0);
+  const rotation = useSharedValue(0);
 
   useEffect(() => {
     // Random horizontal position
     const randomX = (Math.random() - 0.5) * SCREEN_WIDTH;
     const fallDistance = SCREEN_HEIGHT + 100;
+    const randomRotation = Math.random() * 360;
     
     setTimeout(() => {
       translateX.value = randomX;
-      opacity.value = withTiming(1, { duration: 100 });
-      scale.value = withSpring(1, { damping: 12 });
+      rotation.value = randomRotation;
+      opacity.value = withTiming(0.8 + Math.random() * 0.2, { duration: 100 }); // Random opacity
+      scale.value = withSpring(0.6 + Math.random() * 0.6, { damping: 12 }); // Random size between 0.6-1.2
       translateY.value = withTiming(fallDistance, { 
         duration: 3000 + Math.random() * 2000 
       });
@@ -55,12 +58,43 @@ const SplatterParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
       { translateX: translateX.value },
       { translateY: translateY.value },
       { scale: scale.value },
+      { rotate: `${rotation.value}deg` },
     ],
     opacity: opacity.value,
   }));
 
+  // Create different blood splatter shapes
+  const splatterShapes = [
+    // Main splatter with droplets
+    <View key="main" style={styles.splatterContainer}>
+      <View style={[styles.mainSplatter, { backgroundColor: '#8B0000' }]} />
+      <View style={[styles.droplet1, { backgroundColor: '#CC0000' }]} />
+      <View style={[styles.droplet2, { backgroundColor: '#990000' }]} />
+      <View style={[styles.droplet3, { backgroundColor: '#B30000' }]} />
+      <View style={[styles.smallDrop1, { backgroundColor: '#AA0000' }]} />
+      <View style={[styles.smallDrop2, { backgroundColor: '#770000' }]} />
+    </View>,
+    
+    // Irregular splatter
+    <View key="irregular" style={styles.splatterContainer}>
+      <View style={[styles.irregularSplatter, { backgroundColor: '#8B0000' }]} />
+      <View style={[styles.streak1, { backgroundColor: '#990000' }]} />
+      <View style={[styles.streak2, { backgroundColor: '#AA0000' }]} />
+    </View>,
+    
+    // Scattered drops
+    <View key="scattered" style={styles.splatterContainer}>
+      <View style={[styles.centerDrop, { backgroundColor: '#8B0000' }]} />
+      <View style={[styles.scatteredDrop1, { backgroundColor: '#990000' }]} />
+      <View style={[styles.scatteredDrop2, { backgroundColor: '#CC0000' }]} />
+      <View style={[styles.scatteredDrop3, { backgroundColor: '#770000' }]} />
+    </View>
+  ];
+
   return (
-    <Animated.View style={[styles.particle, { backgroundColor: color }, animatedStyle]} />
+    <Animated.View style={[styles.bloodParticle, animatedStyle]}>
+      {splatterShapes[imageVariation % splatterShapes.length]}
+    </Animated.View>
   );
 };
 
@@ -178,17 +212,12 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
       paddingLeft: (insets.left || 0) + 20,
       paddingRight: (insets.right || 0) + 20,
     }]}>
-      {/* Blood splatter/Confetti particles */}
-      {Array.from({ length: 30 }, (_, i) => (
-        <SplatterParticle
+      {/* Blood splatter particles */}
+      {Array.from({ length: 25 }, (_, i) => (
+        <BloodSplatterParticle
           key={i}
-          delay={i * 80 + Math.random() * 200}
-          color={
-            i % 4 === 0 ? '#FF4444' : // Red splatter
-            i % 4 === 1 ? '#FFD700' : // Gold confetti
-            i % 4 === 2 ? '#FF6B6B' : // Light red splatter
-            '#FF9800'                 // Orange splatter
-          }
+          delay={i * 100 + Math.random() * 300}
+          imageVariation={i % 3} // For potential future variations
         />
       ))}
 
@@ -401,17 +430,128 @@ const styles = StyleSheet.create((theme) => ({
     fontWeight: 'bold',
     color: 'white',
   },
-  particle: {
+  bloodParticle: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    top: -50,
+    zIndex: 1000, // Higher z-index than screenshot
+  },
+  splatterContainer: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+  },
+  // Main splatter shapes
+  mainSplatter: {
+    position: 'absolute',
+    width: 20,
+    height: 16,
+    borderRadius: 8,
+    top: 8,
+    left: 10,
+    transform: [{ skewX: '-15deg' }],
+  },
+  droplet1: {
+    position: 'absolute',
+    width: 8,
+    height: 12,
+    borderRadius: 6,
+    top: 2,
+    left: 15,
+  },
+  droplet2: {
+    position: 'absolute',
+    width: 6,
+    height: 8,
+    borderRadius: 4,
+    top: 4,
+    left: 8,
+  },
+  droplet3: {
     position: 'absolute',
     width: 10,
     height: 10,
-    borderRadius: 2, // Less round, more splatter-like
-    top: -50,
-    zIndex: 1000, // Higher z-index than screenshot
-    shadowColor: '#000',
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
+    borderRadius: 5,
+    top: 20,
+    left: 18,
+  },
+  smallDrop1: {
+    position: 'absolute',
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    top: 6,
+    left: 32,
+  },
+  smallDrop2: {
+    position: 'absolute',
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    top: 15,
+    left: 5,
+  },
+  // Irregular splatter shapes
+  irregularSplatter: {
+    position: 'absolute',
+    width: 18,
+    height: 14,
+    borderRadius: 7,
+    top: 10,
+    left: 12,
+    transform: [{ rotate: '25deg' }],
+  },
+  streak1: {
+    position: 'absolute',
+    width: 12,
+    height: 4,
+    borderRadius: 2,
+    top: 8,
+    left: 8,
+    transform: [{ rotate: '-45deg' }],
+  },
+  streak2: {
+    position: 'absolute',
+    width: 8,
+    height: 3,
+    borderRadius: 1.5,
+    top: 18,
+    left: 20,
+    transform: [{ rotate: '60deg' }],
+  },
+  // Scattered drops
+  centerDrop: {
+    position: 'absolute',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    top: 14,
+    left: 14,
+  },
+  scatteredDrop1: {
+    position: 'absolute',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    top: 5,
+    left: 10,
+  },
+  scatteredDrop2: {
+    position: 'absolute',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    top: 8,
+    left: 25,
+  },
+  scatteredDrop3: {
+    position: 'absolute',
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    top: 25,
+    left: 8,
   },
   screenshotContainer: {
     position: 'absolute',

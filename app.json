@@ -11,6 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "uk.co.iconnectit.deadahead",
+      "appleTeamId": "QHS5TSHJA5",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -23,6 +24,11 @@
       "edgeToEdgeEnabled": true,
       "package": "uk.co.iconnectit.deadahead",
       "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION",
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
         "android.permission.READ_EXTERNAL_STORAGE",
@@ -80,6 +86,10 @@
         "projectId": "a8837a6b-eacb-4282-b149-c278dface0fe"
       }
     },
-    "owner": "mrzang77"
+    "owner": "mrzang77",
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/a8837a6b-eacb-4282-b149-c278dface0fe"
+    }
   }
 }

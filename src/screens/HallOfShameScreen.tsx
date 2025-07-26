@@ -44,7 +44,7 @@ const StatItem: React.FC<StatItemProps> = ({ value, label, color = 'white' }) =>
   return (
     <Surface style={styles.statItem} elevation={1}>
       <Text 
-        variant="displaySmall"
+        variant="headlineSmall"
         style={[styles.statValue, { color }]}
         numberOfLines={1}
       >

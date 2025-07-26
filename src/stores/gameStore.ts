@@ -222,12 +222,12 @@ const createDefaultAchievements = (): AchievementProgress => ({
   },
   'perfectionist': {
     id: 'perfectionist',
-    title: 'Perfectionist',
-    description: 'Complete 100% of tiles in a game',
+    title: 'Road Warrior',
+    description: 'Spot 8 tiles in a single game',
     icon: '💎',
     unlocked: false,
     progress: 0,
-    target: 100,
+    target: 50, // 8 out of 16 tiles = 50%
   },
 });
 
@@ -411,9 +411,25 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
       
       if (achievementsData) {
-        const achievements = JSON.parse(achievementsData);
-        set({ achievements });
-        console.log('✅ Achievements loaded from storage');
+        const savedAchievements = JSON.parse(achievementsData);
+        const defaultAchievements = createDefaultAchievements();
+        
+        // Merge saved achievements with new defaults, preserving unlocked status and progress
+        const mergedAchievements: AchievementProgress = {};
+        Object.keys(defaultAchievements).forEach(key => {
+          const defaultAchievement = defaultAchievements[key];
+          const savedAchievement = savedAchievements[key];
+          
+          mergedAchievements[key] = {
+            ...defaultAchievement, // Use new default values (title, description, target, etc.)
+            unlocked: savedAchievement?.unlocked || false, // Preserve unlocked status
+            progress: savedAchievement?.progress || 0, // Preserve progress
+            unlockedAt: savedAchievement?.unlockedAt || undefined, // Preserve unlock date
+          };
+        });
+        
+        set({ achievements: mergedAchievements });
+        console.log('✅ Achievements loaded and merged with defaults');
       }
       
       if (statsData) {

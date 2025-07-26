@@ -111,12 +111,10 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 8,
     padding: 4,
-    margin: 2,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    minHeight: 44,
-    minWidth: 44,
+    flex: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

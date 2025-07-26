@@ -13,13 +13,14 @@ export const BingoGrid: React.FC<BingoGridProps> = ({ onTilePress }) => {
   const theme = useTheme();
   
   const screenWidth = Dimensions.get('window').width;
-  const containerPadding = 2; // Minimal container padding
-  const gridPadding = 1; // Minimal grid padding
-  const tileGap = 1; // Small gap between tiles
+  const containerPadding = 4; // Minimal container padding
+  const gridPadding = 6; // Minimal grid padding
+  const tileGap = 3; // Small gap between tiles
   
-  // Account for all padding layers - 4x4 grid with minimal spacing
-  const totalSpacing = (containerPadding * 2) + (gridPadding * 2) + (tileGap * 3 * 2); // 3 gaps horizontally and vertically
-  const tileSize = (screenWidth - totalSpacing) / 4;
+  // Calculate exact tile size for 4x4 grid - 4 tiles + 3 gaps per row
+  const availableWidth = screenWidth - (containerPadding * 2) - (gridPadding * 2);
+  const totalGapWidth = tileGap * 3; // 3 gaps between 4 tiles
+  const tileSize = (availableWidth - totalGapWidth) / 4;
   
   const handleTilePress = (position: number) => {
     toggleTile(position);
@@ -40,16 +41,25 @@ export const BingoGrid: React.FC<BingoGridProps> = ({ onTilePress }) => {
           {Array.from({ length: 16 }, (_, index) => (
             <View
               key={index}
-              style={[
-                styles.emptyTile,
-                { 
-                  width: tileSize, 
-                  height: tileSize,
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.outline
-                }
-              ]}
-            />
+              style={{
+                width: tileSize,
+                height: tileSize,
+                marginRight: (index + 1) % 4 === 0 ? 0 : tileGap,
+                marginBottom: index < 12 ? tileGap : 0,
+              }}
+            >
+              <View
+                style={[
+                  styles.emptyTile,
+                  { 
+                    width: '100%', 
+                    height: '100%',
+                    backgroundColor: theme.colors.surface,
+                    borderColor: theme.colors.outline
+                  }
+                ]}
+              />
+            </View>
           ))}
         </View>
       </View>
@@ -67,12 +77,21 @@ export const BingoGrid: React.FC<BingoGridProps> = ({ onTilePress }) => {
         }
       ]}>
         {currentGrid.map((cell, index) => (
-          <BingoTile
+          <View
             key={`${cell.tile.id}-${index}`}
-            cell={cell}
-            onPress={handleTilePress}
-            size={tileSize}
-          />
+            style={{
+              width: tileSize,
+              height: tileSize,
+              marginRight: (index + 1) % 4 === 0 ? 0 : tileGap, // No margin on last tile of each row
+              marginBottom: index < 12 ? tileGap : 0, // No margin on last row
+            }}
+          >
+            <BingoTile
+              cell={cell}
+              onPress={handleTilePress}
+              size={tileSize}
+            />
+          </View>
         ))}
       </View>
     </View>
@@ -87,15 +106,14 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    maxWidth: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    width: '100%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 5,
-    gap: 1,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -104,15 +122,13 @@ const styles = StyleSheet.create({
   emptyGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    maxWidth: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    width: '100%',
     opacity: 0.5,
-    gap: 2,
   },
   emptyTile: {
     borderRadius: 8,
-    margin: 4,
     borderWidth: 1,
   },
 });
