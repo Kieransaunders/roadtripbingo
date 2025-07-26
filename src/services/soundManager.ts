@@ -2,32 +2,10 @@ import { Audio } from 'expo-av';
 import * as Haptics from 'expo-haptics';
 import { useGameStore } from '../stores/gameStore';
 
-// Blood splatter sound files
+// Blood splatter sound files - using only the two specified sounds
 const BLOOD_SPLATTER_SOUNDS = [
-  require('../../assets/sounds/7pfq4f9e1ih-blood-splatter-sfx-0.mp3'),
-  require('../../assets/sounds/k7bv7sdrxp-blood-splatter-sfx-3.mp3'),
-  require('../../assets/sounds/ua8hkb5lkxh-blood-splatter-sfx-4.mp3'),
-  require('../../assets/sounds/11L-blood_splatter-1752416609721.mp3'),
-  require('../../assets/sounds/11L-blood_splatter-1752416613586.mp3'),
-  require('../../assets/sounds/11L-blood_splatter-1752416618592.mp3'),
-  require('../../assets/sounds/11L-blood_splatter-1752416623370.mp3'),
-];
-
-// Additional themed sounds (removed roadkill car sound - file deleted)
-
-// Fallback sounds - car noise then blood splatter (epic combination!)
-const FALLBACK_SOUNDS = [
-  require('../../assets/sounds/11L-car_noise_then_blood-1752416885709.mp3'),
-  require('../../assets/sounds/11L-car_noise_then_blood-1752416900607.mp3'),
-];
-
-const CREEPY_SOUNDS = [
-  require('../../assets/sounds/11L-deeply_creepy_monste-1752416684885.mp3'),
-];
-
-const ELECTRIC_SOUNDS = [
-  require('../../assets/sounds/11L-Whirring_Electric_Bu-1752416732720.mp3'),
-  require('../../assets/sounds/11L-Whirring_Electric_Bu-1752416739126.mp3'),
+  require('../../assets/sounds/CarthenBlood.mp3'),
+  require('../../assets/sounds/blood-splatter.mp3'),
 ];
 
 export class SoundManager {
@@ -124,76 +102,6 @@ export class SoundManager {
   }
 
 
-  public async playCreepySound(): Promise<void> {
-    if (!this.isAudioEnabled()) return;
-
-    try {
-      const randomIndex = Math.floor(Math.random() * CREEPY_SOUNDS.length);
-      const soundPath = CREEPY_SOUNDS[randomIndex];
-      const soundKey = `creepy_${randomIndex}`;
-
-      const sound = await this.loadSound(soundPath, soundKey);
-      
-      if (sound) {
-        await sound.setPositionAsync(0);
-        await sound.playAsync();
-        console.log(`👻 Playing creepy sound #${randomIndex}`);
-        if (this.isHapticEnabled()) {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        }
-      }
-    } catch (error) {
-      console.warn('⚠️ Failed to play creepy sound:', error);
-    }
-  }
-
-  public async playElectricSound(): Promise<void> {
-    if (!this.isAudioEnabled()) return;
-
-    try {
-      const randomIndex = Math.floor(Math.random() * ELECTRIC_SOUNDS.length);
-      const soundPath = ELECTRIC_SOUNDS[randomIndex];
-      const soundKey = `electric_${randomIndex}`;
-
-      const sound = await this.loadSound(soundPath, soundKey);
-      
-      if (sound) {
-        await sound.setPositionAsync(0);
-        await sound.playAsync();
-        console.log(`⚡ Playing electric sound #${randomIndex}`);
-        if (this.isHapticEnabled()) {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }
-      }
-    } catch (error) {
-      console.warn('⚠️ Failed to play electric sound:', error);
-      // Fallback to car noise + blood sound
-      await this.playFallbackSound();
-    }
-  }
-
-  public async playFallbackSound(): Promise<void> {
-    if (!this.isAudioEnabled()) return;
-
-    try {
-      const randomIndex = Math.floor(Math.random() * FALLBACK_SOUNDS.length);
-      const soundPath = FALLBACK_SOUNDS[randomIndex];
-      const soundKey = `fallback_${randomIndex}`;
-
-      const sound = await this.loadSound(soundPath, soundKey);
-      
-      if (sound) {
-        await sound.setPositionAsync(0);
-        await sound.playAsync();
-        console.log(`🚗💥 Playing fallback car+blood sound #${randomIndex}`);
-        if (this.isHapticEnabled()) {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        }
-      }
-    } catch (error) {
-      console.warn('⚠️ Failed to play fallback sound:', error);
-    }
-  }
 
   public async playTileSpottedSound(): Promise<void> {
     // For now, use the same blood splatter sound
@@ -219,43 +127,6 @@ export class SoundManager {
     }
   }
 
-  // Play random blood splatter with intensity variation
-  public async playBloodSplatterWithIntensity(intensity: 'light' | 'medium' | 'heavy' = 'medium'): Promise<void> {
-    const volumeMap = {
-      light: 0.3,
-      medium: 0.7,
-      heavy: 1.0,
-    };
-
-    const hapticMap = {
-      light: Haptics.ImpactFeedbackStyle.Light,
-      medium: Haptics.ImpactFeedbackStyle.Medium,
-      heavy: Haptics.ImpactFeedbackStyle.Heavy,
-    };
-
-    if (!this.isAudioEnabled()) return;
-
-    try {
-      const randomIndex = Math.floor(Math.random() * BLOOD_SPLATTER_SOUNDS.length);
-      const soundPath = BLOOD_SPLATTER_SOUNDS[randomIndex];
-      const soundKey = `blood_splatter_${randomIndex}`;
-
-      const sound = await this.loadSound(soundPath, soundKey);
-      
-      if (sound) {
-        await sound.setVolumeAsync(volumeMap[intensity]);
-        await sound.setPositionAsync(0);
-        await sound.playAsync();
-        
-        if (this.isHapticEnabled()) {
-          await Haptics.impactAsync(hapticMap[intensity]);
-        }
-        console.log(`🩸 Playing ${intensity} blood splatter sound #${randomIndex}`);
-      }
-    } catch (error) {
-      console.warn('⚠️ Failed to play blood splatter with intensity:', error);
-    }
-  }
 }
 
 // Export singleton instance

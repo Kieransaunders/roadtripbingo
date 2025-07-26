@@ -139,7 +139,7 @@ export const DashboardScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <Surface style={[styles.header, { backgroundColor: theme.colors.surface }]} elevation={3}>
+        <View style={styles.header}>
           <Text variant="displayLarge" style={[styles.mainTitle, { color: theme.colors.primary }]}>
             DEAD AHEAD
           </Text>
@@ -171,7 +171,7 @@ export const DashboardScreen: React.FC = () => {
               </Text>
             </Card.Content>
           </Card>
-        </Surface>
+        </View>
 
         {/* Menu Cards */}
         <View style={styles.menuContainer}>

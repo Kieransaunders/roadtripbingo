@@ -42,6 +42,8 @@ export interface GameState {
   gameMode: 'standard' | 'savage';
   isGameWon: boolean;
   gameStartTime: Date | null;
+  completedWinLines: Set<string>; // Track which winning lines have already been completed
+  currentGameWins: number; // Track how many wins in current game
   
   // Settings
   soundEnabled: boolean;
@@ -57,8 +59,10 @@ export interface GameState {
   
   // Actions
   startNewGame: () => void;
+  resetGameWonState: () => void;
   toggleTile: (position: number) => void;
   checkWinCondition: () => boolean;
+  getWinningLines: () => number[][];
   setGameMode: (mode: 'standard' | 'savage') => void;
   setSoundEnabled: (enabled: boolean) => void;
   setHapticEnabled: (enabled: boolean) => void;
@@ -237,6 +241,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   gameMode: 'standard',
   isGameWon: false,
   gameStartTime: null,
+  completedWinLines: new Set(),
+  currentGameWins: 0,
   
   // Settings
   soundEnabled: true,
@@ -275,10 +281,18 @@ export const useGameStore = create<GameState>((set, get) => ({
       currentGrid: newGrid,
       isGameWon: false,
       gameStartTime: new Date(),
-      gameMode: longRoadTripEnabled ? 'savage' : 'standard'
+      gameMode: longRoadTripEnabled ? 'savage' : 'standard',
+      completedWinLines: new Set(),
+      currentGameWins: 0
     });
     
     console.log('🎮 New game started!');
+  },
+
+  resetGameWonState: () => {
+    // Only reset the game won flag, keep everything else the same
+    set({ isGameWon: false });
+    console.log('🔄 Game won state reset - ready to continue playing same game');
   },
   
   toggleTile: (position: number) => {
@@ -295,16 +309,145 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({ currentGrid: newGrid });
     
     // Check for win after updating grid
-    const gameWon = get().checkWinCondition();
-    if (gameWon) {
-      set({ isGameWon: true });
-      get().completeGame(true);
+    // Check for new winning lines
+    const winningLines = get().getWinningLines();
+    if (winningLines.length > 0) {
+      const { completedWinLines } = get();
+      
+      // Check if we have any new winning lines that don't overlap with existing ones
+      let hasNewWin = false;
+      const newLines = [];
+      
+      for (const line of winningLines) {
+        const lineKey = line.sort((a, b) => a - b).join(',');
+        if (!completedWinLines.has(lineKey)) {
+          // Check if this line significantly overlaps with any already completed lines
+          let hasSignificantOverlap = false;
+          for (const existingLineKey of completedWinLines) {
+            const existingLine = existingLineKey.split(',').map(Number);
+            // Count how many positions are shared between lines
+            const sharedPositions = line.filter(pos => existingLine.includes(pos)).length;
+            
+            // For 3-in-a-row: Allow lines that share 1 or fewer positions
+            // For 4-in-a-row: Allow lines that share 1 or fewer positions
+            // This prevents the same line from counting twice while allowing legitimate multiple wins
+            const maxAllowedOverlap = 1;
+            
+            if (sharedPositions > maxAllowedOverlap) {
+              hasSignificantOverlap = true;
+              break;
+            }
+          }
+          
+          if (!hasSignificantOverlap) {
+            newLines.push(lineKey);
+            hasNewWin = true;
+          }
+        }
+      }
+      
+      // Add only the non-overlapping new lines
+      for (const lineKey of newLines) {
+        completedWinLines.add(lineKey);
+      }
+      
+      // Only trigger victory if we have a genuinely new winning line
+      if (hasNewWin) {
+        const { currentGameWins } = get();
+        set({ 
+          isGameWon: true,
+          completedWinLines: new Set(completedWinLines),
+          currentGameWins: currentGameWins + 1
+        });
+        get().completeGame(true);
+      }
     }
   },
   
   checkWinCondition: () => {
     const { currentGrid, gameMode } = get();
     return checkWin(currentGrid, gameMode);
+  },
+
+  getWinningLines: () => {
+    const { currentGrid, gameMode } = get();
+    const winLength = gameMode === 'standard' ? 3 : 4;
+    const gridSize = 4;
+    const winningLines: number[][] = [];
+    
+    // Check rows
+    for (let row = 0; row < gridSize; row++) {
+      for (let col = 0; col <= gridSize - winLength; col++) {
+        const line = [];
+        let allSpotted = true;
+        for (let i = 0; i < winLength; i++) {
+          const pos = row * gridSize + col + i;
+          line.push(pos);
+          if (!currentGrid[pos].isSpotted) {
+            allSpotted = false;
+          }
+        }
+        if (allSpotted) {
+          winningLines.push(line);
+        }
+      }
+    }
+    
+    // Check columns
+    for (let col = 0; col < gridSize; col++) {
+      for (let row = 0; row <= gridSize - winLength; row++) {
+        const line = [];
+        let allSpotted = true;
+        for (let i = 0; i < winLength; i++) {
+          const pos = (row + i) * gridSize + col;
+          line.push(pos);
+          if (!currentGrid[pos].isSpotted) {
+            allSpotted = false;
+          }
+        }
+        if (allSpotted) {
+          winningLines.push(line);
+        }
+      }
+    }
+    
+    // Check diagonals (top-left to bottom-right)
+    for (let row = 0; row <= gridSize - winLength; row++) {
+      for (let col = 0; col <= gridSize - winLength; col++) {
+        const line = [];
+        let allSpotted = true;
+        for (let i = 0; i < winLength; i++) {
+          const pos = (row + i) * gridSize + (col + i);
+          line.push(pos);
+          if (!currentGrid[pos].isSpotted) {
+            allSpotted = false;
+          }
+        }
+        if (allSpotted) {
+          winningLines.push(line);
+        }
+      }
+    }
+    
+    // Check diagonals (top-right to bottom-left)
+    for (let row = 0; row <= gridSize - winLength; row++) {
+      for (let col = winLength - 1; col < gridSize; col++) {
+        const line = [];
+        let allSpotted = true;
+        for (let i = 0; i < winLength; i++) {
+          const pos = (row + i) * gridSize + (col - i);
+          line.push(pos);
+          if (!currentGrid[pos].isSpotted) {
+            allSpotted = false;
+          }
+        }
+        if (allSpotted) {
+          winningLines.push(line);
+        }
+      }
+    }
+    
+    return winningLines;
   },
   
   setGameMode: (mode: 'standard' | 'savage') => {

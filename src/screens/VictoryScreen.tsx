@@ -11,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import * as Sentry from '@sentry/react-native';
+import { router } from 'expo-router';
 import { useGameStore, Achievement } from '../stores/gameStore';
 import { BottomNavigation } from '../components/BottomNavigation';
 import { IconSymbol } from '../components/ui/IconSymbol';
@@ -19,6 +20,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface VictoryScreenProps {
   onPlayAgain: () => void;
+  onContinueGame?: () => void;
   onBackToDashboard?: () => void;
   screenshotUri?: string;
 }
@@ -34,22 +36,23 @@ const BloodSplatterParticle: React.FC<{ delay: number; imageVariation: number }>
   useEffect(() => {
     // Random horizontal position
     const randomX = (Math.random() - 0.5) * SCREEN_WIDTH;
-    const fallDistance = SCREEN_HEIGHT + 100;
-    const randomRotation = Math.random() * 360;
+    const fallDistance = SCREEN_HEIGHT + 50; // Reduced fall distance
+    const randomRotation = Math.random() * 180; // Reduced rotation range
     
     setTimeout(() => {
       translateX.value = randomX;
       rotation.value = randomRotation;
-      opacity.value = withTiming(0.8 + Math.random() * 0.2, { duration: 100 }); // Random opacity
-      scale.value = withSpring(0.6 + Math.random() * 0.6, { damping: 12 }); // Random size between 0.6-1.2
+      opacity.value = withTiming(0.7 + Math.random() * 0.3, { duration: 150 }); // Faster opacity animation
+      scale.value = withTiming(0.8 + Math.random() * 0.4, { duration: 200 }); // Use withTiming instead of withSpring for better performance
       translateY.value = withTiming(fallDistance, { 
-        duration: 3000 + Math.random() * 2000 
+        duration: 2000 + Math.random() * 1000 // Shorter, more consistent duration
       });
       
-      // Fade out near the end
+      // Fade out earlier for cleanup
       setTimeout(() => {
-        opacity.value = withTiming(0, { duration: 500 });
-      }, 2500);
+        opacity.value = withTiming(0, { duration: 300 });
+        scale.value = withTiming(0, { duration: 300 }); // Scale down while fading
+      }, 1800);
     }, delay);
   }, []);
 
@@ -101,10 +104,11 @@ const BloodSplatterParticle: React.FC<{ delay: number; imageVariation: number }>
 // Main Victory Screen component
 export const VictoryScreen: React.FC<VictoryScreenProps> = ({ 
   onPlayAgain,
+  onContinueGame,
   onBackToDashboard,
   screenshotUri
 }) => {
-  const { currentGrid, gameMode, gameStartTime, checkAchievements } = useGameStore();
+  const { currentGrid, gameMode, gameStartTime, checkAchievements, resetGameWonState, currentGameWins } = useGameStore();
   const [showStats, setShowStats] = useState(false);
   const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
   const [showScreenshot, setShowScreenshot] = useState(false);
@@ -112,8 +116,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   const insets = useSafeAreaInsets();
 
   // Animation values
-  const titleScale = useSharedValue(0);
-  const titleRotation = useSharedValue(-5);
+  const titleOpacity = useSharedValue(0);
   const statsOpacity = useSharedValue(0);
   const buttonsTranslateY = useSharedValue(50);
   const screenshotOpacity = useSharedValue(0);
@@ -139,45 +142,41 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
     const newlyUnlocked = checkAchievements();
     setNewAchievements(newlyUnlocked);
 
-    // Title animation sequence - smoother and less jarring
-    titleScale.value = withSequence(
-      withSpring(1.1, { damping: 12, stiffness: 100 }),
-      withSpring(1.0, { damping: 15, stiffness: 120 })
-    );
-    titleRotation.value = withSpring(0, { damping: 18, stiffness: 100 });
+    // Coordinate all animations to start together
+    // Start title immediately
+    setTimeout(() => {
+      titleOpacity.value = withTiming(1, { duration: 300 });
+    }, 0);
 
-    // Show stats after title animation
+    // Show stats shortly after
     setTimeout(() => {
       setShowStats(true);
-      statsOpacity.value = withTiming(1, { duration: 600 });
-    }, 800);
+      statsOpacity.value = withTiming(1, { duration: 300 });
+    }, 100);
 
-    // Show buttons last with more delay to prevent jarring
+    // Show buttons quickly after stats
     setTimeout(() => {
-      buttonsTranslateY.value = withSpring(0, { damping: 15, stiffness: 100 });
-    }, 1800);
+      buttonsTranslateY.value = withTiming(0, { duration: 300 });
+    }, 200);
 
-    // Mark animations as complete and optionally show screenshot after all animations finish
+    // Mark animations as complete earlier
     setTimeout(() => {
       setAnimationsComplete(true);
       // Only show screenshot after all animations complete to prevent flicker
       if (screenshotUri) {
         setShowScreenshot(true);
-        screenshotOpacity.value = withTiming(1, { duration: 800 });
+        screenshotOpacity.value = withTiming(1, { duration: 500 });
       }
-    }, 2500);
+    }, 1000);
 
-    // Additional haptic feedback during animation
+    // Reduced haptic feedback to prevent interference
     setTimeout(() => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }, 1000);
+    }, 400);
   }, []);
 
   const titleAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: titleScale.value },
-      { rotate: `${titleRotation.value}deg` },
-    ],
+    opacity: titleOpacity.value,
   }));
 
   const statsAnimatedStyle = useAnimatedStyle(() => ({
@@ -194,7 +193,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
 
   // Calculate victory stats
   const spottedCount = currentGrid.filter(cell => cell.isSpotted).length;
-  const completionPercentage = Math.round((spottedCount / 25) * 100);
+  const completionPercentage = Math.round((spottedCount / 16) * 100);
   const gameTime = calculateGameTime();
   const winningPattern = gameMode === 'standard' ? "3 in a row" : "4 in a row";
 
@@ -204,38 +203,64 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
     onPlayAgain();
   };
 
+  const handleContinueGame = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    // Reset the game won state so we don't get stuck in a loop
+    resetGameWonState();
+    try {
+      router.push('/game');
+    } catch (error) {
+      console.error('Error navigating to game screen:', error);
+      Sentry.captureException(error);
+    }
+  };
+
+  const handleHallOfShame = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    try {
+      router.push('/hall-of-shame');
+    } catch (error) {
+      console.error('Error navigating to hall of shame screen:', error);
+      Sentry.captureException(error);
+    }
+  };
+
 
   return (
     <View style={[styles.container, { 
       paddingTop: insets.top + 20,
-      paddingBottom: insets.bottom + 100, // Add extra padding for bottom navigation
+      paddingBottom: insets.bottom + 250, // Add extra padding for bottom navigation
       paddingLeft: (insets.left || 0) + 20,
       paddingRight: (insets.right || 0) + 20,
     }]}>
-      {/* Blood splatter particles */}
-      {Array.from({ length: 25 }, (_, i) => (
+      {/* Blood splatter particles - reduced count for better performance */}
+      {Array.from({ length: 15 }, (_, i) => (
         <BloodSplatterParticle
           key={i}
-          delay={i * 100 + Math.random() * 300}
-          imageVariation={i % 3} // For potential future variations
+          delay={i * 80 + Math.random() * 200}
+          imageVariation={i % 3}
         />
       ))}
 
       {/* Main content */}
       <View style={styles.content}>
         {/* Victory Title */}
-        <Animated.View style={[styles.titleContainer, titleAnimatedStyle]}>
+        <View style={styles.titleContainer}>
           <Text style={styles.mainTitle}>ROADKILL</Text>
           <Text style={styles.bingoTitle}>BINGO!</Text>
-          <Text style={styles.subtitle}>🎉 YOU WON! 🎉</Text>
-        </Animated.View>
+          {currentGameWins === 1 ? (
+            <Text style={styles.subtitle}>🎉 YOU WON! 🎉</Text>
+          ) : (
+            <Text style={styles.subtitle}>🔥 WIN #{currentGameWins}! 🔥</Text>
+          )}
+        </View>
 
         {/* Victory Stats */}
         {showStats && (
           <Animated.View style={[styles.statsContainer, statsAnimatedStyle]}>
             <View style={styles.statsGrid}>
               <View style={styles.statItem}>
-                <Text style={styles.statValue}>{spottedCount}/25</Text>
+                <Text style={styles.statValue}>{spottedCount}/16</Text>
                 <Text style={styles.statLabel}>Tiles Spotted</Text>
               </View>
               <View style={styles.statItem}>
@@ -247,10 +272,18 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
                 <Text style={styles.statLabel}>Complete</Text>
               </View>
               <View style={styles.statItem}>
-                <Text style={styles.statValue}>{winningPattern}</Text>
-                <Text style={styles.statLabel}>Victory</Text>
+                <Text style={styles.statValue}>{currentGameWins}x {winningPattern}</Text>
+                <Text style={styles.statLabel}>Victories</Text>
               </View>
             </View>
+
+            {currentGameWins > 1 && (
+              <View style={styles.continueWinMessage}>
+                <Text style={styles.continueWinText}>
+                  🎯 Multiple Lines! You got {currentGameWins} winning combinations!
+                </Text>
+              </View>
+            )}
 
             {newAchievements.length > 0 && (
               <View style={styles.achievementContainer}>
@@ -272,6 +305,24 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
         {/* Action Buttons */}
         <Animated.View style={[styles.buttonsContainer, buttonsAnimatedStyle]}>
           <TouchableOpacity
+            style={[styles.button, styles.continueButton]}
+            onPress={handleContinueGame}
+          >
+            <View style={styles.buttonContent}>
+              <IconSymbol 
+                name="arrow.right.circle.fill" 
+                size={24} 
+                color="white"
+                style={styles.buttonIcon}
+              />
+              <View style={styles.buttonTextContainer}>
+                <Text style={styles.buttonText}>Continue Game</Text>
+                <Text style={styles.buttonSubtext}>Try to get another line!</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
             style={[styles.button, styles.playAgainButton]}
             onPress={handlePlayAgain}
           >
@@ -283,6 +334,21 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
                 style={styles.buttonIcon}
               />
               <Text style={styles.buttonText}>Play Again</Text>
+            </View>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[styles.button, styles.hallOfShameButton]}
+            onPress={handleHallOfShame}
+          >
+            <View style={styles.buttonContent}>
+              <IconSymbol 
+                name="trophy.fill" 
+                size={24} 
+                color="white"
+                style={styles.buttonIcon}
+              />
+              <Text style={styles.buttonText}>Hall of Shame</Text>
             </View>
           </TouchableOpacity>
         </Animated.View>
@@ -376,6 +442,19 @@ const styles = StyleSheet.create((theme) => ({
     color: '#ccc',
     textAlign: 'center',
   },
+  continueWinMessage: {
+    backgroundColor: '#FF9800',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  continueWinText: {
+    fontSize: theme.fonts.md,
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: '600',
+  },
   achievementContainer: {
     backgroundColor: '#4CAF50',
     borderRadius: 12,
@@ -414,8 +493,14 @@ const styles = StyleSheet.create((theme) => ({
     shadowRadius: 4,
     elevation: 5,
   },
+  continueButton: {
+    backgroundColor: '#4CAF50',
+  },
   playAgainButton: {
     backgroundColor: '#FF4444',
+  },
+  hallOfShameButton: {
+    backgroundColor: '#9C27B0',
   },
   buttonContent: {
     flexDirection: 'row',
@@ -425,10 +510,18 @@ const styles = StyleSheet.create((theme) => ({
   buttonIcon: {
     marginRight: 8,
   },
+  buttonTextContainer: {
+    alignItems: 'center',
+  },
   buttonText: {
     fontSize: theme.fonts.lg,
     fontWeight: 'bold',
     color: 'white',
+  },
+  buttonSubtext: {
+    fontSize: theme.fonts.sm,
+    color: 'rgba(255, 255, 255, 0.8)',
+    marginTop: 2,
   },
   bloodParticle: {
     position: 'absolute',
