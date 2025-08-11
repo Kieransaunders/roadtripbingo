@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>dead-ahead-bingo</string>
+	<string>Road Trip Bingo</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,14 +27,14 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>deadaheadbingo</string>
-				<string>com.anonymous.deadaheadbingo</string>
+				<string>roadtripbingo</string>
+				<string>uk.co.iconnectit.roadtripbingo</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>exp+deadahead</string>
+				<string>exp+roadtripbingo</string>
 			</array>
 		</dict>
 	</array>
@@ -52,13 +52,13 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow Dead Ahead Bingo to access your camera to capture roadkill evidence for the leaderboard.</string>
+	<string>Allow Road Trip Bingo to access your camera to snap and share photos of your road trip discoveries and memories.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to access your microphone</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Allow Dead Ahead Bingo to save photos to your photo library.</string>
+	<string>Allow Road Trip Bingo to save your road trip memories and discoveries to your device.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow Dead Ahead Bingo to save your roadkill photos to your device.</string>
+	<string>Allow Road Trip Bingo to save photos of your road trip finds to your photo library.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

@@ -205,13 +205,13 @@ const darkColors = {
   },
 };
 
-export const deadAheadLightTheme: MD3Theme = {
+export const roadTripBingoLightTheme: MD3Theme = {
   ...MD3LightTheme,
   colors: designTokens.colors,
   fonts: designTokens.fonts,
 };
 
-export const deadAheadDarkTheme: MD3Theme = {
+export const roadTripBingoDarkTheme: MD3Theme = {
   ...MD3DarkTheme,
   colors: darkColors,
   fonts: designTokens.fonts,

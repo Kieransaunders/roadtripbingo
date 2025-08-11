@@ -109,7 +109,7 @@ const Achievement: React.FC<AchievementProps> = ({ title, description, icon, com
   );
 };
 
-export const HallOfShameScreen: React.FC = () => {
+export const PhotoGalleryScreen: React.FC = () => {
   const { stats, achievements, loadSettings, checkAchievements } = useGameStore();
 
   const handleBack = () => {
@@ -148,7 +148,7 @@ export const HallOfShameScreen: React.FC = () => {
     { id: 'scoring', type: 'stat-card', title: 'Scoring' },
     { id: 'streaks', type: 'stat-card', title: 'Streaks' },
     { id: 'achievements', type: 'stat-card', title: 'Achievements' },
-    { id: 'roadkill-gallery', type: 'roadkill-gallery', title: 'Roadkill Gallery' },
+    { id: 'photo-gallery', type: 'photo-gallery', title: 'Photo Gallery' },
   ];
 
   const renderItem = ({ item }: { item: any }) => {
@@ -224,7 +224,7 @@ export const HallOfShameScreen: React.FC = () => {
           );
         }
         break;
-      case 'roadkill-gallery':
+      case 'photo-gallery':
         return (
           <Card style={styles.galleryContainer} mode="contained">
             <PhotoGallery />

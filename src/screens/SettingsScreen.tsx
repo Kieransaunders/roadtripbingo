@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Text, IconButton, Switch, Button, Surface, Divider, List, useTheme } from 'react-native-paper';
 import { IconSymbol } from '../components/ui/IconSymbol';
-import { useGameStore, GoreLevel } from '../stores/gameStore';
+import { useGameStore, CountryCode } from '../stores/gameStore';
 import { soundManager } from '../services/soundManager';
 import { BottomNavigation } from '../components/BottomNavigation';
 
@@ -55,20 +55,21 @@ interface RadioOptionProps {
   description: string;
   selected: boolean;
   onPress: () => void;
+  disabled?: boolean;
 }
 
-const RadioOption: React.FC<RadioOptionProps> = ({ title, description, selected, onPress }) => {
+const RadioOption: React.FC<RadioOptionProps> = ({ title, description, selected, onPress, disabled = false }) => {
   const theme = useTheme();
   
   return (
     <List.Item
       title={title}
       description={description}
-      onPress={onPress}
+      onPress={disabled ? undefined : onPress}
       left={() => (
         <List.Icon 
           icon={selected ? 'radiobox-marked' : 'radiobox-blank'} 
-          color={selected ? theme.colors.primary : theme.colors.outline}
+          color={disabled ? theme.colors.surfaceDisabled : (selected ? theme.colors.primary : theme.colors.outline)}
         />
       )}
       titleStyle={styles.radioTitle}
@@ -155,11 +156,11 @@ export const SettingsScreen: React.FC = () => {
   const {
     soundEnabled,
     hapticEnabled,
-    goreLevel: _goreLevel,
+    countryCode: _countryCode,
     longRoadTripEnabled,
     setSoundEnabled,
     setHapticEnabled,
-    setGoreLevel: _setGoreLevel,
+    setCountryCode: _setCountryCode,
     setLongRoadTripEnabled,
     loadSettings
   } = useGameStore();
@@ -190,8 +191,8 @@ export const SettingsScreen: React.FC = () => {
     }
   };
 
-  const handleGoreLevelChange = async (level: GoreLevel) => {
-    console.log('🎮 Gore level change attempted:', level);
+  const handleCountryChange = async (code: CountryCode) => {
+    console.log('🌍 Country change attempted:', code);
     
     try {
       // Play creepy monster sound when they try to change mode 👹
@@ -202,31 +203,31 @@ export const SettingsScreen: React.FC = () => {
       console.error('❌ Failed to play creepy sound:', error);
     }
     
-    // Show the message for ANY click on gore level options
-    const message = 'Extreme mode is baked in. Like roadkill on hot tarmac.';
+    // Show the message for ANY click on country options
+    const message = 'Sorry mate, country is auto-detected via sophisticated algorithms involving weather complaints and queuing behavior. If there\'s enough demand, we\'ll add more countries!';
     
     try {
       // Use React Native Alert for all platforms for consistent experience
       console.log('📱 Showing alert dialog...');
       Alert.alert(
-        '🩸 Extreme Mode Only',
+        '🌍 Country Locked',
         message,
         [
           { 
-            text: 'Got It!', 
+            text: 'Brilliant!', 
             style: 'default',
-            onPress: () => console.log('✅ User dismissed gore level dialog')
+            onPress: () => console.log('✅ User dismissed country dialog')
           }
         ]
       );
     } catch (error) {
       console.error('❌ Failed to show dialog:', error);
       // Fallback to console log
-      console.log('🩸 Extreme Mode Only:', message);
+      console.log('🌍 Country Locked:', message);
     }
     
-    // Always keep it on extreme regardless of what they clicked
-    console.log('🔒 Keeping gore level locked to extreme');
+    // Always keep it on UK regardless of what they clicked
+    console.log('🔒 Keeping country locked to UK');
   };
 
   return (
@@ -277,29 +278,34 @@ export const SettingsScreen: React.FC = () => {
           </View>
         </SettingSection>
 
-        {/* Gore Level */}
-        <SettingSection title="Gore Level">
-          <Text variant="bodyMedium" style={styles.goreLevelDescription}>
-            Extreme mode is the only way to experience true roadkill chaos
+        {/* Country Setting */}
+        <SettingSection title="Country Setting">
+          <Text variant="bodyMedium" style={styles.countryDescription}>
+            Auto-detected based on your tea consumption levels
+          </Text>
+          <Text variant="bodySmall" style={styles.demandBanner}>
+            🌍 Other countries coming soon based on player demand!
           </Text>
           <View style={styles.radioContainer}>
             <RadioOption
-              title="Mild"
-              description="For cowards who can't handle the truth"
-              selected={false}
-              onPress={() => handleGoreLevelChange('mild')}
-            />
-            <RadioOption
-              title="Moderate"
-              description="Still too tame for roadkill reality"
-              selected={false}
-              onPress={() => handleGoreLevelChange('moderate')}
-            />
-            <RadioOption
-              title="Extreme"
-              description="Full horror experience - the only way"
+              title="🇬🇧 United Kingdom"
+              description="Proper roadside chaos with a stiff upper lip"
               selected={true}
-              onPress={() => handleGoreLevelChange('extreme')}
+              onPress={() => handleCountryChange('uk')}
+            />
+            <RadioOption
+              title="🇺🇸 United States"
+              description="Coming soon! We need 1,000 more requests from American players"
+              selected={false}
+              onPress={() => handleCountryChange('us')}
+              disabled={true}
+            />
+            <RadioOption
+              title="🇦🇺 Australia"
+              description="In development! Additional difficulty modes coming soon"
+              selected={false}
+              onPress={() => handleCountryChange('aus')}
+              disabled={true}
             />
           </View>
         </SettingSection>
@@ -307,39 +313,23 @@ export const SettingsScreen: React.FC = () => {
         {/* About */}
         <SettingSection title="About">
           <View style={styles.aboutContainer}>
-            <InfoItem icon="gamecontroller.fill" text="Dead Ahead: Roadkill Bingo" />
+            <InfoItem icon="gamecontroller.fill" text="Road Trip Bingo" />
             <InfoItem icon="info.circle.fill" text="Version 1.0.0" />
-            <InfoItem icon="exclamationmark.triangle.fill" text="Rated 12+ for crude humor" />
             <InfoItem icon="target" text={`Get ${longRoadTripEnabled ? '4' : '3'} in a row to win • Free Range center tile always marked`} />
             
             <Card style={styles.conservationSection} mode="outlined">
               <Card.Content>
                 <Text variant="bodyMedium" style={styles.conservationText}>
-                  Dead Ahead is a cheeky road-trip bingo game — but real roads aren&apos;t so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
-                </Text>
-                
-                <Text variant="titleMedium" style={styles.conservationHeading}>Want to help?</Text>
-                <Text variant="bodyMedium" style={styles.conservationText}>
-                  Log your sightings with the Mammals on Roads app by the People&apos;s Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
+                  Road Trip Bingo is a fun road-trip game where you spot interesting sights during your journey. Enjoy the adventure and create memories from your travels.
                 </Text>
               </Card.Content>
             </Card>
               
               <View style={styles.linksContainer}>
                 <LinkItem 
-                  icon="iphone" 
-                  text="App Store: PTES Mammals on Roads" 
-                  url="https://apps.apple.com/gb/app/ptes-mammals-on-roads/id446109227"
-                />
-                <LinkItem 
-                  icon="androidrobot" 
-                  text="Google Play: Mammals on Roads" 
-                  url="https://play.google.com/store/apps/details?id=org.ptes.mammalsonroads.v2&hl=en&gl=US&pli=1"
-                />
-                <LinkItem 
-                  icon="globe" 
-                  text="To find out more about PTES' wider conservation work, visit www.ptes.org" 
-                  url="https://www.ptes.org"
+                  icon="camera.fill" 
+                  text="Follow us on Instagram @roadtripbingo" 
+                  url="https://www.instagram.com/roadtripbingo"
                 />
               </View>
             </View>
@@ -403,11 +393,18 @@ const styles = StyleSheet.create({
   toggleDescription: {
     color: '#888',
   },
-  goreLevelDescription: {
+  countryDescription: {
     fontSize: 14,
     color: '#888',
-    marginBottom: 16,
+    marginBottom: 8,
     lineHeight: 20,
+  },
+  demandBanner: {
+    fontSize: 12,
+    color: '#FFD700',
+    marginBottom: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   radioContainer: {
     gap: 12,
@@ -500,13 +497,6 @@ const styles = StyleSheet.create({
     color: '#ccc',
     lineHeight: 20,
     marginBottom: 12,
-  },
-  conservationHeading: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFD700',
-    marginBottom: 8,
-    marginTop: 4,
   },
   linksContainer: {
     marginTop: 8,

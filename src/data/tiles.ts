@@ -5,11 +5,11 @@ export interface GameTile {
   category: TileCategory;
   rarity: TileRarity;
   description: string;
-  darkHumour: boolean;
+  contentFilter: boolean;
 }
 
 export enum TileCategory {
-  ROADKILL = 'roadkill',
+  SIGHTINGS = 'sightings',
   VEHICLES = 'vehicles',
   ROADSIDE = 'roadside',
   PEOPLE = 'people',
@@ -24,105 +24,123 @@ export enum TileRarity {
 }
 
 export const GAME_TILES: GameTile[] = [
-  // ROADKILL CATEGORY
+  // SIGHTINGS CATEGORY
   {
-    id: 'dead_badger',
-    name: 'Dead Badger',
-    image: require('../../assets/images/dead_badger_roadkill.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'badger_crossing',
+    name: 'Deer Crossing Sign',
+    image: require('../../assets/images/Deer sign.webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.COMMON,
-    description: 'Classic roadkill - badger pancake',
-    darkHumour: true
+    description: 'Wildlife warning sign',
+    contentFilter: true
   },
   {
-    id: 'dead_rabbit',
-    name: 'Dead Rabbit',
-    image: require('../../assets/images/dead_rabbit_roadkill.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'rabbit_sighting',
+    name: 'Squirrel Sighting',
+    image: require('../../assets/images/Squirrel .webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.COMMON,
-    description: 'Bunny gone wrong',
-    darkHumour: true
+    description: 'Wild rabbit spotted',
+    contentFilter: true
   },
   {
-    id: 'dead_hedgehog',
-    name: 'Dead Hedgehog',
-    image: require('../../assets/images/dead_hedgehog_roadkill.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'hedgehog_sighting',
+    name: 'Hedgehog Sighting',
+    image: require('../../assets/images/Hedgehog.webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.COMMON,
-    description: 'Spiky splat',
-    darkHumour: true
+    description: 'Spiky visitor',
+    contentFilter: true
   },
   {
-    id: 'dead_squirrel',
-    name: 'Dead Squirrel',
-    image: require('../../assets/images/dead_squirrel_roadkill.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'squirrel_sighting',
+    name: 'Squirrel Sighting',
+    image: require('../../assets/images/Squirrel .webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.COMMON,
-    description: 'Nutty situation',
-    darkHumour: true
+    description: 'Nutty critter',
+    contentFilter: true
   },
   {
-    id: 'dead_bird',
-    name: 'Dead Bird',
-    image: require('../../assets/images/dead_bird_roadkill.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'bird_sighting',
+    name: 'Bird Sighting',
+    image: require('../../assets/images/Crow.webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.COMMON,
-    description: 'Feathers everywhere',
-    darkHumour: true
+    description: 'Feathered friend',
+    contentFilter: true
   },
   {
-    id: 'dead_cat',
-    name: 'Dead Cat',
-    image: require('../../assets/images/dead_cat_roadkill.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'stray_cat',
+    name: 'Stray Cat',
+    image: require('../../assets/images/Stoat.webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.UNCOMMON,
-    description: 'Used up all 9 lives',
-    darkHumour: true
+    description: 'Wandering feline',
+    contentFilter: true
   },
   {
-    id: 'dead_deer',
-    name: 'Dead Deer',
-    image: require('../../assets/images/dead_deer_roadkill.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'deer_sighting',
+    name: 'Deer Sighting',
+    image: require('../../assets/images/Deer.webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.UNCOMMON,
-    description: 'Venison special',
-    darkHumour: true
+    description: 'Majestic wildlife',
+    contentFilter: true
   },
   {
-    id: 'dead_deer_antlers',
+    id: 'deer_antlers',
     name: 'Deer Antlers',
-    image: require('../../assets/images/dead_deer_antlers.webp'),
-    category: TileCategory.ROADKILL,
+    image: require('../../assets/images/Deer.webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.UNCOMMON,
-    description: 'Trophy remains',
-    darkHumour: true
+    description: 'Antler collection',
+    contentFilter: true
   },
   {
-    id: 'dead_turkey',
-    name: 'Dead Turkey',
-    image: require('../../assets/images/dead_turkey_roadkill.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'turkey_sighting',
+    name: 'Turkey Sighting',
+    image: require('../../assets/images/Pheasant .webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.UNCOMMON,
-    description: 'Thanksgiving came early',
-    darkHumour: true
+    description: 'Wild turkey spotted',
+    contentFilter: true
   },
   {
-    id: 'roadkill_fox',
-    name: 'Dead Fox',
-    image: require('../../assets/images/roadkill_fox.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'fox_sighting',
+    name: 'Fox Sighting',
+    image: require('../../assets/images/Fox.webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.UNCOMMON,
-    description: 'Sly no more',
-    darkHumour: true
+    description: 'Sly fox spotted',
+    contentFilter: true
   },
   {
-    id: 'roadkill_splatter',
-    name: 'Mystery Splatter',
-    image: require('../../assets/images/roadkill_splatter.webp'),
-    category: TileCategory.ROADKILL,
+    id: 'mystery_stain',
+    name: 'Skunk Sighting',
+    image: require('../../assets/images/Skunk .webp'),
+    category: TileCategory.SIGHTINGS,
     rarity: TileRarity.RARE,
-    description: 'Unidentifiable carnage',
-    darkHumour: true
+    description: 'Striped critter',
+    contentFilter: true
+  },
+  {
+    id: 'cow_sighting',
+    name: 'Cow in Field',
+    image: require('../../assets/images/Cow.webp'),
+    category: TileCategory.SIGHTINGS,
+    rarity: TileRarity.COMMON,
+    description: 'Farm animal',
+    contentFilter: false
+  },
+  {
+    id: 'owl_sighting',
+    name: 'Owl Perched',
+    image: require('../../assets/images/Owl.webp'),
+    category: TileCategory.SIGHTINGS,
+    rarity: TileRarity.UNCOMMON,
+    description: 'Wise night bird',
+    contentFilter: false
   },
 
   // VEHICLES CATEGORY
@@ -133,61 +151,61 @@ export const GAME_TILES: GameTile[] = [
     category: TileCategory.VEHICLES,
     rarity: TileRarity.COMMON,
     description: 'Roadside breakdown',
-    darkHumour: false
+    contentFilter: false
   },
   {
     id: 'school_bus',
     name: 'School Bus',
-    image: require('../../assets/images/school_bus.webp'),
+    image: require('../../assets/images/Bus.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.COMMON,
-    description: 'Yellow death trap',
-    darkHumour: false
+    description: 'Public transport',
+    contentFilter: false
   },
   {
-    id: 'hazmat_truck',
-    name: 'Hazmat Truck',
-    image: require('../../assets/images/hazmat_truck.webp'),
+    id: 'police_car',
+    name: 'Police Car',
+    image: require('../../assets/images/Police car.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.UNCOMMON,
-    description: 'Toxic transport',
-    darkHumour: false
+    description: 'Law enforcement',
+    contentFilter: false
   },
   {
-    id: 'horse_trailer',
-    name: 'Horse Trailer',
-    image: require('../../assets/images/horse_trailer.webp'),
+    id: 'campervan',
+    name: 'Campervan',
+    image: require('../../assets/images/Campervan.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.UNCOMMON,
-    description: 'Horsepower delivery',
-    darkHumour: false
+    description: 'Mobile adventure',
+    contentFilter: false
   },
   {
-    id: 'travel_trailer',
-    name: 'Travel Trailer',
-    image: require('../../assets/images/travel_trailer.webp'),
+    id: 'caravan',
+    name: 'Caravan',
+    image: require('../../assets/images/Caravan.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.COMMON,
     description: 'Mobile home',
-    darkHumour: false
+    contentFilter: false
   },
   {
-    id: 'volkswagen_van',
-    name: 'VW Van',
-    image: require('../../assets/images/volkswagen_van.webp'),
+    id: 'black_cab',
+    name: 'Black Cab',
+    image: require('../../assets/images/Black cab.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.UNCOMMON,
-    description: 'Hippy wagon',
-    darkHumour: false
+    description: 'London taxi',
+    contentFilter: false
   },
   {
-    id: 'free_estimates_van',
-    name: 'Free Estimates Van',
-    image: require('../../assets/images/free_estimates_van.webp'),
+    id: 'mini_car',
+    name: 'Mini Car',
+    image: require('../../assets/images/Mini.webp'),
     category: TileCategory.VEHICLES,
     rarity: TileRarity.RARE,
-    description: 'Dodgy contractor',
-    darkHumour: false
+    description: 'Classic British car',
+    contentFilter: false
   },
 
   // ROADSIDE CATEGORY
@@ -198,7 +216,7 @@ export const GAME_TILES: GameTile[] = [
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.COMMON,
     description: 'Fly-tipped furniture',
-    darkHumour: false
+    contentFilter: false
   },
   {
     id: 'lost_shoe',
@@ -207,16 +225,16 @@ export const GAME_TILES: GameTile[] = [
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.COMMON,
     description: 'Sole survivor',
-    darkHumour: false
+    contentFilter: false
   },
   {
     id: 'dentures_roadside',
     name: 'Dentures',
-    image: require('../../assets/images/dentures_roadside.webp'),
+    image: require('../../assets/images/nappy_roadside.webp'),
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.UNCOMMON,
     description: 'Chompers abandoned',
-    darkHumour: false
+    contentFilter: false
   },
   {
     id: 'burrito_roadside',
@@ -225,7 +243,7 @@ export const GAME_TILES: GameTile[] = [
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.UNCOMMON,
     description: 'Fast food fatality',
-    darkHumour: false
+    contentFilter: false
   },
   {
     id: 'bag_for_life',
@@ -234,7 +252,7 @@ export const GAME_TILES: GameTile[] = [
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.COMMON,
     description: 'Ironically abandoned',
-    darkHumour: false
+    contentFilter: false
   },
   {
     id: 'takeout_container',
@@ -243,94 +261,184 @@ export const GAME_TILES: GameTile[] = [
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.COMMON,
     description: 'Litter special',
-    darkHumour: false
+    contentFilter: false
   },
   {
-    id: 'shotgun_shells',
-    name: 'Shotgun Shells',
-    image: require('../../assets/images/shotgun_shells.webp'),
+    id: 'car_parts',
+    name: 'Car Parts',
+    image: require('../../assets/images/car_parts.webp'),
+    category: TileCategory.ROADSIDE,
+    rarity: TileRarity.UNCOMMON,
+    description: 'Spare parts scattered',
+    contentFilter: false
+  },
+  {
+    id: 'garden_gnome',
+    name: 'Garden Gnome',
+    image: require('../../assets/images/Gnome.webp'),
     category: TileCategory.ROADSIDE,
     rarity: TileRarity.RARE,
-    description: 'Spent ammunition',
-    darkHumour: true
+    description: 'Lost lawn ornament',
+    contentFilter: false
+  },
+  {
+    id: 'coffee_cup',
+    name: 'Coffee Cup',
+    image: require('../../assets/images/Coffee .webp'),
+    category: TileCategory.ROADSIDE,
+    rarity: TileRarity.COMMON,
+    description: 'Discarded drink',
+    contentFilter: false
   },
 
   // PEOPLE CATEGORY
   {
-    id: 'man_peeing_bush',
-    name: 'Man Peeing in Bush',
-    image: require('../../assets/images/man_peeing_bush.webp'),
+    id: 'person_running',
+    name: 'Person Running',
+    image: require('../../assets/images/person_running_roadside.webp'),
     category: TileCategory.PEOPLE,
     rarity: TileRarity.UNCOMMON,
-    description: 'Nature calls',
-    darkHumour: false
+    description: 'Roadside jogger',
+    contentFilter: false
   },
   {
-    id: 'person_peeing_roadside',
-    name: 'Roadside Relief',
-    image: require('../../assets/images/person_peeing_roadside.webp'),
+    id: 'cyclist',
+    name: 'Cyclist',
+    image: require('../../assets/images/Bike.webp'),
     category: TileCategory.PEOPLE,
-    rarity: TileRarity.UNCOMMON,
-    description: 'Emergency stop',
-    darkHumour: false
-  },
-  {
-    id: 'road_rage_argument',
-    name: 'Road Rage Argument',
-    image: require('../../assets/images/road_rage_argument.webp'),
-    category: TileCategory.PEOPLE,
-    rarity: TileRarity.RARE,
-    description: 'Heated discussion',
-    darkHumour: false
+    rarity: TileRarity.COMMON,
+    description: 'Two-wheeled transport',
+    contentFilter: false
   },
 
   // INFRASTRUCTURE CATEGORY
   {
-    id: 'oil_spill',
-    name: 'Oil Spill',
-    image: require('../../assets/images/oil_spill.webp'),
+    id: 'traffic_jam',
+    name: 'Traffic Jam',
+    image: require('../../assets/images/Traffic jam.webp'),
     category: TileCategory.INFRASTRUCTURE,
     rarity: TileRarity.COMMON,
-    description: 'Slippery situation',
-    darkHumour: false
+    description: 'Heavy congestion',
+    contentFilter: false
   },
   {
-    id: 'tire_tracks_skid',
-    name: 'Skid Marks',
-    image: require('../../assets/images/tire_tracks_skid.webp'),
+    id: 'roundabout',
+    name: 'Roundabout',
+    image: require('../../assets/images/Roundabout.webp'),
     category: TileCategory.INFRASTRUCTURE,
     rarity: TileRarity.COMMON,
-    description: 'Panic braking',
-    darkHumour: false
+    description: 'Circular junction',
+    contentFilter: false
   },
   {
-    id: 'traffic_cone_tree',
-    name: 'Traffic Cone in Tree',
-    image: require('../../assets/images/traffic_cone_tree.webp'),
+    id: 'bridge',
+    name: 'Bridge',
+    image: require('../../assets/images/Bridge.webp'),
+    category: TileCategory.INFRASTRUCTURE,
+    rarity: TileRarity.COMMON,
+    description: 'River crossing',
+    contentFilter: false
+  },
+  {
+    id: 'gas_station',
+    name: 'Gas Station',
+    image: require('../../assets/images/Gas station .webp'),
+    category: TileCategory.INFRASTRUCTURE,
+    rarity: TileRarity.COMMON,
+    description: 'Fuel stop',
+    contentFilter: false
+  },
+  {
+    id: 'bus_stop',
+    name: 'Bus Stop',
+    image: require('../../assets/images/Bus stop .webp'),
+    category: TileCategory.INFRASTRUCTURE,
+    rarity: TileRarity.COMMON,
+    description: 'Public transport stop',
+    contentFilter: false
+  },
+  {
+    id: 'phone_box',
+    name: 'Phone Box',
+    image: require('../../assets/images/Phone box.webp'),
     category: TileCategory.INFRASTRUCTURE,
     rarity: TileRarity.RARE,
-    description: 'Gravity defying',
-    darkHumour: false
+    description: 'Red telephone box',
+    contentFilter: false
   },
   {
-    id: 'layby_rest_stop',
-    name: 'Layby Rest Stop',
-    image: require('../../assets/images/layby_rest_stop.webp'),
+    id: 'village_sign',
+    name: 'Village Sign',
+    image: require('../../assets/images/Village sign.webp'),
+    category: TileCategory.INFRASTRUCTURE,
+    rarity: TileRarity.UNCOMMON,
+    description: 'Town boundary',
+    contentFilter: false
+  },
+  {
+    id: 'wind_turbines',
+    name: 'Wind Turbines',
+    image: require('../../assets/images/Wind turbines .webp'),
+    category: TileCategory.INFRASTRUCTURE,
+    rarity: TileRarity.UNCOMMON,
+    description: 'Green energy',
+    contentFilter: false
+  },
+  {
+    id: 'pub',
+    name: 'Country Pub',
+    image: require('../../assets/images/Pub.webp'),
     category: TileCategory.INFRASTRUCTURE,
     rarity: TileRarity.COMMON,
-    description: 'Trucker paradise',
-    darkHumour: false
+    description: 'Local watering hole',
+    contentFilter: false
+  },
+  {
+    id: 'house',
+    name: 'Farmhouse',
+    image: require('../../assets/images/House.webp'),
+    category: TileCategory.INFRASTRUCTURE,
+    rarity: TileRarity.COMMON,
+    description: 'Country home',
+    contentFilter: false
+  },
+  {
+    id: 'water_tower',
+    name: 'Water Tower',
+    image: require('../../assets/images/Water tower.webp'),
+    category: TileCategory.INFRASTRUCTURE,
+    rarity: TileRarity.UNCOMMON,
+    description: 'Storage facility',
+    contentFilter: false
+  },
+  {
+    id: 'windmill',
+    name: 'Windmill',
+    image: require('../../assets/images/Wind mill.webp'),
+    category: TileCategory.INFRASTRUCTURE,
+    rarity: TileRarity.RARE,
+    description: 'Historic mill',
+    contentFilter: false
+  },
+  {
+    id: 'corn_field',
+    name: 'Corn Field',
+    image: require('../../assets/images/Corn field.webp'),
+    category: TileCategory.INFRASTRUCTURE,
+    rarity: TileRarity.COMMON,
+    description: 'Agricultural land',
+    contentFilter: false
   },
 
   // SPECIAL CATEGORY
   {
     id: 'free_range_center',
-    name: 'Free Range',
-    image: require('../../assets/images/free_range_logo_square.jpg'),
+    name: 'FREE SPOT',
+    image: require('../../assets/images/Free spot.webp'),
     category: TileCategory.SPECIAL,
     rarity: TileRarity.COMMON,
-    description: 'Dead Centre - Always spotted',
-    darkHumour: false
+    description: 'Center tile - Always spotted',
+    contentFilter: false
   }
 ];
 
@@ -353,8 +461,8 @@ export const getTilesByRarity = (rarity: TileRarity): GameTile[] => {
   return GAME_TILES.filter(tile => tile.rarity === rarity);
 };
 
-export const getFilteredTiles = (darkHumourEnabled: boolean): GameTile[] => {
-  return darkHumourEnabled 
+export const getFilteredTiles = (contentFilterEnabled: boolean): GameTile[] => {
+  return contentFilterEnabled 
     ? GAME_TILES 
-    : GAME_TILES.filter(tile => !tile.darkHumour);
+    : GAME_TILES.filter(tile => !tile.contentFilter);
 };

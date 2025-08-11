@@ -64,7 +64,7 @@ test.describe('Camera Capture Flow', () => {
     
     // Should show camera interface
     await expect(page.getByTestId('camera-view')).toBeVisible();
-    await expect(page.getByText('📸 Snap the Splat!')).toBeVisible();
+    await expect(page.getByText('📸 Snap & Share!')).toBeVisible();
     await expect(page.getByText('Cancel')).toBeVisible();
     await expect(page.getByText('Flip')).toBeVisible();
   });
@@ -125,14 +125,14 @@ test.describe('Camera Capture Flow', () => {
     await expect(page.getByTestId('camera-view')).toBeVisible();
     
     // Take photo
-    await page.getByText('📸 Snap the Splat!').click();
+    await page.getByText('📸 Snap & Share!').click();
     
     // Should show uploading state
     await expect(page.getByText('Uploading...')).toBeVisible();
     
     // Should show success message
     await expect(page.getByText('Success! 🎉')).toBeVisible({ timeout: 15000 });
-    await expect(page.getByText('Photo uploaded and posted to @deadaheadroadkill!')).toBeVisible();
+    await expect(page.getByText('Photo uploaded and posted to @roadtripbingo!')).toBeVisible();
   });
 
   test('should handle photo upload errors gracefully', async ({ page }) => {
@@ -159,7 +159,7 @@ test.describe('Camera Capture Flow', () => {
     await expect(page.getByTestId('camera-view')).toBeVisible();
     
     // Take photo
-    await page.getByText('📸 Snap the Splat!').click();
+    await page.getByText('📸 Snap & Share!').click();
     
     // Should show uploading state
     await expect(page.getByText('Uploading...')).toBeVisible();

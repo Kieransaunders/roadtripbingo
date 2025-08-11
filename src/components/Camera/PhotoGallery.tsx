@@ -31,7 +31,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
 
   const loadPhotos = async () => {
     try {
-      const storedPhotos = await AsyncStorage.getItem('roadkill_photos');
+      const storedPhotos = await AsyncStorage.getItem('roadtrip_photos');
       if (storedPhotos) {
         const parsedPhotos: PhotoRecord[] = JSON.parse(storedPhotos);
         setPhotos(parsedPhotos.sort((a, b) => b.timestamp - a.timestamp));
@@ -78,7 +78,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
     try {
       const updatedPhotos = photos.filter(p => p.id !== photoId);
       setPhotos(updatedPhotos);
-      await AsyncStorage.setItem('roadkill_photos', JSON.stringify(updatedPhotos));
+      await AsyncStorage.setItem('roadtrip_photos', JSON.stringify(updatedPhotos));
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     } catch (error) {
       console.error('Error deleting photo:', error);
@@ -97,7 +97,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
           onPress: async () => {
             try {
               setPhotos([]);
-              await AsyncStorage.removeItem('roadkill_photos');
+              await AsyncStorage.removeItem('roadtrip_photos');
               await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             } catch (error) {
               console.error('Error clearing photos:', error);
@@ -150,7 +150,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Roadkill Gallery</Text>
+        <Text style={styles.title}>Photo Gallery</Text>
         <Text style={styles.subtitle}>
           {photos.length} photo{photos.length !== 1 ? 's' : ''} captured
         </Text>
@@ -162,7 +162,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
             No photos yet!
           </Text>
           <Text style={styles.emptySubtext}>
-            Start spotting roadkill and taking photos to build your gallery
+            Start spotting sights and taking photos to build your gallery
           </Text>
         </View>
       ) : (
@@ -182,7 +182,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
           style={styles.instagramButton}
           activeOpacity={0.7}
         >
-          <Text style={styles.buttonText}>View @deadaheadroadkill</Text>
+          <Text style={styles.buttonText}>View @roadtripbingo</Text>
         </TouchableOpacity>
         
         {photos.length > 0 && (
@@ -212,7 +212,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ onClose }) => {
 // Helper function to check daily photo limit
 export const checkDailyPhotoLimit = async (maxPhotosPerDay: number = 1): Promise<{ canUpload: boolean; remainingPhotos: number; todayCount: number }> => {
   try {
-    const existingPhotos = await AsyncStorage.getItem('roadkill_photos');
+    const existingPhotos = await AsyncStorage.getItem('roadtrip_photos');
     const photos: PhotoRecord[] = existingPhotos ? JSON.parse(existingPhotos) : [];
     
     // Get start of today (midnight)
@@ -248,7 +248,7 @@ export const savePhotoToGallery = async (photoData: Omit<PhotoRecord, 'id' | 'ti
       timestamp: Date.now(),
     };
 
-    const existingPhotos = await AsyncStorage.getItem('roadkill_photos');
+    const existingPhotos = await AsyncStorage.getItem('roadtrip_photos');
     const photos: PhotoRecord[] = existingPhotos ? JSON.parse(existingPhotos) : [];
     
     photos.unshift(newPhoto); // Add to beginning of array
@@ -256,7 +256,7 @@ export const savePhotoToGallery = async (photoData: Omit<PhotoRecord, 'id' | 'ti
     // Keep only last 50 photos to prevent storage issues
     const trimmedPhotos = photos.slice(0, 50);
     
-    await AsyncStorage.setItem('roadkill_photos', JSON.stringify(trimmedPhotos));
+    await AsyncStorage.setItem('roadtrip_photos', JSON.stringify(trimmedPhotos));
     console.log('✅ Photo saved to gallery:', newPhoto.id);
     
     return newPhoto;

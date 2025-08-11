@@ -1,7 +1,7 @@
 {
   "consent": {
     "title": "Consent Required",
-    "message": "By sharing this image, you consent to it being posted on our Instagram. Note: Images may be graphic.",
+    "message": "By sharing this image, you consent to it being posted on our Instagram.",
     "understand": "I Understand",
     "cancel": "Cancel",
     "a11y": {
@@ -16,9 +16,9 @@
     }
   },
   "permissions": {
-    "camera": "Allow Dead Ahead Bingo to access your camera to capture roadkill evidence for the leaderboard.",
-    "photos": "Allow Dead Ahead Bingo to save your roadkill photos to your device.",
-    "savePhotos": "Allow Dead Ahead Bingo to save photos to your photo library."
+    "camera": "Allow Road Trip Bingo to access your camera to capture photos for the leaderboard.",
+    "photos": "Allow Road Trip Bingo to save your photos to your device.",
+    "savePhotos": "Allow Road Trip Bingo to save photos to your photo library."
   },
   "common": {
     "loading": "Loading...",
@@ -30,9 +30,9 @@
     "confirm": "Confirm"
   },
   "game": {
-    "title": "Dead Ahead: Roadkill Bingo",
-    "snapTheSplat": "Snap the Splat",
-    "hallOfShame": "Hall of Shame",
+    "title": "Road Trip Bingo",
+    "captureMemories": "Capture Memories",
+    "photoGallery": "Photo Gallery",
     "leaderboard": "Leaderboard",
     "settings": "Settings"
   },

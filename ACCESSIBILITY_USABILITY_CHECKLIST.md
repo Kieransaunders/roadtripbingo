@@ -530,7 +530,7 @@ const GameScreen = () => {
   return (
     <View>
       <Text accessibilityRole="header" style={styles.h1}>
-        Dead Ahead Bingo
+        Bingo
       </Text>
       <Text accessibilityRole="header" style={styles.h2}>
         Current Game

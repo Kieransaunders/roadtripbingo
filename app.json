@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "Dead Ahead",
-    "slug": "deadahead",
+    "name": "Road Trip Bingo",
+    "slug": "roadtripbingo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "deadaheadbingo",
+    "scheme": "roadtripbingo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "uk.co.iconnectit.deadahead",
+      "bundleIdentifier": "uk.co.iconnectit.roadtripbingo",
       "appleTeamId": "QHS5TSHJA5",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "uk.co.iconnectit.deadahead",
+      "package": "uk.co.iconnectit.roadtripbingo",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
@@ -64,14 +64,14 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Dead Ahead Bingo to access your camera to capture roadkill evidence for the leaderboard."
+          "cameraPermission": "Allow Road Trip Bingo to access your camera to snap and share photos of your road trip discoveries and memories."
         }
       ],
       [
         "expo-media-library",
         {
-          "photosPermission": "Allow Dead Ahead Bingo to save your roadkill photos to your device.",
-          "savePhotosPermission": "Allow Dead Ahead Bingo to save photos to your photo library.",
+          "photosPermission": "Allow Road Trip Bingo to save your road trip memories and discoveries to your device.",
+          "savePhotosPermission": "Allow Road Trip Bingo to save photos of your road trip finds to your photo library.",
           "isAccessMediaLocationEnabled": true
         }
       ],
@@ -83,13 +83,10 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a8837a6b-eacb-4282-b149-c278dface0fe"
+        "projectId": "504bc6cb-fb94-441b-8bfc-021edb506752"
       }
     },
     "owner": "mrzang77",
     "runtimeVersion": "1.0.0",
-    "updates": {
-      "url": "https://u.expo.dev/a8837a6b-eacb-4282-b149-c278dface0fe"
-    }
   }
 }

@@ -1,4 +1,4 @@
-// Dead Ahead Bingo Design System Components
+// Road Trip Bingo Design System Components
 export { Button } from './Button';
 export type { ButtonVariant, ButtonSize } from './Button';
 

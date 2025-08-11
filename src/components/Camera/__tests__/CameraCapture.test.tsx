@@ -301,7 +301,7 @@ describe('CameraCapture', () => {
       await waitFor(() => {
         expect(mockAlert).toHaveBeenCalledWith(
           'Success! 🎉',
-          expect.stringContaining('Photo uploaded and posted to @deadaheadroadkill!'),
+          expect.stringContaining('Photo uploaded and posted to @roadtripbingo!'),
           expect.arrayContaining([
             expect.objectContaining({ text: 'View on Instagram' }),
             expect.objectContaining({ text: 'OK' }),

@@ -1,7 +1,11 @@
-# CLAUDE.md - Dead Ahead: Roadkill Bingo
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+# Road Trip Bingo
 
 ## Project Overview
-Dead Ahead: Roadkill Bingo is a React Native/Expo mobile game where players spot bizarre roadside sights during road trips using a 5×5 bingo grid. The game combines dark British humor with interactive gameplay, featuring a camera integration for "Snap-a-Roadkill" photo sharing and leaderboards.
+Road Trip Bingo is a React Native/Expo mobile game where players spot interesting roadside sights during road trips using a 5×5 bingo grid. The game combines fun gameplay with interactive camera integration for photo sharing and leaderboards.
 
 ## Key Technical Stack
 
@@ -21,8 +25,8 @@ Dead Ahead: Roadkill Bingo is a React Native/Expo mobile game where players spot
 - **Babel** with Unistyles and Reanimated plugins
 - **ESLint** with Expo configuration
 - **React Query** for data fetching and caching
-
-### Development Tools
+- **Jest** for unit testing with React Native Testing Library
+- **Playwright** for end-to-end testing
 - **Context7-mcp** for looking up up-to-date documentation for various libraries and frameworks
 
 ## Project Structure
@@ -30,26 +34,31 @@ Dead Ahead: Roadkill Bingo is a React Native/Expo mobile game where players spot
 ```
 /
 ├── app/                    # Expo Router file-based routing
-│   ├── (tabs)/            # Tab navigator structure
-│   │   ├── _layout.tsx    # Tab navigation configuration
-│   │   ├── index.tsx      # Home screen (currently template)
-│   │   └── explore.tsx    # Explore screen (currently template)
 │   ├── _layout.tsx        # Root layout with navigation theme
+│   ├── index.tsx          # Dashboard screen (main menu)
+│   ├── game.tsx           # Game screen with 5x5 bingo grid
+│   ├── settings.tsx       # Settings screen
+│   ├── camera.tsx         # Camera screen for photo capture
+│   ├── trophy-room.tsx    # Trophy gallery/photo collection screen
+│   ├── victory.tsx        # Victory screen with animations
 │   └── +not-found.tsx     # 404 screen
 ├── src/
 │   ├── components/        # Reusable UI components
 │   │   ├── ui/           # Platform-specific UI components
+│   │   ├── Camera/       # Camera-related components
 │   │   └── [various themed components]
 │   ├── constants/         # Theme colors and constants
 │   ├── data/
 │   │   └── tiles.ts      # Game tiles data (33 tiles with categories/rarity)
 │   ├── hooks/            # Custom React hooks
+│   ├── locales/          # Internationalization files
+│   ├── screens/          # Screen components (used by app/ routes)
 │   ├── stores/
 │   │   └── gameStore.ts  # Zustand store for game state
 │   ├── styles/           # (empty - using Unistyles)
 │   └── unistyles.ts      # Unistyles theme configuration
 ├── assets/
-│   └── images/           # Game tile images (30+ PNG files)
+│   └── images/           # Game tile images (40+ WebP files, optimized)
 ├── android/              # Android-specific configuration
 ├── ios/                  # iOS-specific configuration
 └── [config files]
@@ -68,7 +77,7 @@ Dead Ahead: Roadkill Bingo is a React Native/Expo mobile game where players spot
 
 ### Tile System (`src/data/tiles.ts`)
 - **33 unique tiles** across 6 categories:
-  - ROADKILL (11 tiles) - dark humor content
+  - SIGHTINGS (11 tiles) - interesting roadside observations
   - VEHICLES (7 tiles) - cars, trucks, trailers
   - ROADSIDE (7 tiles) - litter, lost items
   - PEOPLE (3 tiles) - human activities
@@ -99,6 +108,14 @@ npm run web           # Web development build
 npm run lint          # ESLint code checking
 npm run reset-project # Reset to blank Expo template
 
+# Testing
+npm run test          # Run Jest unit tests
+npm run test:watch    # Run Jest in watch mode
+npm run test:coverage # Run tests with coverage report
+npm run test:e2e      # Run Playwright end-to-end tests
+npm run test:e2e:ui   # Run Playwright tests with UI
+npm run test:e2e:headed # Run Playwright tests in headed mode
+
 # Build for production
 npx expo build        # Production builds (requires EAS)
 ```
@@ -110,31 +127,31 @@ npx expo build        # Production builds (requires EAS)
 - ✅ Zustand game store with complete game logic
 - ✅ Comprehensive tile system with 33 game tiles
 - ✅ Unistyles theming system
-- ✅ Win condition algorithms (3-in-a-row, 4-in-a-row)
-- ✅ Settings system (sound, haptics, dark humor filter)
-- ✅ Game statistics tracking
-- ✅ All game assets (tile images)
+- ✅ Win condition algorithms (3-in-a-row, 5-in-a-row)
+- ✅ Settings system (sound, haptics, content filter)
+- ✅ Game statistics tracking and achievements system
+- ✅ All game assets (tile images optimized to WebP)
 - ✅ Camera integration for photo capture
 - ✅ Instagram API integration for photo sharing
 - ✅ Consent dialog system for user privacy
-- ✅ Bottom navigation across all screens
+- ✅ All game screens implemented (Dashboard, Game, Settings, Camera, Trophy Room, Victory)
+- ✅ 5×5 bingo grid component with interactive tiles
 - ✅ Victory screen with animations and sharing
 - ✅ Photo gallery and cloud storage integration
+- ✅ Testing setup with Jest and Playwright
+- ✅ Internationalization support
 
 ### TODO (Per PDR.md)
-- 🚧 Replace template screens with actual game UI
-- 🚧 Implement 5×5 bingo grid component
-- 🚧 Build leaderboard with image upload
-- 🚧 Implement sound effects and haptic feedback
-- 🚧 Create settings screen
-- 🚧 Add card gallery for previous games
-- 🚧 Add game tutorial/onboarding screens
-- 🚧 Implement user statistics and achievements display
+- 🚧 Sound effects and haptic feedback implementation
+- 🚧 Leaderboard with cloud sync
+- 🚧 Game tutorial/onboarding screens
+- 🚧 Enhanced achievement system display
+- 🚧 Statistics dashboard improvements
 
 ## Key Configuration Files
 
 ### `app.json`
-- Bundle IDs: `com.anonymous.deadaheadbingo`
+- Bundle IDs: `uk.co.iconnectit.roadtripbingo`
 - New Architecture enabled
 - Portrait orientation only
 - Expo Router and Splash Screen plugins
@@ -152,12 +169,12 @@ npx expo build        # Production builds (requires EAS)
 ## Assets & Resources
 
 ### Game Assets (`assets/images/`)
-- 40+ WebP tile images (dead animals, vehicles, roadside items) - optimized for 80%+ size reduction
+- 40+ WebP tile images (animals, vehicles, roadside items) - optimized for 80%+ size reduction
 - App icons and splash screens (PNG format for compatibility)
-- Logo assets (`dead_ahead_logo.webp`, `free_range_logo_square.jpg`)
+- Logo assets (`road_trip_bingo_logo.webp`, `free_range_logo_square.jpg`)
 
 ### Notable Dependencies
-- **expo-camera**: For roadkill photo capture
+- **expo-camera**: For photo capture
 - **expo-haptics**: Tactile feedback
 - **expo-image**: Optimized image loading
 - **react-native-gesture-handler**: Touch interactions
@@ -173,15 +190,17 @@ npx expo build        # Production builds (requires EAS)
 
 ## Architecture Notes
 
-- **File-based routing**: Screens go in `app/` directory
-- **Component organization**: Reusable components in `src/components/`
-- **Store pattern**: Zustand store handles all game state management
-- **Theme system**: Unistyles provides responsive, platform-aware styling
+- **File-based routing**: Screens go in `app/` directory with corresponding components in `src/screens/`
+- **Component organization**: Reusable components in `src/components/` with platform-specific UI components in `src/components/ui/`
+- **Store pattern**: Zustand store handles all game state management with AsyncStorage persistence
+- **Theme system**: Unistyles provides responsive, platform-aware styling with light/dark theme support
 - **Asset management**: Images bundled via `require()` statements, optimized with WebP format for 80%+ size reduction
+- **Testing**: Component tests in `__tests__` directories, Jest configuration for React Native, Playwright for E2E tests
+- **Navigation**: Bottom tab navigation with consistent routing across all screens
 
 ## PDR Reference
 See `PDR.md` for complete product requirements, game rules, content categories, and development milestones. The technical implementation closely follows the PDR specifications with modern React Native/Expo architecture.
 
 ---
 
-*This file serves as the primary reference for understanding the Dead Ahead: Roadkill Bingo codebase architecture, development setup, and current implementation status.*
+*This file serves as the primary reference for understanding the Road Trip Bingo codebase architecture, development setup, and current implementation status.*

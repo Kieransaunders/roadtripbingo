@@ -32,7 +32,7 @@ expo run:ios
    - Verify ConsentDialog appears
    - Test "Cancel" - should return to game
    - Test "I Understand" - should show camera interface
-   - Test camera controls: "📸 Snap the Splat!", "Cancel", "Flip"
+   - Test camera controls: "📸 Snap & Share!", "Cancel", "Flip"
    - Test actual photo capture
 
 2. **Test Steps (Permission Denied):**
@@ -80,7 +80,7 @@ expo run:android
    - Verify ConsentDialog appears
    - Test "Cancel" - should return to game
    - Test "I Understand" - should show camera interface
-   - Test camera controls: "📸 Snap the Splat!", "Cancel", "Flip"
+   - Test camera controls: "📸 Snap & Share!", "Cancel", "Flip"
    - Test actual photo capture
 
 2. **Test Steps (Permission Denied):**

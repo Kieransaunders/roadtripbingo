@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, StatusBar } from 'react-native';
+import { View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet as UnistylesStyleSheet } from 'react-native-unistyles';
 import { Surface, Chip } from 'react-native-paper';
@@ -17,7 +17,7 @@ export const GameScreen: React.FC = () => {
     currentGrid, 
     isGameWon, 
     gameMode, 
-    goreLevel,
+    countryCode,
     startNewGame
   } = useGameStore();
 
@@ -61,8 +61,13 @@ export const GameScreen: React.FC = () => {
     return gameMode === 'standard' ? '3 in a row' : '4 in a row';
   };
 
-  const getGoreLevel = () => {
-    return goreLevel.charAt(0).toUpperCase() + goreLevel.slice(1);
+  const getCountryFlag = () => {
+    const countryFlags = {
+      'uk': '🇬🇧',
+      'us': '🇺🇸',
+      'aus': '🇦🇺'
+    };
+    return countryFlags[countryCode] || '🇬🇧';
   };
 
   const handleModePress = () => {
@@ -81,46 +86,12 @@ export const GameScreen: React.FC = () => {
 
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.content}>
         <Surface style={styles.header} elevation={3}>
-          <Heading1 align="center" color="accent" style={styles.title}>DEAD AHEAD</Heading1>
-          <Heading3 align="center" style={styles.subtitle}>Roadkill Bingo</Heading3>
-          <Body align="center" style={styles.tagline}>
-            &quot;See it. Spot it. Shout it. Win shotgun or throw up trying.&quot;
+          <Heading1 align="center" color="accent" style={styles.title}>ROAD TRIP</Heading1>
+          <Heading3 align="center" style={styles.subtitle}>Bingo</Heading3>
+          <Body align="center" style={styles.instructions}>
+            Tap tiles when you spot them on your road trip. Get 3 in a row to win!
           </Body>
         </Surface>
-
-        <View style={styles.gameInfo}>
-            <View style={styles.infoRow}>
-              <View style={styles.infoItem}>
-                <Chip 
-                  mode="outlined" 
-                  onPress={handleModePress}
-                  style={styles.clickableChip}
-                  textStyle={styles.chipText}
-                >
-                  {getWinRequirement()}
-                </Chip>
-              </View>
-              <View style={styles.infoItem}>
-                <Chip 
-                  mode="outlined" 
-                  onPress={handleModePress}
-                  style={styles.clickableChip}
-                  textStyle={styles.chipText}
-                >
-                  {getGoreLevel()}
-                </Chip>
-              </View>
-              <View style={styles.infoItem}>
-                <Chip 
-                  mode="flat" 
-                  style={styles.spottedChip}
-                  textStyle={styles.spottedChipText}
-                >
-                  {getSpottedCount()}/16
-                </Chip>
-              </View>
-            </View>
-        </View>
 
       <View style={styles.gridContainer}>
         <BingoGrid />
@@ -137,6 +108,47 @@ export const GameScreen: React.FC = () => {
           New Game
         </Button>
       </View>
+
+        <View style={styles.gameInfo}>
+          <View style={styles.statsContainer}>
+            <TouchableOpacity onPress={handleModePress} activeOpacity={0.7}>
+              <Surface style={[styles.statCard, styles.clickableStatCard]} elevation={2}>
+                <View style={styles.statCardContent}>
+                  <IconSymbol name="gamecontroller.fill" size={20} color="#FFD700" />
+                  <View style={styles.statTextContainer}>
+                    <Body style={styles.statLabel}>Game Mode</Body>
+                    <Body style={styles.statValue}>{getWinRequirement()}</Body>
+                  </View>
+                  <IconSymbol name="gear" size={16} color="#888" />
+                </View>
+              </Surface>
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={handleModePress} activeOpacity={0.7}>
+              <Surface style={[styles.statCard, styles.clickableStatCard]} elevation={2}>
+                <View style={styles.statCardContent}>
+                  <IconSymbol name="globe.americas.fill" size={20} color="#4CAF50" />
+                  <View style={styles.statTextContainer}>
+                    <Body style={styles.statLabel}>Country</Body>
+                    <Body style={[styles.statValue, styles.flagValue]}>{getCountryFlag()}</Body>
+                  </View>
+                  <IconSymbol name="gear" size={16} color="#888" />
+                </View>
+              </Surface>
+            </TouchableOpacity>
+            
+            <Surface style={styles.statCard} elevation={2}>
+              <View style={styles.statCardContent}>
+                <IconSymbol name="eye.fill" size={20} color="#FF4444" />
+                <View style={styles.statTextContainer}>
+                  <Body style={styles.statLabel}>Spotted</Body>
+                  <Body style={styles.statValue}>{getSpottedCount()}/16</Body>
+                </View>
+                <IconSymbol name="checkmark.circle.fill" size={16} color="#4CAF50" />
+              </View>
+            </Surface>
+          </View>
+        </View>
       </ScrollView>
       
       <BottomNavigation />
@@ -181,52 +193,64 @@ const styles = UnistylesStyleSheet.create((theme) => ({
     marginBottom: 12,
     lineHeight: theme.fonts.lg * 1.2,
   },
-  tagline: {
+  instructions: {
     fontSize: theme.fonts.sm,
     color: '#FFFFFF',
     textAlign: 'center',
-    fontStyle: 'italic',
-    opacity: 0.8,
+    opacity: 0.9,
     lineHeight: theme.fonts.sm * 1.3,
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   gameInfo: {
-    marginHorizontal: 20,
-    marginBottom: 12,
-    marginTop: 0,
+    marginHorizontal: 16,
+    marginBottom: 20,
+    marginTop: 16,
   },
-  infoRow: {
+  statsContainer: {
+    gap: 12,
+  },
+  statCard: {
+    backgroundColor: 'rgba(42, 42, 74, 0.8)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    overflow: 'hidden',
+  },
+  clickableStatCard: {
+    backgroundColor: 'rgba(255, 212, 0, 0.08)',
+    borderColor: 'rgba(255, 212, 0, 0.3)',
+  },
+  statCardContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: 8,
-  },
-  infoItem: {
     alignItems: 'center',
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    gap: 14,
+    minHeight: 64,
+  },
+  statTextContainer: {
     flex: 1,
+    paddingVertical: 2,
   },
-  infoLabel: {
-    color: '#CCCCCC',
-    opacity: 0.7,
-    marginTop: 4,
-    textAlign: 'center',
+  statLabel: {
+    color: '#B0B0B0',
+    fontSize: 12,
+    fontWeight: '500',
+    marginBottom: 4,
+    letterSpacing: 0.3,
+    lineHeight: 14,
   },
-  clickableChip: {
-    backgroundColor: 'rgba(255, 212, 0, 0.1)',
-    borderColor: '#FFD700',
+  statValue: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.2,
+    lineHeight: 20,
   },
-  chipText: {
-    color: '#FFD700',
-    fontSize: 11,
-  },
-  spottedChip: {
-    backgroundColor: 'rgba(255, 68, 68, 0.2)',
-  },
-  spottedChipText: {
-    color: '#FF4444',
-    fontSize: 11,
-    fontWeight: 'bold',
+  flagValue: {
+    fontSize: 24,
+    lineHeight: 28,
   },
   gridContainer: {
     marginBottom: 16,

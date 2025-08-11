@@ -34,7 +34,7 @@ export interface AchievementProgress {
   [key: string]: Achievement;
 }
 
-export type GoreLevel = 'mild' | 'moderate' | 'extreme';
+export type CountryCode = 'uk' | 'us' | 'aus';
 
 export interface GameState {
   // Current game state
@@ -48,7 +48,7 @@ export interface GameState {
   // Settings
   soundEnabled: boolean;
   hapticEnabled: boolean;
-  goreLevel: GoreLevel;
+  countryCode: CountryCode;
   longRoadTripEnabled: boolean;
   
   // Stats
@@ -66,7 +66,7 @@ export interface GameState {
   setGameMode: (mode: 'standard' | 'savage') => void;
   setSoundEnabled: (enabled: boolean) => void;
   setHapticEnabled: (enabled: boolean) => void;
-  setGoreLevel: (level: GoreLevel) => void;
+  setCountryCode: (code: CountryCode) => void;
   setLongRoadTripEnabled: (enabled: boolean) => void;
   incrementPhotosUploaded: () => void;
   completeGame: (won: boolean) => void;
@@ -79,7 +79,7 @@ export interface GameState {
   getAchievementProgress: (achievementId: string) => Achievement | null;
 }
 
-const generateBingoGrid = (goreLevel: GoreLevel): BingoCell[] => {
+const generateBingoGrid = (countryCode: CountryCode): BingoCell[] => {
   const grid: BingoCell[] = [];
   const randomTiles = getRandomTiles(15, true); // 15 random tiles + 1 free range = 16 total
   
@@ -179,9 +179,9 @@ const checkWin = (grid: BingoCell[], gameMode: 'standard' | 'savage'): boolean =
 
 // Default achievements
 const createDefaultAchievements = (): AchievementProgress => ({
-  'first-blood': {
-    id: 'first-blood',
-    title: 'First Blood',
+  'first-victory': {
+    id: 'first-victory',
+    title: 'First Victory',
     description: 'Win your first game',
     icon: '🏆',
     unlocked: false,
@@ -190,8 +190,8 @@ const createDefaultAchievements = (): AchievementProgress => ({
   },
   'shutterbug': {
     id: 'shutterbug',
-    title: 'Shutterbug',
-    description: 'Take 10 photos',
+    title: 'Photo Pro',
+    description: 'Take 10 photos during your trips',
     icon: '📷',
     unlocked: false,
     progress: 0,
@@ -199,36 +199,36 @@ const createDefaultAchievements = (): AchievementProgress => ({
   },
   'winning-streak': {
     id: 'winning-streak',
-    title: 'Winning Streak',
+    title: 'Champion Streak',
     description: 'Win 5 games in a row',
-    icon: '💧',
+    icon: '🔥',
     unlocked: false,
     progress: 0,
     target: 5,
   },
-  'roadkill-spotter': {
-    id: 'roadkill-spotter',
-    title: 'Roadkill Spotter',
+  'game-explorer': {
+    id: 'game-explorer',
+    title: 'Game Explorer',
     description: 'Play 10 games',
     icon: '🎮',
     unlocked: false,
     progress: 0,
     target: 10,
   },
-  'speed-demon': {
-    id: 'speed-demon',
-    title: 'Speed Demon',
+  'speed-master': {
+    id: 'speed-master',
+    title: 'Speed Master',
     description: 'Win a game in under 30 seconds',
     icon: '⚡',
     unlocked: false,
     progress: 0,
     target: 30000, // 30 seconds in milliseconds
   },
-  'perfectionist': {
-    id: 'perfectionist',
-    title: 'Road Warrior',
+  'eagle-eye': {
+    id: 'eagle-eye',
+    title: 'Eagle Eye',
     description: 'Spot 8 tiles in a single game',
-    icon: '💎',
+    icon: '👁️',
     unlocked: false,
     progress: 0,
     target: 50, // 8 out of 16 tiles = 50%
@@ -247,7 +247,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   // Settings
   soundEnabled: true,
   hapticEnabled: true,
-  goreLevel: 'extreme',
+  countryCode: 'uk',
   longRoadTripEnabled: false,
   
   // Stats
@@ -267,7 +267,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   
   // Actions
   startNewGame: () => {
-    const { goreLevel, longRoadTripEnabled, gameStartTime } = get();
+    const { countryCode, longRoadTripEnabled, gameStartTime } = get();
     
     // If there was a previous game in progress, count it as abandoned
     if (gameStartTime && !get().isGameWon) {
@@ -275,7 +275,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       get().completeGame(false); // This will count as a game played but not won
     }
     
-    const newGrid = generateBingoGrid(goreLevel);
+    const newGrid = generateBingoGrid(countryCode);
     
     set({
       currentGrid: newGrid,
@@ -464,9 +464,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     get().saveSettings();
   },
   
-  setGoreLevel: (level: GoreLevel) => {
+  setCountryCode: (code: CountryCode) => {
     // Force extreme mode - other levels are disabled
-    set({ goreLevel: 'extreme' });
+    set({ countryCode: 'uk' });
     get().saveSettings();
   },
   
@@ -546,7 +546,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         set({
           soundEnabled: settings.soundEnabled ?? true,
           hapticEnabled: settings.hapticEnabled ?? true,
-          goreLevel: settings.goreLevel ?? 'extreme',
+          countryCode: settings.countryCode ?? 'uk',
           longRoadTripEnabled,
           gameMode: longRoadTripEnabled ? 'savage' : 'standard'
         });
@@ -587,12 +587,12 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   saveSettings: async () => {
     try {
-      const { soundEnabled, hapticEnabled, goreLevel, longRoadTripEnabled, achievements, stats } = get();
+      const { soundEnabled, hapticEnabled, countryCode, longRoadTripEnabled, achievements, stats } = get();
       
       const settings = {
         soundEnabled,
         hapticEnabled,
-        goreLevel,
+        countryCode,
         longRoadTripEnabled,
       };
       
@@ -621,7 +621,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       let shouldUnlock = false;
 
       switch (achievement.id) {
-        case 'first-blood':
+        case 'first-victory':
           progress = Math.min(stats.gamesWon, achievement.target);
           shouldUnlock = stats.gamesWon >= achievement.target;
           break;
@@ -633,15 +633,15 @@ export const useGameStore = create<GameState>((set, get) => ({
           progress = Math.min(stats.currentStreak, achievement.target);
           shouldUnlock = stats.currentStreak >= achievement.target;
           break;
-        case 'roadkill-spotter':
+        case 'game-explorer':
           progress = Math.min(stats.gamesPlayed, achievement.target);
           shouldUnlock = stats.gamesPlayed >= achievement.target;
           break;
-        case 'speed-demon':
+        case 'speed-master':
           progress = stats.fastestTime < achievement.target ? achievement.target : 0;
           shouldUnlock = stats.fastestTime < achievement.target && stats.fastestTime !== Infinity;
           break;
-        case 'perfectionist':
+        case 'eagle-eye':
           progress = Math.min(stats.highestCompletion, achievement.target);
           shouldUnlock = stats.highestCompletion >= achievement.target;
           break;

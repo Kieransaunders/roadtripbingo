@@ -112,7 +112,7 @@ export default function RootLayout() {
               <Stack.Screen name="index" />
               <Stack.Screen name="game" />
               <Stack.Screen name="victory" />
-              <Stack.Screen name="hall-of-shame" />
+              <Stack.Screen name="trophy-room" />
               <Stack.Screen name="settings" />
               <Stack.Screen name="camera" />
               <Stack.Screen name="+not-found" options={{ headerShown: true }} />

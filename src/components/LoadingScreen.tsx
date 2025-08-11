@@ -7,10 +7,10 @@ export const LoadingScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <Typography variant="displayMedium" color="accent" align="center" style={styles.title}>
-        DEAD AHEAD
+        ROAD TRIP
       </Typography>
       <Typography variant="headlineMedium" align="center" style={styles.subtitle}>
-        Roadkill Bingo
+        Bingo
       </Typography>
       <ActivityIndicator size="large" color="#FF4444" style={styles.spinner} />
     </View>

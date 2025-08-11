@@ -1,4 +1,4 @@
-// src/unistyles.ts - Dead Ahead Bingo Design System v2.0
+// src/unistyles.ts - Road Trip Bingo Design System v2.0
 import { Dimensions } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 

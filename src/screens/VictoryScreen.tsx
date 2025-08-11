@@ -215,12 +215,12 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
     }
   };
 
-  const handleHallOfShame = () => {
+  const handleTrophyRoom = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
-      router.push('/hall-of-shame');
+      router.push('/trophy-room');
     } catch (error) {
-      console.error('Error navigating to hall of shame screen:', error);
+      console.error('Error navigating to trophy room screen:', error);
       Sentry.captureException(error);
     }
   };
@@ -246,7 +246,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
       <View style={styles.content}>
         {/* Victory Title */}
         <View style={styles.titleContainer}>
-          <Text style={styles.mainTitle}>ROADKILL</Text>
+          <Text style={styles.mainTitle}>ROAD TRIP</Text>
           <Text style={styles.bingoTitle}>BINGO!</Text>
           {currentGameWins === 1 ? (
             <Text style={styles.subtitle}>🎉 YOU WON! 🎉</Text>
@@ -338,8 +338,8 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
           </TouchableOpacity>
           
           <TouchableOpacity
-            style={[styles.button, styles.hallOfShameButton]}
-            onPress={handleHallOfShame}
+            style={[styles.button, styles.photoGalleryButton]}
+            onPress={handleTrophyRoom}
           >
             <View style={styles.buttonContent}>
               <IconSymbol 
@@ -348,7 +348,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
                 color="white"
                 style={styles.buttonIcon}
               />
-              <Text style={styles.buttonText}>Hall of Shame</Text>
+              <Text style={styles.buttonText}>Trophy Room</Text>
             </View>
           </TouchableOpacity>
         </Animated.View>
@@ -499,7 +499,7 @@ const styles = StyleSheet.create((theme) => ({
   playAgainButton: {
     backgroundColor: '#FF4444',
   },
-  hallOfShameButton: {
+  photoGalleryButton: {
     backgroundColor: '#9C27B0',
   },
   buttonContent: {

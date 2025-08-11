@@ -1,7 +1,7 @@
 # Dead Ahead: Menu Design Requirements Brief
 
 ## Overview
-This brief outlines the design inputs and requirements for the "Dead Ahead" menu system based on analysis of the existing codebase, screenshots, and project documentation.
+This brief outlines the design inputs and requirements for the "Roadtrip bingo" menu system based on analysis of the existing codebase, screenshots, and project documentation.
 
 ## 1. Core Design Attributes
 

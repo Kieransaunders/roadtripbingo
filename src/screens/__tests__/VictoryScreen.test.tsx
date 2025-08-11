@@ -122,7 +122,7 @@ describe('VictoryScreen Integration Tests', () => {
         expect(screen.queryByText(Strings.consent.title)).toBeNull();
         expect(mockAlert).toHaveBeenCalledWith(
           'Share Your Victory! 🎉',
-          expect.stringContaining('I just won ROADKILL BINGO with 15/25 tiles spotted'),
+          expect.stringContaining('I just won ROAD TRIP BINGO with 15/25 tiles spotted'),
           expect.any(Array)
         );
       });
@@ -163,10 +163,10 @@ describe('VictoryScreen Integration Tests', () => {
       await waitFor(() => {
         expect(mockAlert).toHaveBeenCalledWith(
           'Share Your Victory! 🎉',
-          expect.stringContaining('I just won ROADKILL BINGO with 15/25 tiles spotted in 2:00'),
+          expect.stringContaining('I just won ROAD TRIP BINGO with 15/25 tiles spotted in 2:00'),
           expect.arrayContaining([
             expect.objectContaining({ text: 'Copy Message' }),
-            expect.objectContaining({ text: 'View @deadaheadroadkill' }),
+            expect.objectContaining({ text: 'View @roadtripbingo' }),
             expect.objectContaining({ text: 'Later' }),
           ])
         );

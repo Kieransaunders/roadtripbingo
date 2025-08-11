@@ -1,17 +1,16 @@
-import React from 'react';
-import { StatusBar, Dimensions, View, ScrollView, Platform, Alert, Linking, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { 
-  IconButton, 
-  Surface, 
-  List, 
-  useTheme, 
-  Text, 
-  Card
+import React from 'react';
+import { Alert, Dimensions, Linking, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import {
+  Card,
+  IconButton,
+  List,
+  Surface,
+  Text,
+  useTheme
 } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../components/ui/IconSymbol';
-import { useConsentDialog } from '../hooks/useConsentDialog';
 // import { BottomNavigation } from '../components/BottomNavigation';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -119,8 +118,8 @@ export const DashboardScreen: React.FC = () => {
       case 'camera':
         router.push('/camera');
         break;
-      case 'hall-of-shame':
-        router.push('/hall-of-shame');
+      case 'trophy-room':
+        router.push('/trophy-room');
         break;
       case 'settings':
         router.push('/settings');
@@ -141,36 +140,15 @@ export const DashboardScreen: React.FC = () => {
         {/* Header */}
         <View style={styles.header}>
           <Text variant="displayLarge" style={[styles.mainTitle, { color: theme.colors.primary }]}>
-            DEAD AHEAD
+            ROAD TRIP
           </Text>
           <Text variant="displayMedium" style={[styles.subtitle, { color: theme.colors.secondary }]}>
-            Roadkill Bingo
+            Bingo
           </Text>
           <Text variant="bodyLarge" style={[styles.tagline, { color: theme.colors.onSurfaceVariant }]}>
-            &quot;See it. Spot it. Shout it. Win shotgun or throw up trying.&quot;
+            &quot;See it. Spot it. Shout it. Win front seat privileges by spotting 3 tiles in a row!&quot;
           </Text>
           
-          {/* Disclaimer - Top of Fold */}
-          <Card mode="outlined" style={styles.topDisclaimer}>
-            <Card.Content>
-              <View style={styles.disclaimerContainer}>
-                <Surface 
-                  style={[styles.ratingCircle, { backgroundColor: theme.colors.primary }]} 
-                  elevation={1}
-                >
-                  <Text style={[styles.ratingText, { color: theme.colors.onPrimary }]}>
-                    12+
-                  </Text>
-                </Surface>
-                <Text variant="bodyMedium" style={[styles.disclaimerText, { color: theme.colors.onSurfaceVariant }]}>
-                  Rated 12+ for crude humor and mild violence
-                </Text>
-              </View>
-              <Text variant="bodySmall" style={[styles.disclaimerSubtext, { color: theme.colors.onSurfaceVariant }]}>
-                No animals were harmed in the making of this game... By Us!
-              </Text>
-            </Card.Content>
-          </Card>
         </View>
 
         {/* Menu Cards */}
@@ -184,64 +162,26 @@ export const DashboardScreen: React.FC = () => {
           
           <MenuCard
             icon="camera"
-            title="Snap the Splat!"
+            title="Snap & Share!"
             subtitle="Use camera to validate finds"
             onPress={() => handleMenuPress('camera')}
           />
           
           <MenuCard
             icon="trophy"
-            title="Hall of Shame"
+            title="Trophy Room"
             subtitle="View your achievements"
-            onPress={() => handleMenuPress('hall-of-shame')}
+            onPress={() => handleMenuPress('trophy-room')}
           />
           
           <MenuCard
             icon="gear"
             title="Settings"
-            subtitle="Gore level & sound options"
+            subtitle="Country settings & sound options"
             onPress={() => handleMenuPress('settings')}
           />
         </View>
 
-        {/* Conservation Section */}
-        <Card mode="contained" style={styles.conservationContainer}>
-          <Card.Title 
-            title="Help Real Wildlife" 
-            titleStyle={[styles.conservationTitle, { color: theme.colors.secondary }]}
-            left={(props) => <IconButton {...props} icon="heart" iconColor="#FF4444" />}
-          />
-          <Card.Content>
-            <Text variant="bodyMedium" style={[styles.conservationText, { color: theme.colors.onSurfaceVariant }]}>
-              Dead Ahead is a cheeky road-trip bingo game — but real roads aren&apos;t so funny for wildlife. Thousands of animals are killed every week, and spotting them can help conservation efforts.
-            </Text>
-            
-            <Text variant="titleMedium" style={[styles.conservationHeading, { color: theme.colors.secondary }]}>
-              Want to help?
-            </Text>
-            <Text variant="bodyMedium" style={[styles.conservationText, { color: theme.colors.onSurfaceVariant }]}>
-              Log your sightings with the Mammals on Roads app by the People's Trust for Endangered Species. Every report helps track wildlife populations and improve road safety.
-            </Text>
-            
-            <View style={styles.linksContainer}>
-              <LinkItem 
-                icon="iphone" 
-                text="App Store: PTES Mammals on Roads" 
-                url="https://apps.apple.com/gb/app/ptes-mammals-on-roads/id446109227"
-              />
-              <LinkItem 
-                icon="androidrobot" 
-                text="Google Play: Mammals on Roads" 
-                url="https://play.google.com/store/apps/details?id=org.ptes.mammalsonroads.v2&hl=en&gl=US&pli=1"
-              />
-              <LinkItem 
-                icon="globe" 
-                text="To find out more about PTES' wider conservation work, visit www.ptes.org" 
-                url="https://www.ptes.org"
-              />
-            </View>
-          </Card.Content>
-        </Card>
 
       </ScrollView>
       
@@ -274,9 +214,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 24,
     paddingHorizontal: 24,
-  },
-  topDisclaimer: {
-    marginTop: 24,
   },
   scrollView: {
     flex: 1,
@@ -313,75 +250,5 @@ const styles = StyleSheet.create({
   },
   menuSubtitle: {
     fontSize: 14,
-  },
-  disclaimerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  ratingCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  ratingText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  disclaimerText: {
-    fontSize: 12,
-  },
-  disclaimerSubtext: {
-    fontSize: 12,
-    textAlign: 'center',
-  },
-  conservationContainer: {
-    marginHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  conservationTitle: {
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-  conservationText: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-  conservationHeading: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    marginTop: 4,
-  },
-  linksContainer: {
-    marginTop: 8,
-    gap: 8,
-  },
-  linkItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  linkIcon: {
-    marginRight: 12,
-    width: 20,
-  },
-  linkText: {
-    fontSize: 14,
-    flex: 1,
-    lineHeight: 20,
-  },
-  externalIcon: {
-    fontSize: 16,
-    marginLeft: 8,
   },
 });

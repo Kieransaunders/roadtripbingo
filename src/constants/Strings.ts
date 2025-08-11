@@ -1,5 +1,5 @@
 /**
- * Centralized strings for the Dead Ahead: Roadkill Bingo app
+ * Centralized strings for the Road Trip Bingo app
  * This file contains all user-facing text to support future internationalization (i18n)
  * 
  * TODO: Replace with proper i18n library like react-i18next or expo-localization
@@ -10,7 +10,7 @@ export const Strings = {
   // Consent Dialog
   consent: {
     title: 'Consent Required',
-    message: 'By sharing this image, you consent to it being posted on our Instagram. Note: Images may be graphic.',
+    message: 'By sharing this image, you consent to it being posted on our Instagram.',
     understand: 'I Understand',
     cancel: 'Cancel',
     // Accessibility labels
@@ -28,9 +28,9 @@ export const Strings = {
 
   // Camera permissions (used in app.json)
   permissions: {
-    camera: 'Allow Dead Ahead Bingo to access your camera to capture roadkill evidence for the leaderboard.',
-    photos: 'Allow Dead Ahead Bingo to save your roadkill photos to your device.',
-    savePhotos: 'Allow Dead Ahead Bingo to save photos to your photo library.',
+    camera: 'Allow Road Trip Bingo to access your camera to capture photos for the leaderboard.',
+    photos: 'Allow Road Trip Bingo to save your photos to your device.',
+    savePhotos: 'Allow Road Trip Bingo to save photos to your photo library.',
   },
 
   // Common UI elements
@@ -49,11 +49,11 @@ export const Strings = {
   camera: {
     permissions: {
       title: 'We need your permission to show the camera',
-      message: 'This app needs access to camera to take photos',
+      message: 'This app needs access to camera to take photos and share memories',
       grant: 'Grant Permission',
     },
     controls: {
-      capture: '📸 Snap the Splat!',
+      capture: '📸 Snap & Share!',
       flip: 'Flip',
       cancel: 'Cancel',
     },
@@ -65,9 +65,9 @@ export const Strings = {
 
   // Game-specific strings
   game: {
-    title: 'Dead Ahead: Roadkill Bingo',
-    snapTheSplat: 'Snap the Splat',
-    hallOfShame: 'Hall of Shame',
+    title: 'Road Trip Bingo',
+    captureMemories: 'Snap & Share',
+    photoGallery: 'Trophy Gallery',
     leaderboard: 'Leaderboard',
     settings: 'Settings',
   },

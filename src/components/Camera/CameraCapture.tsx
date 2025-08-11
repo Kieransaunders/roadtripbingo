@@ -94,7 +94,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
         Alert.alert(
           '📸 Daily Limit Reached',
-          `You've already uploaded ${todayCount} photo${todayCount === 1 ? '' : 's'} today!\n\nDaily limit: 1 photo per day\nTry again tomorrow for more roadkill hunting! 🦫`,
+          `You've already uploaded ${todayCount} photo${todayCount === 1 ? '' : 's'} today!\n\nDaily limit: 1 photo per day\nTry again tomorrow for more road trip sightseeing! 🎯`,
           [{ text: 'Got It' }]
         );
         return;
@@ -152,7 +152,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(
         'Success! 🎉', 
-        `Photo uploaded and posted to @deadaheadroadkill!\n\nPost ID: ${result.post_id || 'Unknown'}`,
+        `Photo uploaded and posted to @roadtripbingo!\n\nPost ID: ${result.post_id || 'Unknown'}`,
         [
           {
             text: 'View on Instagram',

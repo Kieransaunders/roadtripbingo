@@ -1,7 +1,7 @@
 # Camera to Instagram Feature Setup
 
 ## Overview
-The Dead Ahead: Roadkill Bingo app includes a "Snap the Splat" camera feature that allows users to take photos of roadkill and automatically post them to Instagram. This document covers the setup and token refresh process for the Instagram integration.
+The road trip Bingo app includes a "Snap the find" camera feature that allows users to take photos of finds and automatically post them to our Instagram. This document covers the setup and token refresh process for the Instagram integration.
 
 ## Facebook/Instagram Token Refresh
 
@@ -84,7 +84,7 @@ Here's a ready-to-import Postman Collection JSON for refreshing your long‑live
 
 ### Workflow Process
 
-1. User takes photo with "Snap the Splat" camera
+1. User takes photo with "Snap" camera
 2. Photo is uploaded to Cloudinary
 3. Post description is generated
 4. Photo is posted to Instagram via n8n webhook

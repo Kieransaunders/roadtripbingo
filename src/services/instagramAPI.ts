@@ -1,5 +1,5 @@
 // Instagram API integration via Make.com workflow
-// Posts images to @deadaheadroadkill Instagram account
+// Posts images to @roadtripbingo Instagram account
 
 import { Linking } from 'react-native';
 
@@ -16,12 +16,12 @@ export interface InstagramPostResponse {
 }
 
 // Make.com webhook URL for Instagram posting (production)
-const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/6fadkjb17kifmn2jhyvfj2aln5igpd42';
+const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/h1astzskynhes770v6a1mp8b4wsgvyrf';
 
 // Test webhook URL to verify it's working
 export const testWebhookConnection = async () => {
   try {
-    const testUrl = `${MAKE_WEBHOOK_URL}?secret=deadahead&image_url=https://httpbin.org/image/jpeg&caption=Test connection`;
+    const testUrl = `${MAKE_WEBHOOK_URL}?secret=roadtripbingo&image_url=https://httpbin.org/image/jpeg&caption=Test connection`;
     const response = await fetch(testUrl, {
       method: 'GET',
       headers: {
@@ -43,18 +43,18 @@ export const postToInstagram = async (
 ): Promise<InstagramPostResponse> => {
   try {
     // Short caption for Instagram
-    const shortCaption = "Dead Ahead Roadkill Snap the splat";
+    const shortCaption = "Road Trip Bingo - Spot the sights!";
     
     // Longer social message for description
-    const defaultDescription = `🚨 Roadkill spotted! 📸 
+    const defaultDescription = `🎯 Road Trip Bingo sight spotted! 📸 
 
-See it. Spot it. Shout it. Win shotgun or throw up trying! 🤢
+See it. Spot it. Shout BINGO! The ultimate road trip game! 🎯
 
-#roadkill #wildlifesafety #roadsafety #deadahead #roadkillbingo #wildlife #awareness #roadsafetyfirst`;
+#roadtrip #bingo #travel #sightseeing #roadtripbingo #adventure #explore #familyfun`;
 
     const caption = encodeURIComponent(shortCaption);
     const description = encodeURIComponent(customDescription || defaultDescription);
-    const postUrl = `${MAKE_WEBHOOK_URL}?secret=deadahead&image_url=${encodeURIComponent(imageUrl)}&caption=${caption}&description=${description}`;
+    const postUrl = `${MAKE_WEBHOOK_URL}?secret=roadtripbingo&image_url=${encodeURIComponent(imageUrl)}&caption=${caption}&description=${description}`;
 
     console.log('📤 Posting to Instagram via Make.com...', { 
       imageUrl, 
@@ -120,7 +120,7 @@ See it. Spot it. Shout it. Win shotgun or throw up trying! 🤢
 // Helper function to open Instagram account in browser
 export const openInstagramAccount = async (): Promise<boolean> => {
   try {
-    const instagramUrl = 'https://www.instagram.com/deadaheadroadkill';
+    const instagramUrl = 'https://www.instagram.com/roadtripbingo';
     
     const canOpen = await Linking.canOpenURL(instagramUrl);
     
@@ -146,7 +146,7 @@ export const generateGameDescription = (context?: {
 }): string => {
   const { tileName, gameMode, location } = context || {};
   
-  let description = `🚨 Roadkill spotted! 📸\n\n`;
+  let description = `🎯 Road Trip Bingo sight spotted! 📸\n\n`;
   
   if (tileName) {
     description += `Spotted: ${tileName}\n`;
@@ -160,8 +160,8 @@ export const generateGameDescription = (context?: {
     description += `📍 Location: ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}\n`;
   }
   
-  description += `\nSee it. Spot it. Shout it. Win shotgun or throw up trying! 🤢\n\n`;
-  description += `#roadkill #wildlifesafety #roadsafety #deadahead #roadkillbingo`;
+  description += `\nSee it. Spot it. Shout BINGO! The ultimate road trip game! 🎯\n\n`;
+  description += `#roadtrip #bingo #travel #sightseeing #roadtripbingo #adventure #explore #familyfun`;
   
   if (tileName) {
     description += ` #${tileName.toLowerCase().replace(/\s+/g, '')}`;
@@ -173,7 +173,7 @@ export const generateGameDescription = (context?: {
 // Generate short caption for Instagram posts
 export const generateShortCaption = (tileName?: string): string => {
   if (tileName) {
-    return `Dead Ahead Roadkill: ${tileName} spotted!`;
+    return `Road Trip Bingo: ${tileName} spotted!`;
   }
-  return "Dead Ahead Roadkill Snap the splat";
+  return "Road Trip Bingo - Spot the sights!";
 };

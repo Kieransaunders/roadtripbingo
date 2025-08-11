@@ -1,10 +1,10 @@
-# Dead Ahead: Roadkill Bingo 🎯
+# Road Trip Bingo 🎯
 
-Welcome to Dead Ahead: Roadkill Bingo, a unique mobile game built with React Native and Expo! Spot bizarre roadside sights during road trips using a 5x5 bingo grid, combining dark British humor with interactive gameplay.
+Welcome to Road Trip Bingo, a unique mobile game built with React Native and Expo! Spot interesting sights during road trips using a 4x4 bingo grid, combining fun gameplay with family-friendly entertainment.
 
 ## Project Overview
 
-Dead Ahead: Roadkill Bingo is a mobile game where players identify various roadside "roadkill" and other quirky sights to complete bingo patterns. The game features a camera integration for "Snap-a-Roadkill" photo sharing and leaderboards.
+Road Trip Bingo is a mobile game where players identify various roadside sights and landmarks to complete bingo patterns. The game features camera integration for photo sharing and leaderboards.
 
 ## Key Technical Stack
 
@@ -24,7 +24,7 @@ Dead Ahead: Roadkill Bingo is a mobile game where players identify various roads
 
 ⚠️ **Important: Instagram Consent Requirement**
 
-This app includes a "Snap the Splat" camera feature that allows users to take photos and optionally share them to Instagram. **User consent is required** before any image can be posted to Instagram.
+This app includes a "Snap & Share" camera feature that allows users to take photos of their road trip discoveries and optionally share them to Instagram. **User consent is required** before any image can be posted to Instagram.
 
 ### How It Works
 

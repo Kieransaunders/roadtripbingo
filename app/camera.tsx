@@ -271,7 +271,7 @@ export default function CameraScreen() {
       // Save to app gallery
       await savePhotoToGallery({
         localUri: uriToSave,
-        tileName: 'Roadkill Spotted',
+        tileName: 'Road Trip Sighting',
         gameMode: 'Standard'
       });
       
@@ -286,13 +286,13 @@ export default function CameraScreen() {
   };
 
 
-  const viewDeadAheadInsta = async () => {
+  const viewRoadTripBingoInsta = async () => {
     triggerHaptic();
     try {
       await openInstagramAccount();
       Alert.alert(
         'Instagram Opened! 📱',
-        'Check out @deadaheadroadkill for more roadkill content!',
+        'Check out @roadtripbingo for more road trip content!',
         [{ text: 'OK' }]
       );
     } catch {
@@ -334,7 +334,7 @@ export default function CameraScreen() {
       
       // Generate description
       const description = generateGameDescription({
-        tileName: 'Roadkill Spotted',
+        tileName: 'Road Trip Sighting',
         gameMode: 'Standard'
       });
       console.log('🔄 Step 2: Generated description:', description);
@@ -352,7 +352,7 @@ export default function CameraScreen() {
         if (result.success) {
           Alert.alert(
             'Success! 🎉',
-            `Photo uploaded and posted to @deadaheadroadkill!\n\nPost ID: ${result.post_id || 'Unknown'}`,
+            `Photo uploaded and posted to @roadtripbingo!\n\nPost ID: ${result.post_id || 'Unknown'}`,
             [
               {
                 text: 'View on Instagram',
@@ -426,11 +426,11 @@ export default function CameraScreen() {
             <View style={styles.permissionTitleContainer}>
               <IconSymbol name="camera.fill" size={24} color="#FF4444" />
               <Text variant="headlineMedium" style={styles.permissionText}>
-                Snap the Splat!
+                Snap & Share!
               </Text>
             </View>
             <Text variant="bodyMedium" style={styles.permissionSubtext}>
-              We need camera access to capture your roadkill evidence for the leaderboard!
+              We need camera access to capture your road trip sightings for the leaderboard!
             </Text>
             <Button
               mode="contained"
@@ -507,7 +507,7 @@ export default function CameraScreen() {
               <Card style={[styles.instructions, { top: insets.top + 100 }]} mode="contained">
                 <Card.Content>
                   <Text variant="titleMedium" style={styles.instructionText}>
-                    🎯 Spot roadkill? Capture the evidence!
+                    🎯 Spot something interesting? Capture the moment!
                   </Text>
                   <Text variant="bodyMedium" style={styles.instructionSubtext}>
                     Photos help verify your bingo wins

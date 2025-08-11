@@ -19,7 +19,7 @@ const navigationButtons: NavigationButton[] = [
   { id: 'new-game', icon: 'gamecontroller.fill', label: 'New Game', route: '/game', isNewGame: true },
   { id: 'camera', icon: 'camera.fill', label: 'Camera', route: '/camera' },
   { id: 'settings', icon: 'gearshape.fill', label: 'Settings', route: '/settings' },
-  { id: 'hall-of-shame', icon: 'trophy.fill', label: 'Hall of Shame', route: '/hall-of-shame' },
+  { id: 'trophy-room', icon: 'trophy.fill', label: 'Trophy Room', route: '/trophy-room' },
 ];
 
 export const BottomNavigation: React.FC = () => {

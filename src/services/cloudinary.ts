@@ -1,14 +1,14 @@
-// Cloudinary Configuration for Dead Ahead: Roadkill Bingo
+// Cloudinary Configuration for Road Trip Bingo
 // 
 // Setup Instructions:
 // 1. Create account at https://cloudinary.com
 // 2. Get your Cloud Name, API Key, and API Secret from dashboard
-// 3. Create an unsigned upload preset named 'roadkill_preset'
+// 3. Create an unsigned upload preset named 'roadtrip_preset'
 // 4. Replace YOUR_CLOUD_NAME with your actual cloud name
 
 export const CLOUDINARY_CONFIG = {
   CLOUD_NAME: 'dxuq6a1mt',
-  UPLOAD_PRESET: 'roadkill_preset', // Try alternatives if this fails: 'ml_default', 'unsigned', 'default', or just remove upload_preset
+  UPLOAD_PRESET: 'roadtrip_preset', // Try alternatives if this fails: 'ml_default', 'unsigned', 'default', or just remove upload_preset
   UPLOAD_URL: 'https://api.cloudinary.com/v1_1/dxuq6a1mt/image/upload',
 };
 
@@ -95,7 +95,7 @@ export const uploadImageToCloudinaryWithFallback = async (
   imageUri: string, 
   filename?: string
 ): Promise<string> => {
-  const presetsToTry = ['roadkill_preset', 'ml_default', 'unsigned', 'default'];
+  const presetsToTry = ['roadtrip_preset', 'ml_default', 'unsigned', 'default'];
   
   for (const preset of presetsToTry) {
     try {
@@ -106,12 +106,12 @@ export const uploadImageToCloudinaryWithFallback = async (
       formData.append('file', {
         uri: imageUri,
         type: 'image/jpeg',
-        name: filename || `roadkill_${Date.now()}.jpg`,
+        name: filename || `roadtrip_${Date.now()}.jpg`,
       } as any);
       
       formData.append('upload_preset', preset);
-      formData.append('tags', 'roadkill,deadahead,bingo');
-      formData.append('folder', 'roadkill-bingo');
+      formData.append('tags', 'roadtrip,travel,bingo');
+      formData.append('folder', 'roadtrip-bingo');
 
       const response = await fetch(CLOUDINARY_CONFIG.UPLOAD_URL, {
         method: 'POST',
@@ -187,12 +187,12 @@ export const uploadImageToCloudinary = async (
     formData.append('file', {
       uri: imageUri,
       type: 'image/jpeg',
-      name: filename || `roadkill_${Date.now()}.jpg`,
+      name: filename || `roadtrip_${Date.now()}.jpg`,
     } as any);
     
     formData.append('upload_preset', CLOUDINARY_CONFIG.UPLOAD_PRESET);
-    formData.append('tags', 'roadkill,deadahead,bingo');
-    formData.append('folder', 'roadkill-bingo');
+    formData.append('tags', 'roadtrip,travel,bingo');
+    formData.append('folder', 'roadtrip-bingo');
 
     const response = await fetch(
       CLOUDINARY_CONFIG.UPLOAD_URL,
