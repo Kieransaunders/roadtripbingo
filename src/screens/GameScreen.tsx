@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet as UnistylesStyleSheet } from 'react-native-unistyles';
-import { Surface, Chip } from 'react-native-paper';
+import { Surface } from 'react-native-paper';
 import { BingoGrid } from '../components/BingoGrid';
 import { useGameStore } from '../stores/gameStore';
 import { router } from 'expo-router';
