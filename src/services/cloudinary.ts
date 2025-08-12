@@ -95,6 +95,51 @@ export const uploadImageToCloudinaryWithFallback = async (
   imageUri: string, 
   filename?: string
 ): Promise<string> => {
+  // First try with API key/secret for signed uploads (more reliable)
+  try {
+    console.log('🔄 Trying signed upload (no preset required)');
+    
+    const formData = new FormData();
+    
+    formData.append('file', {
+      uri: imageUri,
+      type: 'image/jpeg',
+      name: filename || `roadtrip_${Date.now()}.jpg`,
+    } as any);
+    
+    // For signed uploads, add timestamp
+    const timestamp = Math.round(Date.now() / 1000);
+    formData.append('timestamp', timestamp.toString());
+    formData.append('tags', 'roadtrip,travel,bingo');
+    formData.append('folder', 'roadtrip-bingo');
+
+    const response = await fetch(CLOUDINARY_CONFIG.UPLOAD_URL, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    const data: CloudinaryResponse = await response.json();
+    
+    if (response.ok) {
+      console.log('✅ Signed upload successful');
+      console.log('✅ Original image dimensions:', data.width, 'x', data.height);
+      console.log('✅ Original aspect ratio:', (data.width / data.height).toFixed(2));
+      
+      // Return the secure URL directly - simpler approach
+      console.log('✅ Using secure URL:', data.secure_url);
+      return data.secure_url;
+    } else {
+      console.log('❌ Signed upload failed:', data.error?.message);
+      throw new Error(data.error?.message || 'Signed upload failed');
+    }
+  } catch (error) {
+    console.log('❌ Signed upload error:', error instanceof Error ? error.message : String(error));
+  }
+  
+  // Fallback to unsigned preset attempts
   const presetsToTry = ['roadtrip_preset', 'ml_default', 'unsigned', 'default'];
   
   for (const preset of presetsToTry) {
@@ -128,15 +173,9 @@ export const uploadImageToCloudinaryWithFallback = async (
         console.log('✅ Original image dimensions:', data.width, 'x', data.height);
         console.log('✅ Original aspect ratio:', (data.width / data.height).toFixed(2));
         
-        // Get Buffer-compatible URL (simpler transformations)
-        const bufferUrl = getBufferCompatibleImageUrl(data.public_id, data.width, data.height);
-        console.log('✅ Buffer-compatible URL:', bufferUrl);
-        
-        // Also log the raw URL as a fallback option
-        const rawUrl = getRawCloudinaryUrl(data.public_id, data.version?.toString());
-        console.log('📋 Raw URL fallback:', rawUrl);
-        
-        return bufferUrl;
+        // Return the secure URL directly - simpler approach
+        console.log('✅ Using secure URL:', data.secure_url);
+        return data.secure_url;
       } else {
         console.log(`❌ Upload failed with preset ${preset}:`, data.error?.message);
       }
@@ -145,7 +184,7 @@ export const uploadImageToCloudinaryWithFallback = async (
     }
   }
   
-  throw new Error('All upload presets failed. Please check your Cloudinary configuration.');
+  throw new Error('All upload methods failed. Please check your Cloudinary configuration and internet connection.');
 };
 
 export interface CloudinaryResponse {

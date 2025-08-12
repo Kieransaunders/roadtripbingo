@@ -1,4 +1,4 @@
-package com.anonymous.deadaheadbingo
+package uk.co.iconnectit.roadtripbingo
 
 import android.app.Application
 import android.content.res.Configuration

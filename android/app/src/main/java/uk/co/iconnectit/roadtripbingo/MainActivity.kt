@@ -1,4 +1,4 @@
-package com.anonymous.deadaheadbingo
+package uk.co.iconnectit.roadtripbingo
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

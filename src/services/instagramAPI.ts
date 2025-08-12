@@ -120,7 +120,7 @@ See it. Spot it. Shout BINGO! The ultimate road trip game! 🎯
 // Helper function to open Instagram account in browser
 export const openInstagramAccount = async (): Promise<boolean> => {
   try {
-    const instagramUrl = 'https://www.instagram.com/roadtripbingo';
+    const instagramUrl = 'https://www.instagram.com/roadtripbingo/';
     
     const canOpen = await Linking.canOpenURL(instagramUrl);
     

@@ -384,8 +384,8 @@ const styles = StyleSheet.create((theme) => ({
   titleContainer: {
     alignItems: 'center',
     marginBottom: 40,
-    marginTop: 40, // Fixed top margin to prevent clipping
-    paddingTop: 20, // Add padding for safe display
+    marginTop: 60, // Increased top margin for iPhone bezel clearance
+    paddingTop: 30, // Increased padding for safe display
   },
   mainTitle: {
     fontSize: theme.fonts.massive,

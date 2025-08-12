@@ -9,7 +9,8 @@ import { StyleSheet } from 'react-native-unistyles';
 import { Card, Text, IconButton, Button, Surface, FAB } from 'react-native-paper';
 import { useGameStore } from '../src/stores/gameStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { openInstagramAccount } from '../src/services/instagramAPI';
+import { openInstagramAccount, postToInstagram, generateGameDescription, testWebhookConnection } from '../src/services/instagramAPI';
+import { uploadImageToCloudinaryWithFallback } from '../src/services/cloudinary';
 import { savePhotoToGallery } from '../src/components/Camera/PhotoGallery';
 import { BottomNavigation } from '../src/components/BottomNavigation';
 import { useConsentDialog } from '../src/hooks/useConsentDialog';
@@ -221,11 +222,15 @@ export default function CameraScreen() {
   console.log('🔍 Camera component - useConsentDialog hook available:', !!showConsentDialog);
 
   useEffect(() => {
+    console.log('🔐 Permission status check - Camera:', permission?.granted, 'Media:', mediaPermission?.granted);
+    
     // Request permissions on mount
     if (!permission?.granted) {
+      console.log('🔐 Requesting camera permission...');
       requestPermission();
     }
     if (!mediaPermission?.granted) {
+      console.log('🔐 Requesting media library permission...');
       requestMediaPermission();
     }
   }, [permission?.granted, mediaPermission?.granted, requestPermission, requestMediaPermission]);
@@ -237,26 +242,51 @@ export default function CameraScreen() {
   };
 
   const takePicture = async () => {
-    if (!cameraRef.current || isCapturing) return;
+    if (!cameraRef.current || isCapturing) {
+      console.log('🚫 takePicture blocked - camera ref:', !!cameraRef.current, 'isCapturing:', isCapturing);
+      return;
+    }
+    
+    console.log('📸 Starting photo capture...');
     
     try {
       setIsCapturing(true);
       triggerHaptic();
       
-      const photo = await cameraRef.current.takePictureAsync({
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Camera timeout - please try again')), 10000)
+      );
+      
+      const capturePromise = cameraRef.current.takePictureAsync({
         quality: 0.8,
         base64: false,
         exif: false,
       });
 
-      if (photo) {
+      const photo = await Promise.race([capturePromise, timeoutPromise]) as any;
+      
+      console.log('📸 Photo captured successfully:', photo?.uri);
+
+      if (photo && photo.uri) {
         setCapturedPhoto(photo.uri);
+        console.log('📸 Photo set in state, starting auto-save...');
         // Auto-save to gallery when photo is taken
         await savePhoto(photo.uri);
+        console.log('📸 Photo auto-saved successfully');
+      } else {
+        throw new Error('Photo capture returned invalid result');
       }
     } catch (error) {
-      console.error('Error taking picture:', error);
-      Alert.alert('Error', 'Failed to take picture. Please try again.');
+      console.error('❌ Error taking picture:', error);
+      Alert.alert(
+        'Camera Error', 
+        `Failed to take picture: ${error instanceof Error ? error.message : 'Unknown error'}\n\nPlease try again.`
+      );
+    } finally {
+      // Always reset capturing state
+      console.log('📸 Resetting capturing state');
+      setIsCapturing(false);
     }
   };
 
@@ -284,6 +314,7 @@ export default function CameraScreen() {
       Alert.alert('Error', 'Failed to save photo. Please check your permissions.');
     }
   };
+
 
 
   const viewRoadTripBingoInsta = async () => {
@@ -321,74 +352,76 @@ export default function CameraScreen() {
     }
     
     try {
-      // Import the necessary services
-      const { uploadImageToCloudinaryWithFallback } = await import('../src/services/cloudinary');
-      const { postToInstagram, generateGameDescription } = await import('../src/services/instagramAPI');
-      
       console.log('🔄 Starting photo upload workflow...');
       
-      // Upload image with fallback presets
-      console.log('🔄 Step 1: Uploading image...');
-      const cloudinaryUrl = await uploadImageToCloudinaryWithFallback(capturedPhoto);
-      console.log('✅ Step 1 Complete: Image URL:', cloudinaryUrl);
-      
-      // Generate description
-      const description = generateGameDescription({
-        tileName: 'Road Trip Sighting',
-        gameMode: 'Standard'
-      });
-      console.log('🔄 Step 2: Generated description:', description);
-      
-      // Post to Instagram via n8n workflow
-      console.log('🔄 Step 3: Posting to Instagram via n8n...');
-      console.log('🔄 Webhook URL:', 'https://n8n.iconnectit.co.uk/webhook/instagram-post');
-      console.log('🔄 Image URL:', cloudinaryUrl);
-      console.log('🔄 Description:', description);
-      
+      // Test network connectivity first
+      console.log('🔄 Testing network connectivity...');
       try {
-        const result = await postToInstagram(cloudinaryUrl, description);
-        console.log('✅ Step 3 Complete: Instagram result:', result);
+        const testResponse = await fetch('https://httpbin.org/status/200', { method: 'GET' });
+        console.log('🌐 Network test result:', testResponse.ok ? 'Connected' : 'Failed');
+        if (!testResponse.ok) {
+          throw new Error('No internet connection detected');
+        }
+      } catch (networkError) {
+        console.error('❌ Network connectivity test failed:', networkError);
+        throw new Error('Please check your internet connection and try again');
+      }
+      
+      // Upload image to Cloudinary
+      console.log('🔄 Step 1: Uploading image to Cloudinary...');
+      try {
+        const cloudinaryUrl = await uploadImageToCloudinaryWithFallback(capturedPhoto);
+        console.log('✅ Step 1 Complete: Image URL:', cloudinaryUrl);
         
-        if (result.success) {
+        // Generate description
+        const description = generateGameDescription({
+          tileName: 'Road Trip Sighting',
+          gameMode: 'Standard'
+        });
+        console.log('🔄 Step 2: Generated description:', description);
+        
+        // Post to Instagram via Make.com workflow
+        console.log('🔄 Step 3: Posting to Instagram via Make.com...');
+        
+        try {
+          const result = await postToInstagram(cloudinaryUrl, description);
+          console.log('✅ Step 3 Complete: Instagram result:', result);
+          
+          if (result.success) {
+            Alert.alert(
+              'Success! 🎉',
+              `Photo uploaded and posted to @roadtripbingo!\n\nPost ID: ${result.post_id || 'Unknown'}`,
+              [
+                {
+                  text: 'View on Instagram',
+                  onPress: () => openInstagramAccount()
+                },
+                { text: 'OK' }
+              ]
+            );
+          } else {
+            throw new Error(result.message || 'Failed to post to Instagram');
+          }
+        } catch (instagramError) {
+          console.log('⚠️ Instagram posting failed, but photo was uploaded successfully');
+          console.log('⚠️ Instagram Error:', instagramError instanceof Error ? instagramError.message : String(instagramError));
+          
+          // Fallback: Photo uploaded successfully but Instagram posting failed
           Alert.alert(
-            'Success! 🎉',
-            `Photo uploaded and posted to @roadtripbingo!\n\nPost ID: ${result.post_id || 'Unknown'}`,
+            'Photo Uploaded! 📸',
+            `Your photo was uploaded successfully to Cloudinary!\n\nURL: ${cloudinaryUrl}\n\nInstagram posting failed, but you can manually share the image.`,
             [
               {
-                text: 'View on Instagram',
+                text: 'View Instagram',
                 onPress: () => openInstagramAccount()
               },
               { text: 'OK' }
             ]
           );
-        } else {
-          throw new Error(result.message || 'Failed to post to Instagram');
         }
-      } catch (instagramError) {
-        console.log('⚠️ Instagram posting failed, but photo was uploaded successfully');
-        console.log('⚠️ Error:', instagramError instanceof Error ? instagramError.message : String(instagramError));
-        
-        // Fallback: Photo uploaded successfully but Instagram posting failed
-        Alert.alert(
-          'Photo Uploaded!',
-          `Your photo was uploaded successfully!\n\nURL: ${cloudinaryUrl}\n\nInstagram posting failed (webhook needs activation), but you can manually share the image.`,
-          [
-            {
-              text: 'Copy URL',
-              onPress: () => {
-                // Copy URL to clipboard if available
-                if (typeof navigator !== 'undefined' && navigator.clipboard) {
-                  navigator.clipboard.writeText(cloudinaryUrl);
-                }
-              }
-            },
-            {
-              text: 'View Instagram',
-              onPress: () => openInstagramAccount()
-            },
-            { text: 'OK' }
-          ]
-        );
+      } catch (cloudinaryError) {
+        console.error('❌ Cloudinary upload failed:', cloudinaryError);
+        throw new Error(`Cloudinary upload failed: ${cloudinaryError instanceof Error ? cloudinaryError.message : 'Unknown error'}`);
       }
     } catch (error) {
       console.error('❌ Camera upload error:', error);
@@ -403,6 +436,13 @@ export default function CameraScreen() {
     }
   };
 
+  const retakePhoto = () => {
+    console.log('🔄 User wants to retake photo');
+    triggerHaptic();
+    setCapturedPhoto(null);
+    setIsCapturing(false);
+  };
+
   const flipCamera = () => {
     triggerHaptic();
     setFacing(current => (current === 'back' ? 'front' : 'back'));
@@ -410,15 +450,17 @@ export default function CameraScreen() {
 
   if (!permission) {
     // Camera permissions are still loading
+    console.log('🔐 Camera permissions still loading...');
     return (
       <View style={styles.container}>
-        <Text variant="bodyLarge" style={styles.loadingText}>Loading camera...</Text>
+        <Text variant="bodyLarge" style={styles.loadingText}>Loading camera permissions...</Text>
       </View>
     );
   }
 
   if (!permission.granted) {
     // Camera permissions are not granted yet
+    console.log('🔐 Camera permission not granted, showing permission request UI');
     return (
       <Surface style={[styles.container, { paddingTop: insets.top + 40 }]}>
         <Card style={styles.permissionCard} mode="contained">
@@ -430,11 +472,14 @@ export default function CameraScreen() {
               </Text>
             </View>
             <Text variant="bodyMedium" style={styles.permissionSubtext}>
-              We need camera access to capture your road trip sightings for the leaderboard!
+              We need camera access to capture your road trip sightings for Instagram sharing!
             </Text>
             <Button
               mode="contained"
-              onPress={requestPermission}
+              onPress={() => {
+                console.log('🔐 User tapped Grant Camera Access');
+                requestPermission();
+              }}
               style={styles.permissionButton}
               contentStyle={styles.buttonContent}
               icon="camera"
@@ -443,7 +488,10 @@ export default function CameraScreen() {
             </Button>
             <Button
               mode="outlined"
-              onPress={() => router.back()}
+              onPress={() => {
+                console.log('🔐 User tapped Back to Game');
+                router.back();
+              }}
               style={styles.backButton}
               contentStyle={styles.buttonContent}
               icon="arrow-left"
@@ -456,6 +504,8 @@ export default function CameraScreen() {
     );
   }
 
+  console.log('🎬 Rendering camera with permission granted. Captured photo:', !!capturedPhoto);
+  
   return (
     <View style={styles.container}>
         {capturedPhoto ? (
@@ -473,12 +523,24 @@ export default function CameraScreen() {
             <View style={styles.previewButtons}>
               <Button
                 mode="contained"
-                onPress={sharePhotoToWorkflow}
+                onPress={() => {
+                  console.log('📤 User tapped Share Photo to Instagram');
+                  sharePhotoToWorkflow();
+                }}
                 style={styles.shareButton}
                 contentStyle={styles.buttonContent}
                 icon="share"
               >
                 Share Photo to Instagram
+              </Button>
+              <Button
+                mode="outlined"
+                onPress={retakePhoto}
+                style={styles.backButton}
+                contentStyle={styles.buttonContent}
+                icon="camera-retake"
+              >
+                Retake Photo
               </Button>
             </View>
           </Surface>
